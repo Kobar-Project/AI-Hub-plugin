@@ -17,8 +17,10 @@ export const usePluginChatStore = create(
             },
             aiAvatar: null,
             userAvatar: null,
+            panelSize: { width: 600, height: 600 },
 
             setApiKeys: (keys) => set((state) => ({ apiKeys: { ...state.apiKeys, ...keys } })),
+            setPanelSize: (width, height) => set({ panelSize: { width, height } }),
             setAiAvatar: (avatar) => set({ aiAvatar: avatar }),
             setUserAvatar: (avatar) => set({ userAvatar: avatar }),
 

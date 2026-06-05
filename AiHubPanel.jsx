@@ -20,7 +20,7 @@ const ResizerHandle = ({ direction, edgePosition, startDrag }) => {
     return (
         <div
             onMouseDown={(e) => startDrag(e, direction)}
-            className={`${directionClasses} resizer-handle hover:bg-[#f4a125]/30 transition-colors z-50 [-webkit-app-region:no-drag] bg-black/1`}
+            className={`${directionClasses} resizer-handle hover:bg-primary/30 transition-colors z-50 [-webkit-app-region:no-drag] bg-black/1`}
         />
     );
 };
@@ -50,9 +50,9 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
     const orientation = useAppStore(state => state.orientation);
 
     const { 
-        chats, activeChatId, apiKeys, setActiveChatId, createChat, 
+        chats, activeChatId, apiKeys, panelSize, setActiveChatId, createChat, 
         deleteChat, addMessage, appendStreamToMessage, updateChatTitle, 
-        aiAvatar, userAvatar, setAiAvatar, setUserAvatar 
+        aiAvatar, userAvatar, setAiAvatar, setUserAvatar, setPanelSize 
     } = usePluginChatStore();
 
     const [input, setInput] = useState('');
@@ -62,8 +62,8 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
     const [generatingMessageId, setGeneratingMessageId] = useState(null);
     const [showSettings, setShowSettings] = useState(false);
 
-    const [aiHubWidth, setAiHubWidth] = useState(600);
-    const [aiHubHeight, setAiHubHeight] = useState(600);
+    const [aiHubWidth, setAiHubWidth] = useState(panelSize?.width || 600);
+    const [aiHubHeight, setAiHubHeight] = useState(panelSize?.height || 600);
     const [isSmartPositioning] = useState(true);
 
     const inputRef = useRef(null);
@@ -191,6 +191,9 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
         const startW = aiHubWidth;
         const startH = aiHubHeight;
 
+        let lastW = startW;
+        let lastH = startH;
+
         const onMouseMove = (moveEvent) => {
             let newW = startW;
             let newH = startH;
@@ -202,12 +205,15 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                 const deltaY = moveEvent.clientY - startY;
                 newH = Math.max(400, startH + deltaY);
             }
+            lastW = newW;
+            lastH = newH;
             setAiHubWidth(newW);
             setAiHubHeight(newH);
         };
         const onMouseUp = () => {
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
+            setPanelSize(lastW, lastH);
         };
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
@@ -445,7 +451,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                 <div className={`flex flex-col h-full shrink-0 ${isSidebarOpen ? 'w-48' : 'w-0'}`}>
                     <div className="p-3 border-b border-white/5 flex items-center justify-between">
                         <span className="font-bold text-slate-200 text-sm">{t('chats')}</span>
-                        <button onClick={() => createChat()} className="w-8 h-8 rounded-lg bg-[#f4a125]/20 text-[#f4a125] hover:bg-[#f4a125]/30 flex items-center justify-center pointer-events-auto" title={t('newChat')}>
+                        <button onClick={() => createChat()} className="w-8 h-8 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 flex items-center justify-center pointer-events-auto" title={t('newChat')}>
                             <span className="material-symbols-outlined text-[18px]">add</span>
                         </button>
                     </div>
@@ -456,7 +462,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                 onClick={() => setActiveChatId(c.id)}
                                 onDoubleClick={() => startEditingTitle(c.id, c.title)}
                                 className={`w-full group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors pointer-events-auto select-none
-                                    ${activeChatId === c.id ? 'bg-[#f4a125]/20 text-[#f4a125]' : 'hover:bg-white/5 text-slate-400'}
+                                    ${activeChatId === c.id ? 'bg-primary/20 text-primary' : 'hover:bg-white/5 text-slate-400'}
                                 `}
                             >
                                 {editingChatId === c.id ? (
@@ -469,7 +475,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                             if (e.key === 'Enter') saveTitle(c.id);
                                             if (e.key === 'Escape') setEditingChatId(null);
                                         }}
-                                        className="bg-black/40 border border-[#f4a125]/50 text-white text-sm rounded px-1 w-full outline-none"
+                                        className="bg-black/40 border border-primary/50 text-white text-sm rounded px-1 w-full outline-none"
                                         onClick={(e) => e.stopPropagation()}
                                     />
                                 ) : (
@@ -490,7 +496,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
             </div>
 
             {/* Main Area */}
-            <div className="flex-1 flex flex-col bg-transparent">
+            <div className="flex-1 flex flex-col bg-transparent relative">
                 <div className="p-3 border-b flex items-center justify-between bg-transparent shrink-0 pointer-events-auto" style={{ borderColor: 'var(--theme-border)' }}>
                     <div className="flex items-center gap-3">
                         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
@@ -507,7 +513,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                     createChat(e.target.value);
                                 }
                             }}
-                            className="bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-slate-200 min-w-[200px] outline-none hover:border-[#f4a125]/50 cursor-pointer"
+                            className="bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-slate-200 min-w-[200px] outline-none hover:border-primary/50 cursor-pointer"
                         >
                             {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
                         </select>
@@ -515,7 +521,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                     <div className="flex items-center gap-1">
                         <button 
                             onClick={() => setShowSettings(!showSettings)} 
-                            className={`p-1.5 rounded-lg transition-colors ${showSettings ? 'bg-[#f4a125] text-[#1a1612]' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}
+                            className={`p-1.5 rounded-lg transition-colors ${showSettings ? 'bg-primary text-white' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}
                             title={t('aiHubSettings')}
                         >
                             <span className="material-symbols-outlined text-[20px]">settings</span>
@@ -537,7 +543,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                 >
                     {activeChat?.messages.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center opacity-50 select-none pointer-events-none">
-                            <span className="material-symbols-outlined text-[48px] text-[#f4a125] mb-4">smart_toy</span>
+                            <span className="material-symbols-outlined text-[48px] text-primary mb-4">smart_toy</span>
                             <span className="text-slate-200 font-bold mb-1">{t('kobarAiHub')}</span>
                             <span className="text-sm text-slate-400 text-center max-w-[300px]">{t('sayHello')}</span>
                         </div>
@@ -545,30 +551,30 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                         activeChat?.messages.map((msg) => (
                             <div key={msg.id} className={`flex gap-4 w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 {msg.role !== 'user' && (
-                                    <div className="w-8 h-8 rounded-full bg-[#f4a125]/20 shrink-0 flex items-center justify-center overflow-hidden border border-white/10">
+                                    <div className="w-8 h-8 rounded-full bg-primary/20 shrink-0 flex items-center justify-center overflow-hidden border border-white/10">
                                         {aiAvatar ? (
                                             <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
                                         ) : (
-                                            <span className="material-symbols-outlined text-[#f4a125] text-[18px]">smart_toy</span>
+                                            <span className="material-symbols-outlined text-primary text-[18px]">smart_toy</span>
                                         )}
                                     </div>
                                 )}
                                 <div className={`flex flex-col gap-1 max-w-[85%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                                    <div className={`p-4 rounded-2xl group relative ai-chat-selectable ${msg.role === 'user' ? 'bg-[#f4a125]/10 text-slate-200 border border-[#f4a125]/20 rounded-tr-sm' : 'bg-transparent text-slate-300 border border-white/5 rounded-tl-sm'}`} style={{ WebkitUserSelect: 'text', userSelect: 'text' }}>
+                                    <div className={`p-4 rounded-2xl group relative ai-chat-selectable ${msg.role === 'user' ? 'bg-primary/10 text-slate-200 border border-primary/20 rounded-tr-sm' : 'bg-transparent text-slate-300 border border-white/5 rounded-tl-sm'}`} style={{ WebkitUserSelect: 'text', userSelect: 'text' }}>
                                         
-                                        <div className={`absolute top-2 flex gap-1 bg-[#1a1612] rounded-md border border-white/10 p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 
+                                        <div className={`absolute top-2 flex gap-1  rounded-md border border-white/10 p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 
                                             ${msg.role === 'user' ? '-left-16' : '-right-16'}`}>
-                                            <button onClick={() => handleSendToSlot(msg.content)} className="p-1 hover:text-[#f4a125] text-slate-400 transition-colors" title={t('sendToSlot')}>
+                                            <button onClick={() => handleSendToSlot(msg.content)} className="p-1 hover:text-primary text-slate-400 transition-colors" title={t('sendToSlot')}>
                                                 <span className="material-symbols-outlined text-[16px]">dynamic_feed</span>
                                             </button>
-                                            <button onClick={() => handleCopy(msg.content)} className="p-1 hover:text-[#f4a125] text-slate-400 transition-colors" title={t('copyText')}>
+                                            <button onClick={() => handleCopy(msg.content)} className="p-1 hover:text-primary text-slate-400 transition-colors" title={t('copyText')}>
                                                 <span className="material-symbols-outlined text-[16px]">content_copy</span>
                                             </button>
                                         </div>
 
                                         {msg.attachments && msg.attachments.length > 0 && (
                                              <div className="flex flex-wrap gap-2 mb-3">
-                                                 <span className="text-xs bg-[#f4a125]/20 text-[#f4a125] px-2 py-1 rounded-md">+{msg.attachments.length} {t('filesAttached')}</span>
+                                                 <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-md">+{msg.attachments.length} {t('filesAttached')}</span>
                                              </div>
                                         )}
 
@@ -615,7 +621,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                                                 </SyntaxHighlighter>
                                                             </div>
                                                         ) : (
-                                                            <code className="bg-black/30 text-[#f4a125] px-1.5 py-0.5 rounded font-mono text-xs select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text' }} {...props}>
+                                                            <code className="bg-black/30 text-primary px-1.5 py-0.5 rounded font-mono text-xs select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text' }} {...props}>
                                                                 {children}
                                                             </code>
                                                         );
@@ -641,8 +647,8 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                     )}
                     {isGenerating && (
                          <div className="flex gap-4 w-full justify-start">
-                              <div className="w-8 h-8 rounded-full bg-[#f4a125]/20 shrink-0 flex items-center justify-center">
-                                  <span className="material-symbols-outlined text-[#f4a125] text-[18px] animate-spin">refresh</span>
+                              <div className="w-8 h-8 rounded-full bg-primary/20 shrink-0 flex items-center justify-center">
+                                  <span className="material-symbols-outlined text-primary text-[18px] animate-spin">refresh</span>
                               </div>
                               <div className="p-4 rounded-2xl bg-transparent text-slate-300 border border-white/5 rounded-tl-sm flex items-center">
                                   <span className="animate-pulse">{t('thinking')}</span>
@@ -657,7 +663,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                         <div className="flex flex-wrap gap-2 mb-2">
                              {attachments.map((a, i) => (
                                  <div key={i} className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 rounded-md text-xs text-slate-300">
-                                     <span className="material-symbols-outlined text-[14px] text-[#f4a125]">{a.type === 'image' ? 'image' : 'description'}</span>
+                                     <span className="material-symbols-outlined text-[14px] text-primary">{a.type === 'image' ? 'image' : 'description'}</span>
                                      <span className="truncate max-w-[150px]">{a.name}</span>
                                      <button onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} className="hover:text-red-400 p-0.5 rounded-sm ml-1">
                                          <span className="material-symbols-outlined text-[14px]">close</span>
@@ -667,13 +673,13 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                         </div>
                     )}
 
-                    <div className="relative flex items-end focus-within:border-[#f4a125]/50 transition-colors">
+                    <div className="relative flex items-end focus-within:border-primary/50 transition-colors">
                         <textarea
                             ref={inputRef}
                             value={input}
                             onChange={onInput}
                             placeholder={t('typeMessage')}
-                            className="w-full bg-black/20 text-slate-200 rounded-lg p-3 outline-none resize-none custom-scrollbar border border-white/5 focus:border-[#f4a125]/50 transition-colors max-h-[200px] overflow-y-auto select-auto pointer-events-auto"
+                            className="w-full bg-black/20 text-slate-200 rounded-lg p-3 outline-none resize-none custom-scrollbar border border-white/5 focus:border-primary/50 transition-colors max-h-[200px] overflow-y-auto select-auto pointer-events-auto"
                             style={{ minHeight: '44px' }}
                             onKeyDown={e => {
                                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -688,7 +694,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                      <span className="material-symbols-outlined text-[20px]">stop_circle</span>
                                  </button>
                              ) : (
-                                 <button onClick={handleSend} disabled={!input.trim() && attachments.length === 0} className="p-2 rounded-xl bg-[#f4a125] text-[#1a1612] hover:brightness-110 transition-colors disabled:opacity-50">
+                                 <button onClick={handleSend} disabled={!input.trim() && attachments.length === 0} className="p-2 rounded-xl bg-primary text-white hover:brightness-110 transition-colors disabled:opacity-50">
                                      <span className="material-symbols-outlined text-[20px] -rotate-45 ml-0.5 mt-0.5">send</span>
                                  </button>
                              )}
@@ -698,17 +704,17 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
 
                 {/* Settings Overlay View */}
                 {showSettings && (
-                    <div className="absolute top-[57px] left-0 right-0 bottom-0 bg-[#1a1612] z-50 flex flex-col no-drag-region">
+                    <div className="absolute top-[57px] left-0 right-0 bottom-0  z-50 flex flex-col no-drag-region" style={{ backgroundColor: '#1a1612' }}>
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
                             <div>
-                                <h3 className="text-sm font-bold text-[#f4a125] uppercase tracking-wider mb-4">{t('modelDefaults')}</h3>
+                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('modelDefaults')}</h3>
                                 <div className="space-y-4">
                                     <div className="flex flex-col gap-2">
                                         <label className="text-xs text-slate-400">{t('defaultModel')}</label>
                                         <select
                                             value={apiKeys?.defaultModel || 'anthropic:claude-sonnet-4-6'}
                                             onChange={(e) => usePluginChatStore.getState().setApiKeys({ defaultModel: e.target.value })}
-                                            className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-[#f4a125]/50 cursor-pointer"
+                                            className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 cursor-pointer"
                                         >
                                             {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
                                         </select>
@@ -719,7 +725,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                             <div className="w-full h-px bg-white/5" />
 
                             <div>
-                                <h3 className="text-sm font-bold text-[#f4a125] uppercase tracking-wider mb-4">{t('apiKeysProviders')}</h3>
+                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('apiKeysProviders')}</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="flex flex-col gap-2 relative group opacity-50">
                                         <label className="text-xs text-slate-400">{t('openaiKeyLabel')}</label>
@@ -736,7 +742,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                             value={apiKeys?.anthropic || ''}
                                             onChange={(e) => usePluginChatStore.getState().setApiKeys({ anthropic: e.target.value })}
                                             placeholder="sk-ant-..."
-                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-[#f4a125]/50 select-text"
+                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 select-text"
                                         />
                                     </div>
                                     <div className="flex flex-col gap-2">
@@ -746,7 +752,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                             value={apiKeys?.localUrl || ''}
                                             onChange={(e) => usePluginChatStore.getState().setApiKeys({ localUrl: e.target.value })}
                                             placeholder="http://localhost:11434"
-                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-[#f4a125]/50 select-text"
+                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 select-text"
                                         />
                                     </div>
                                 </div>
@@ -755,14 +761,14 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                             <div className="w-full h-px bg-white/5" />
 
                             <div>
-                                <h3 className="text-sm font-bold text-[#f4a125] uppercase tracking-wider mb-4">{t('profileCustomization')}</h3>
+                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('profileCustomization')}</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-xl bg-[#f4a125]/10 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                                        <div className="w-16 h-16 rounded-xl bg-primary/10 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
                                             {aiAvatar ? (
                                                 <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
                                             ) : (
-                                                <span className="material-symbols-outlined text-[#f4a125] text-[32px]">smart_toy</span>
+                                                <span className="material-symbols-outlined text-primary text-[32px]">smart_toy</span>
                                             )}
                                         </div>
                                         <div className="flex flex-col gap-2">
@@ -810,7 +816,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                             <div className="w-full h-px bg-white/5" />
 
                             <div>
-                                <h3 className="text-sm font-bold text-[#f4a125] uppercase tracking-wider mb-4">{t('promptCustomization')}</h3>
+                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('promptCustomization')}</h3>
                                 <div className="space-y-4">
                                     <div className="flex flex-col gap-2">
                                         <div className="flex justify-between items-center">
@@ -821,7 +827,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                             value={apiKeys?.systemMessage || ''}
                                             onChange={(e) => usePluginChatStore.getState().setApiKeys({ systemMessage: e.target.value })}
                                             placeholder="You are a helpful AI..."
-                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-[#f4a125]/50 min-h-[80px] resize-none select-text"
+                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 min-h-[80px] resize-none select-text"
                                         />
                                     </div>
                                     <div className="flex flex-col gap-2">
@@ -833,7 +839,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                             value={apiKeys?.customInstructions || ''}
                                             onChange={(e) => usePluginChatStore.getState().setApiKeys({ customInstructions: e.target.value })}
                                             placeholder="e.g. Always respond in Spanish"
-                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-[#f4a125]/50 min-h-[80px] resize-none select-text"
+                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 min-h-[80px] resize-none select-text"
                                         />
                                     </div>
                                 </div>
@@ -842,7 +848,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                         <div className="p-4 border-t border-white/5 bg-black/20 flex justify-end">
                             <button 
                                 onClick={() => setShowSettings(false)}
-                                className="px-6 py-2 bg-[#f4a125] text-[#1a1612] font-bold rounded-lg hover:brightness-110 transition-all shadow-lg"
+                                className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:brightness-110 transition-all shadow-lg"
                             >
                                 {t('backToChat')}
                             </button>

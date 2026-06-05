@@ -25,11 +25,15 @@ if (window.KoBarExtensions.registerSidebarButton) {
         icon: 'smart_toy',
         label: getTranslation(window.useAppStore.getState().language, 'pluginName'),
         onClick: (e, anchorRect) => {
-            window.useAppStore.getState().closeAllUtilityPopups();
-            window.useAppStore.setState({
-                activeExtensionPanelId: 'com.kobar.aihub.panel',
-                activeExtensionAnchorRect: anchorRect
-            });
+            const state = window.useAppStore.getState();
+            const isCurrentlyOpen = state.activeExtensionPanelId === 'com.kobar.aihub.panel';
+            state.closeAllUtilityPopups();
+            if (!isCurrentlyOpen) {
+                window.useAppStore.setState({
+                    activeExtensionPanelId: 'com.kobar.aihub.panel',
+                    activeExtensionAnchorRect: anchorRect
+                });
+            }
         }
     });
 }
