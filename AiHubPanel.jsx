@@ -131,12 +131,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
             if (adjustedLeft < minLeft) adjustedLeft = minLeft;
             if (adjustedLeft > maxLeft) adjustedLeft = maxLeft;
 
-            if (!isSmartPositioning) {
-                style.left = '50%';
-                style.transform = 'translateX(-50%)';
-            } else {
-                style.left = adjustedLeft;
-            }
+            style.left = `${adjustedLeft}px`;
 
             if (edgePosition === 'top') {
                 style.top = '100%';
@@ -152,12 +147,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
             if (adjustedTop < minTop) adjustedTop = minTop;
             if (adjustedTop > maxTop) adjustedTop = maxTop;
 
-            if (!isSmartPositioning) {
-                style.top = '50%';
-                style.transform = 'translateY(-50%)';
-            } else {
-                style.top = adjustedTop;
-            }
+            style.top = `${adjustedTop}px`;
 
             if (edgePosition === 'left') {
                 style.left = '100%';
@@ -762,7 +752,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
 
                             <div>
                                 <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('profileCustomization')}</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="flex flex-col gap-6 md:flex-row md:gap-8">
                                     <div className="flex items-center gap-4">
                                         <div className="w-16 h-16 rounded-xl bg-primary/10 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
                                             {aiAvatar ? (
@@ -827,7 +817,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                             value={apiKeys?.systemMessage || ''}
                                             onChange={(e) => usePluginChatStore.getState().setApiKeys({ systemMessage: e.target.value })}
                                             placeholder="You are a helpful AI..."
-                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 min-h-[80px] resize-none select-text"
+                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 min-h-[80px] resize-y select-text"
                                         />
                                     </div>
                                     <div className="flex flex-col gap-2">
@@ -839,7 +829,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                             value={apiKeys?.customInstructions || ''}
                                             onChange={(e) => usePluginChatStore.getState().setApiKeys({ customInstructions: e.target.value })}
                                             placeholder="e.g. Always respond in Spanish"
-                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 min-h-[80px] resize-none select-text"
+                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 min-h-[80px] resize-y select-text"
                                         />
                                     </div>
                                 </div>
