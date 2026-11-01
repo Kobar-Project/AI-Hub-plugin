@@ -143,7 +143,7 @@
       values[key] = value;
     }
   }
-  function create(definition2) {
+  function create$1(definition2) {
     const properties = {};
     const normals = {};
     for (const [property, value] of Object.entries(definition2.properties)) {
@@ -162,7 +162,7 @@
     }
     return new Schema(properties, normals, definition2.space);
   }
-  const aria$1 = create({
+  const aria$1 = create$1({
     properties: {
       ariaActiveDescendant: null,
       ariaAtomic: booleanish,
@@ -224,7 +224,7 @@
   function caseInsensitiveTransform(attributes, property) {
     return caseSensitiveTransform(attributes, property.toLowerCase());
   }
-  const html$4 = create({
+  const html$4 = create$1({
     attributes: {
       acceptcharset: "accept-charset",
       classname: "class",
@@ -596,7 +596,7 @@
     space: "html",
     transform: caseInsensitiveTransform
   });
-  const svg$1 = create({
+  const svg$1 = create$1({
     attributes: {
       accentHeight: "accent-height",
       alignmentBaseline: "alignment-baseline",
@@ -1158,7 +1158,7 @@
     space: "svg",
     transform: caseSensitiveTransform
   });
-  const xlink$1 = create({
+  const xlink$1 = create$1({
     properties: {
       xLinkActuate: null,
       xLinkArcRole: null,
@@ -1173,13 +1173,13 @@
       return "xlink:" + property.slice(5).toLowerCase();
     }
   });
-  const xmlns$1 = create({
+  const xmlns$1 = create$1({
     attributes: { xmlnsxlink: "xmlns:xlink" },
     properties: { xmlnsXLink: null, xmlns: null },
     space: "xmlns",
     transform: caseInsensitiveTransform
   });
-  const xml$1 = create({
+  const xml$1 = create$1({
     properties: { xmlBase: null, xmlLang: null, xmlSpace: null },
     space: "xml",
     transform(_, property) {
@@ -8313,17 +8313,17 @@
       return pipeline;
     }
   }
-  function wrap(middleware2, callback) {
+  function wrap(middleware, callback) {
     let called;
     return wrapped;
     function wrapped(...parameters) {
-      const fnExpectsCallback = middleware2.length > parameters.length;
+      const fnExpectsCallback = middleware.length > parameters.length;
       let result;
       if (fnExpectsCallback) {
         parameters.push(done);
       }
       try {
-        result = middleware2.apply(this, parameters);
+        result = middleware.apply(this, parameters);
       } catch (error) {
         const exception = (
           /** @type {Error} */
@@ -38667,564 +38667,245 @@
     fromMarkdownExtensions.push(gfmFromMarkdown());
     toMarkdownExtensions.push(gfmToMarkdown(settings));
   }
-  var vanilla = {};
-  var hasRequiredVanilla;
-  function requireVanilla() {
-    if (hasRequiredVanilla) return vanilla;
-    hasRequiredVanilla = 1;
-    const createStoreImpl = (createState2) => {
-      let state;
-      const listeners = /* @__PURE__ */ new Set();
-      const setState = (partial, replace2) => {
-        const nextState = typeof partial === "function" ? partial(state) : partial;
-        if (!Object.is(nextState, state)) {
-          const previousState = state;
-          state = (replace2 != null ? replace2 : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state, nextState);
-          listeners.forEach((listener) => listener(state, previousState));
-        }
-      };
-      const getState = () => state;
-      const getInitialState = () => initialState;
-      const subscribe = (listener) => {
-        listeners.add(listener);
-        return () => listeners.delete(listener);
-      };
-      const api = { setState, getState, getInitialState, subscribe };
-      const initialState = state = createState2(setState, getState, api);
-      return api;
+  const createStoreImpl = (createState2) => {
+    let state;
+    const listeners = /* @__PURE__ */ new Set();
+    const setState = (partial, replace2) => {
+      const nextState = typeof partial === "function" ? partial(state) : partial;
+      if (!Object.is(nextState, state)) {
+        const previousState = state;
+        state = (replace2 != null ? replace2 : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state, nextState);
+        listeners.forEach((listener) => listener(state, previousState));
+      }
     };
-    const createStore = ((createState2) => createState2 ? createStoreImpl(createState2) : createStoreImpl);
-    vanilla.createStore = createStore;
-    return vanilla;
+    const getState = () => state;
+    const getInitialState = () => initialState;
+    const subscribe = (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    };
+    const api = { setState, getState, getInitialState, subscribe };
+    const initialState = state = createState2(setState, getState, api);
+    return api;
+  };
+  const createStore = ((createState2) => createState2 ? createStoreImpl(createState2) : createStoreImpl);
+  const identity = (arg) => arg;
+  function useStore(api, selector = identity) {
+    const slice = React.useSyncExternalStore(
+      api.subscribe,
+      React.useCallback(() => selector(api.getState()), [api, selector]),
+      () => selector(api.getInitialState())
+    );
+    React.useDebugValue(slice);
+    return slice;
   }
-  var vanillaExports = requireVanilla();
-  var react = {};
-  var hasRequiredReact;
-  function requireReact() {
-    if (hasRequiredReact) return react;
-    hasRequiredReact = 1;
-    var React$1 = React;
-    var vanilla2 = requireVanilla();
-    const identity = (arg) => arg;
-    function useStore(api, selector = identity) {
-      const slice = React$1.useSyncExternalStore(
-        api.subscribe,
-        React$1.useCallback(() => selector(api.getState()), [api, selector]),
-        () => selector(api.getInitialState())
-      );
-      React$1.useDebugValue(slice);
-      return slice;
+  const createImpl = (createState2) => {
+    const api = createStore(createState2);
+    const useBoundStore = (selector) => useStore(api, selector);
+    Object.assign(useBoundStore, api);
+    return useBoundStore;
+  };
+  const create = ((createState2) => createState2 ? createImpl(createState2) : createImpl);
+  function createJSONStorage(getStorage, options) {
+    let storage;
+    try {
+      storage = getStorage();
+    } catch (e) {
+      return;
     }
-    const createImpl = (createState2) => {
-      const api = vanilla2.createStore(createState2);
-      const useBoundStore = (selector) => useStore(api, selector);
-      Object.assign(useBoundStore, api);
-      return useBoundStore;
-    };
-    const create2 = ((createState2) => createState2 ? createImpl(createState2) : createImpl);
-    react.create = create2;
-    react.useStore = useStore;
-    return react;
-  }
-  requireReact();
-  var middleware = {};
-  var hasRequiredMiddleware;
-  function requireMiddleware() {
-    if (hasRequiredMiddleware) return middleware;
-    hasRequiredMiddleware = 1;
-    const reduxImpl = (reducer, initial) => (set, _get, api) => {
-      api.dispatch = (action) => {
-        set((state) => reducer(state, action), false, action);
-        return action;
-      };
-      api.dispatchFromDevtools = true;
-      return { dispatch: (...args) => api.dispatch(...args), ...initial };
-    };
-    const redux = reduxImpl;
-    const shouldDispatchFromDevtools = (api) => !!api.dispatchFromDevtools && typeof api.dispatch === "function";
-    const trackedConnections = /* @__PURE__ */ new Map();
-    const getTrackedConnectionState = (name2) => {
-      const api = trackedConnections.get(name2);
-      if (!api) return {};
-      return Object.fromEntries(
-        Object.entries(api.stores).map(([key, api2]) => [key, api2.getState()])
-      );
-    };
-    const extractConnectionInformation = (store, extensionConnector, options) => {
-      if (store === void 0) {
-        return {
-          type: "untracked",
-          connection: extensionConnector.connect(options)
-        };
-      }
-      const existingConnection = trackedConnections.get(options.name);
-      if (existingConnection) {
-        return { type: "tracked", store, ...existingConnection };
-      }
-      const newConnection = {
-        connection: extensionConnector.connect(options),
-        stores: {}
-      };
-      trackedConnections.set(options.name, newConnection);
-      return { type: "tracked", store, ...newConnection };
-    };
-    const removeStoreFromTrackedConnections = (name2, store, api) => {
-      if (store === void 0) return;
-      const connectionInfo = trackedConnections.get(name2);
-      if ((connectionInfo == null ? void 0 : connectionInfo.stores[store]) !== api) return;
-      delete connectionInfo.stores[store];
-      if (Object.keys(connectionInfo.stores).length === 0) {
-        trackedConnections.delete(name2);
-      }
-    };
-    const v8StackLineRe = /^at (?:new |async )?(.+?) \(/;
-    const geckoStackLineRe = /^([^@]+)@/;
-    function findCallerName(stack) {
-      var _a, _b, _c;
-      if (!stack) return void 0;
-      const traceLines = stack.split("\n");
-      const apiSetStateLineIndex = traceLines.findIndex(
-        (traceLine) => traceLine.includes("api.setState")
-      );
-      if (apiSetStateLineIndex < 0) return void 0;
-      const callerLine = ((_a = traceLines[apiSetStateLineIndex + 1]) == null ? void 0 : _a.trim()) || "";
-      return ((_b = v8StackLineRe.exec(callerLine)) == null ? void 0 : _b[1]) || ((_c = geckoStackLineRe.exec(callerLine)) == null ? void 0 : _c[1]);
-    }
-    const devtoolsImpl = (fn, devtoolsOptions = {}) => (set, get, api) => {
-      const { enabled, anonymousActionType, store, ...options } = devtoolsOptions;
-      let extensionConnector;
-      try {
-        extensionConnector = (enabled != null ? enabled : false) && window.__REDUX_DEVTOOLS_EXTENSION__;
-      } catch (e) {
-      }
-      if (!extensionConnector) {
-        return fn(set, get, api);
-      }
-      const { connection, ...connectionInformation } = extractConnectionInformation(store, extensionConnector, options);
-      let isRecording = true;
-      api.setState = ((state, replace2, nameOrAction) => {
-        const r = set(state, replace2);
-        if (!isRecording) return r;
-        const action = nameOrAction === void 0 ? {
-          type: anonymousActionType || findCallerName(new Error().stack) || "anonymous"
-        } : typeof nameOrAction === "string" ? { type: nameOrAction } : nameOrAction;
-        if (store === void 0) {
-          connection == null ? void 0 : connection.send(action, get());
-          return r;
-        }
-        connection == null ? void 0 : connection.send(
-          {
-            ...action,
-            type: `${store}/${action.type}`
-          },
-          {
-            ...getTrackedConnectionState(options.name),
-            [store]: api.getState()
-          }
-        );
-        return r;
-      });
-      let unsubscribeFromStore;
-      api.devtools = {
-        cleanup: () => {
-          unsubscribeFromStore == null ? void 0 : unsubscribeFromStore();
-          unsubscribeFromStore = void 0;
-          removeStoreFromTrackedConnections(options.name, store, api);
-          if ((store === void 0 || !trackedConnections.has(options.name)) && connection && typeof connection.unsubscribe === "function") {
-            connection.unsubscribe();
-          }
-        }
-      };
-      const setStateFromDevtools = (...a) => {
-        const originalIsRecording = isRecording;
-        isRecording = false;
-        set(...a);
-        isRecording = originalIsRecording;
-      };
-      const initialState = fn(api.setState, get, api);
-      if (connectionInformation.type === "untracked") {
-        connection == null ? void 0 : connection.init(initialState);
-      } else {
-        connectionInformation.stores[connectionInformation.store] = api;
-        connection == null ? void 0 : connection.init(
-          Object.fromEntries(
-            Object.entries(connectionInformation.stores).map(([key, store2]) => [
-              key,
-              key === connectionInformation.store ? initialState : store2.getState()
-            ])
-          )
-        );
-      }
-      if (shouldDispatchFromDevtools(api)) {
-        const originalDispatch = api.dispatch;
-        api.dispatch = (...args) => {
-          originalDispatch(...args);
-        };
-      }
-      unsubscribeFromStore = connection.subscribe((message) => {
+    const persistStorage = {
+      getItem: (name2) => {
         var _a;
-        const reviver = typeof options.serialize === "object" ? options.serialize.reviver : void 0;
-        switch (message.type) {
-          case "ACTION":
-            if (typeof message.payload !== "string") {
-              console.error(
-                "[zustand devtools middleware] Unsupported action format"
-              );
-              return;
-            }
-            return parseJsonThen(
-              message.payload,
-              reviver,
-              (action) => {
-                if (action.type === "__setState") {
-                  if (store === void 0) {
-                    setStateFromDevtools(action.state);
-                    return;
-                  }
-                  if (Object.keys(action.state).length !== 1) {
-                    console.error(
-                      `
-                    [zustand devtools middleware] Unsupported __setState action format.
-                    When using 'store' option in devtools(), the 'state' should have only one key, which is a value of 'store' that was passed in devtools(),
-                    and value of this only key should be a state object. Example: { "type": "__setState", "state": { "abc123Store": { "foo": "bar" } } }
-                    `
-                    );
-                  }
-                  const stateFromDevtools = action.state[store];
-                  if (stateFromDevtools === void 0 || stateFromDevtools === null) {
-                    return;
-                  }
-                  if (JSON.stringify(api.getState()) !== JSON.stringify(stateFromDevtools)) {
-                    setStateFromDevtools(stateFromDevtools);
-                  }
-                  return;
-                }
-                if (shouldDispatchFromDevtools(api)) {
-                  api.dispatch(action);
-                }
-              }
-            );
-          case "DISPATCH":
-            switch (message.payload.type) {
-              case "RESET":
-                setStateFromDevtools(initialState);
-                if (store === void 0) {
-                  return connection == null ? void 0 : connection.init(api.getState());
-                }
-                return connection == null ? void 0 : connection.init(getTrackedConnectionState(options.name));
-              case "COMMIT":
-                if (store === void 0) {
-                  connection == null ? void 0 : connection.init(api.getState());
-                  return;
-                }
-                return connection == null ? void 0 : connection.init(getTrackedConnectionState(options.name));
-              case "ROLLBACK":
-                return parseJsonThen(message.state, reviver, (state) => {
-                  if (store === void 0) {
-                    setStateFromDevtools(state);
-                    connection == null ? void 0 : connection.init(api.getState());
-                    return;
-                  }
-                  setStateFromDevtools(state[store]);
-                  connection == null ? void 0 : connection.init(getTrackedConnectionState(options.name));
-                });
-              case "JUMP_TO_STATE":
-              case "JUMP_TO_ACTION":
-                return parseJsonThen(message.state, reviver, (state) => {
-                  if (store === void 0) {
-                    setStateFromDevtools(state);
-                    return;
-                  }
-                  if (JSON.stringify(api.getState()) !== JSON.stringify(state[store])) {
-                    setStateFromDevtools(state[store]);
-                  }
-                });
-              case "IMPORT_STATE": {
-                const { nextLiftedState } = message.payload;
-                const lastComputedState = (_a = nextLiftedState.computedStates.slice(-1)[0]) == null ? void 0 : _a.state;
-                if (!lastComputedState) return;
-                if (store === void 0) {
-                  setStateFromDevtools(lastComputedState);
-                } else {
-                  setStateFromDevtools(lastComputedState[store]);
-                }
-                connection == null ? void 0 : connection.send(
-                  null,
-                  // FIXME no-any
-                  nextLiftedState
-                );
-                return;
-              }
-              case "PAUSE_RECORDING":
-                return isRecording = !isRecording;
-            }
-            return;
-        }
-      });
-      return initialState;
-    };
-    const devtools = devtoolsImpl;
-    const parseJsonThen = (stringified, reviver, fn) => {
-      let parsed;
-      try {
-        parsed = JSON.parse(stringified, reviver);
-      } catch (e) {
-        console.error(
-          "[zustand devtools middleware] Could not parse the received json",
-          e
-        );
-      }
-      if (parsed !== void 0) fn(parsed);
-    };
-    const subscribeWithSelectorImpl = (fn) => (set, get, api) => {
-      const origSubscribe = api.subscribe;
-      api.subscribe = ((selector, optListener, options) => {
-        let listener = selector;
-        if (optListener) {
-          const equalityFn = (options == null ? void 0 : options.equalityFn) || Object.is;
-          let currentSlice = selector(api.getState());
-          listener = (state) => {
-            const nextSlice = selector(state);
-            if (!equalityFn(currentSlice, nextSlice)) {
-              const previousSlice = currentSlice;
-              optListener(currentSlice = nextSlice, previousSlice);
-            }
-          };
-          if (options == null ? void 0 : options.fireImmediately) {
-            optListener(currentSlice, currentSlice);
+        const parse2 = (str2) => {
+          if (str2 === null) {
+            return null;
           }
+          return JSON.parse(str2, void 0);
+        };
+        const str = (_a = storage.getItem(name2)) != null ? _a : null;
+        if (str instanceof Promise) {
+          return str.then(parse2);
         }
-        return origSubscribe(listener);
-      });
-      const initialState = fn(set, get, api);
-      return initialState;
+        return parse2(str);
+      },
+      setItem: (name2, newValue) => storage.setItem(name2, JSON.stringify(newValue, void 0)),
+      removeItem: (name2) => storage.removeItem(name2)
     };
-    const subscribeWithSelector = subscribeWithSelectorImpl;
-    function combine(initialState, create2) {
-      return (...args) => Object.assign({}, initialState, create2(...args));
-    }
-    function createJSONStorage(getStorage, options) {
-      let storage;
-      try {
-        storage = getStorage();
-      } catch (e) {
-        return;
+    return persistStorage;
+  }
+  const toThenable = (fn) => (input) => {
+    try {
+      const result = fn(input);
+      if (result instanceof Promise) {
+        return result;
       }
-      const persistStorage = {
-        getItem: (name2) => {
-          var _a;
-          const parse2 = (str2) => {
-            if (str2 === null) {
-              return null;
-            }
-            return JSON.parse(str2, options == null ? void 0 : options.reviver);
-          };
-          const str = (_a = storage.getItem(name2)) != null ? _a : null;
-          if (str instanceof Promise) {
-            return str.then(parse2);
-          }
-          return parse2(str);
+      return {
+        then(onFulfilled) {
+          return toThenable(onFulfilled)(result);
         },
-        setItem: (name2, newValue) => storage.setItem(name2, JSON.stringify(newValue, options == null ? void 0 : options.replacer)),
-        removeItem: (name2) => storage.removeItem(name2)
-      };
-      return persistStorage;
-    }
-    const toThenable = (fn) => (input) => {
-      try {
-        const result = fn(input);
-        if (result instanceof Promise) {
-          return result;
+        catch(_onRejected) {
+          return this;
         }
-        return {
-          then(onFulfilled) {
-            return toThenable(onFulfilled)(result);
-          },
-          catch(_onRejected) {
-            return this;
-          }
-        };
-      } catch (e) {
-        return {
-          then(_onFulfilled) {
-            return this;
-          },
-          catch(onRejected) {
-            return toThenable(onRejected)(e);
-          }
-        };
-      }
+      };
+    } catch (e) {
+      return {
+        then(_onFulfilled) {
+          return this;
+        },
+        catch(onRejected) {
+          return toThenable(onRejected)(e);
+        }
+      };
+    }
+  };
+  const persistImpl = (config, baseOptions) => (set, get, api) => {
+    let options = {
+      storage: createJSONStorage(() => window.localStorage),
+      partialize: (state) => state,
+      version: 0,
+      merge: (persistedState, currentState) => ({
+        ...currentState,
+        ...persistedState
+      }),
+      ...baseOptions
     };
-    const persistImpl = (config, baseOptions) => (set, get, api) => {
-      let options = {
-        storage: createJSONStorage(() => window.localStorage),
-        partialize: (state) => state,
-        version: 0,
-        merge: (persistedState, currentState) => ({
-          ...currentState,
-          ...persistedState
-        }),
-        ...baseOptions
-      };
-      let hasHydrated = false;
-      let hydrationVersion = 0;
-      const hydrationListeners = /* @__PURE__ */ new Set();
-      const finishHydrationListeners = /* @__PURE__ */ new Set();
-      let storage = options.storage;
-      if (!storage) {
-        return config(
-          (...args) => {
-            console.warn(
-              `[zustand persist middleware] Unable to update item '${options.name}', the given storage is currently unavailable.`
-            );
-            set(...args);
-          },
-          get,
-          api
-        );
-      }
-      const setItem = () => {
-        const state = options.partialize({ ...get() });
-        return storage.setItem(options.name, {
-          state,
-          version: options.version
-        });
-      };
-      const savedSetState = api.setState;
-      api.setState = (...args) => {
-        savedSetState(...args);
-        return setItem();
-      };
-      const configResult = config(
+    let hasHydrated = false;
+    let hydrationVersion = 0;
+    const hydrationListeners = /* @__PURE__ */ new Set();
+    const finishHydrationListeners = /* @__PURE__ */ new Set();
+    let storage = options.storage;
+    if (!storage) {
+      return config(
         (...args) => {
+          console.warn(
+            `[zustand persist middleware] Unable to update item '${options.name}', the given storage is currently unavailable.`
+          );
           set(...args);
-          return setItem();
         },
         get,
         api
       );
-      api.getInitialState = () => configResult;
-      let stateFromStorage;
-      const hydrate = () => {
-        var _a, _b;
-        if (!storage) return;
-        const currentVersion = ++hydrationVersion;
-        hasHydrated = false;
-        hydrationListeners.forEach((cb) => {
-          var _a2;
-          return cb((_a2 = get()) != null ? _a2 : configResult);
-        });
-        const postRehydrationCallback = ((_b = options.onRehydrateStorage) == null ? void 0 : _b.call(options, (_a = get()) != null ? _a : configResult)) || void 0;
-        return toThenable(storage.getItem.bind(storage))(options.name).then((deserializedStorageValue) => {
-          if (deserializedStorageValue) {
-            if (typeof deserializedStorageValue.version === "number" && deserializedStorageValue.version !== options.version) {
-              if (options.migrate) {
-                const migration = options.migrate(
-                  deserializedStorageValue.state,
-                  deserializedStorageValue.version
-                );
-                if (migration instanceof Promise) {
-                  return migration.then((result) => [true, result]);
-                }
-                return [true, migration];
-              }
-              console.error(
-                `State loaded from storage couldn't be migrated since no migrate function was provided`
-              );
-            } else {
-              return [false, deserializedStorageValue.state];
-            }
-          }
-          return [false, void 0];
-        }).then((migrationResult) => {
-          var _a2;
-          if (currentVersion !== hydrationVersion) {
-            return;
-          }
-          const [migrated, migratedState] = migrationResult;
-          stateFromStorage = options.merge(
-            migratedState,
-            (_a2 = get()) != null ? _a2 : configResult
-          );
-          set(stateFromStorage, true);
-          if (migrated) {
-            return setItem();
-          }
-        }).then(() => {
-          if (currentVersion !== hydrationVersion) {
-            return;
-          }
-          postRehydrationCallback == null ? void 0 : postRehydrationCallback(get(), void 0);
-          stateFromStorage = get();
-          hasHydrated = true;
-          finishHydrationListeners.forEach((cb) => cb(stateFromStorage));
-        }).catch((e) => {
-          if (currentVersion !== hydrationVersion) {
-            return;
-          }
-          postRehydrationCallback == null ? void 0 : postRehydrationCallback(void 0, e);
-        });
-      };
-      api.persist = {
-        setOptions: (newOptions) => {
-          options = {
-            ...options,
-            ...newOptions
-          };
-          if (newOptions.storage) {
-            storage = newOptions.storage;
-          }
-        },
-        clearStorage: () => {
-          ++hydrationVersion;
-          storage == null ? void 0 : storage.removeItem(options.name);
-        },
-        getOptions: () => options,
-        rehydrate: () => hydrate(),
-        hasHydrated: () => hasHydrated,
-        onHydrate: (cb) => {
-          hydrationListeners.add(cb);
-          return () => {
-            hydrationListeners.delete(cb);
-          };
-        },
-        onFinishHydration: (cb) => {
-          finishHydrationListeners.add(cb);
-          return () => {
-            finishHydrationListeners.delete(cb);
-          };
-        }
-      };
-      if (!options.skipHydration) {
-        hydrate();
-      }
-      return stateFromStorage || configResult;
-    };
-    const persist = persistImpl;
-    function ssrSafe(config, isSSR = typeof window === "undefined") {
-      return (set, get, api) => {
-        if (!isSSR) {
-          return config(set, get, api);
-        }
-        const ssrSet = () => {
-          throw new Error("Cannot set state of Zustand store in SSR");
-        };
-        api.setState = ssrSet;
-        return config(ssrSet, get, api);
-      };
     }
-    middleware.combine = combine;
-    middleware.createJSONStorage = createJSONStorage;
-    middleware.devtools = devtools;
-    middleware.persist = persist;
-    middleware.redux = redux;
-    middleware.subscribeWithSelector = subscribeWithSelector;
-    middleware.unstable_ssrSafe = ssrSafe;
-    return middleware;
-  }
-  var middlewareExports = requireMiddleware();
-  const usePluginChatStore = vanillaExports.create(
-    middlewareExports.persist(
+    const setItem = () => {
+      const state = options.partialize({ ...get() });
+      return storage.setItem(options.name, {
+        state,
+        version: options.version
+      });
+    };
+    const savedSetState = api.setState;
+    api.setState = (...args) => {
+      savedSetState(...args);
+      return setItem();
+    };
+    const configResult = config(
+      (...args) => {
+        set(...args);
+        return setItem();
+      },
+      get,
+      api
+    );
+    api.getInitialState = () => configResult;
+    let stateFromStorage;
+    const hydrate = () => {
+      var _a, _b;
+      if (!storage) return;
+      const currentVersion = ++hydrationVersion;
+      hasHydrated = false;
+      hydrationListeners.forEach((cb) => {
+        var _a2;
+        return cb((_a2 = get()) != null ? _a2 : configResult);
+      });
+      const postRehydrationCallback = ((_b = options.onRehydrateStorage) == null ? void 0 : _b.call(options, (_a = get()) != null ? _a : configResult)) || void 0;
+      return toThenable(storage.getItem.bind(storage))(options.name).then((deserializedStorageValue) => {
+        if (deserializedStorageValue) {
+          if (typeof deserializedStorageValue.version === "number" && deserializedStorageValue.version !== options.version) {
+            if (options.migrate) {
+              const migration = options.migrate(
+                deserializedStorageValue.state,
+                deserializedStorageValue.version
+              );
+              if (migration instanceof Promise) {
+                return migration.then((result) => [true, result]);
+              }
+              return [true, migration];
+            }
+            console.error(
+              `State loaded from storage couldn't be migrated since no migrate function was provided`
+            );
+          } else {
+            return [false, deserializedStorageValue.state];
+          }
+        }
+        return [false, void 0];
+      }).then((migrationResult) => {
+        var _a2;
+        if (currentVersion !== hydrationVersion) {
+          return;
+        }
+        const [migrated, migratedState] = migrationResult;
+        stateFromStorage = options.merge(
+          migratedState,
+          (_a2 = get()) != null ? _a2 : configResult
+        );
+        set(stateFromStorage, true);
+        if (migrated) {
+          return setItem();
+        }
+      }).then(() => {
+        if (currentVersion !== hydrationVersion) {
+          return;
+        }
+        postRehydrationCallback == null ? void 0 : postRehydrationCallback(get(), void 0);
+        stateFromStorage = get();
+        hasHydrated = true;
+        finishHydrationListeners.forEach((cb) => cb(stateFromStorage));
+      }).catch((e) => {
+        if (currentVersion !== hydrationVersion) {
+          return;
+        }
+        postRehydrationCallback == null ? void 0 : postRehydrationCallback(void 0, e);
+      });
+    };
+    api.persist = {
+      setOptions: (newOptions) => {
+        options = {
+          ...options,
+          ...newOptions
+        };
+        if (newOptions.storage) {
+          storage = newOptions.storage;
+        }
+      },
+      clearStorage: () => {
+        ++hydrationVersion;
+        storage == null ? void 0 : storage.removeItem(options.name);
+      },
+      getOptions: () => options,
+      rehydrate: () => hydrate(),
+      hasHydrated: () => hasHydrated,
+      onHydrate: (cb) => {
+        hydrationListeners.add(cb);
+        return () => {
+          hydrationListeners.delete(cb);
+        };
+      },
+      onFinishHydration: (cb) => {
+        finishHydrationListeners.add(cb);
+        return () => {
+          finishHydrationListeners.delete(cb);
+        };
+      }
+    };
+    if (!options.skipHydration) {
+      hydrate();
+    }
+    return stateFromStorage || configResult;
+  };
+  const persist = persistImpl;
+  const usePluginChatStore = create(
+    persist(
       (set, get) => ({
         chats: [],
         activeChatId: null,
@@ -40016,6 +39697,41 @@ ${currentApiKeys.customInstructions}` : ""
       if (!text2) return "";
       return text2.replace(/\\\*/g, "*").replace(/\*\*\s+(.*?)\s+\*\*/g, "**$1**").replace(/(^|\s)\*\s+(.*?)\s+\*(\s|$)/g, "$1*$2*$3");
     };
+    const fg1 = "var(--kb-fg-1, #f1f5f9)";
+    const fg2 = "var(--kb-fg-2, #94a3b8)";
+    const stroke = "var(--kb-stroke-subtle, var(--theme-border))";
+    const iconBtn = (extra) => ({
+      width: 36,
+      height: 36,
+      borderRadius: 999,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0,
+      background: "var(--kb-bg-tile, rgba(255,255,255,0.06))",
+      color: fg1,
+      ...extra
+    });
+    const tonal = { background: "var(--kb-bg-container, var(--theme-accent-glow))", color: "var(--kb-on-container, #fff)" };
+    const fieldStyle = { width: "100%", background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", color: fg1, borderRadius: 16, padding: "10px 14px", fontSize: 14, border: "none", outline: "none", userSelect: "text" };
+    const labelStyle = { fontSize: 12, color: fg2 };
+    const cardStyle = { background: "var(--kb-bg-surface, rgba(255,255,255,0.04))", borderRadius: 24, padding: 20, display: "flex", flexDirection: "column", gap: 16 };
+    const cardTitle = { fontSize: 15, fontWeight: 600, color: fg1, fontFamily: "var(--kb-font-display, inherit)", margin: 0 };
+    const pillBtn = { borderRadius: 999, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer", ...tonal };
+    const ModelSelect = ({ value, onChange, ariaLabel, style }) => /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center", ...style } }, /* @__PURE__ */ window.React.createElement(
+      "select",
+      {
+        value,
+        onChange,
+        "aria-label": ariaLabel,
+        style: { ...fieldStyle, appearance: "none", WebkitAppearance: "none", borderRadius: 999, padding: "9px 40px 9px 16px", fontWeight: 500, cursor: "pointer", textOverflow: "ellipsis" }
+      },
+      MODELS$1.map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, m.label))
+    ), /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", "aria-hidden": "true", style: { position: "absolute", right: 12, fontSize: 20, color: fg2, pointerEvents: "none" } }, "expand_more"));
+    const Avatar = ({ src, icon, tone }) => /* @__PURE__ */ window.React.createElement("div", { style: { width: 32, height: 32, borderRadius: 999, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", ...tone === "ai" ? tonal : { background: "var(--kb-bg-tile, #334155)", color: fg1 } } }, src ? /* @__PURE__ */ window.React.createElement("img", { src, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } }) : /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 18, color: tone === "ai" ? "var(--kb-accent, var(--theme-primary))" : fg1 } }, icon));
+    const IconTile = ({ size, icon, src }) => /* @__PURE__ */ window.React.createElement("div", { style: { width: size, height: size, borderRadius: size >= 60 ? 22 : 15, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", ...tonal } }, src ? /* @__PURE__ */ window.React.createElement("img", { src, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } }) : /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: size >= 60 ? 32 : 24, color: "var(--kb-accent, var(--theme-primary))" } }, icon));
+    const AvatarRow = ({ type, src, icon, label }) => /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 16 } }, /* @__PURE__ */ window.React.createElement(IconTile, { size: 64, icon, src }), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, minWidth: 0 } }, /* @__PURE__ */ window.React.createElement("span", { style: labelStyle }, label), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, /* @__PURE__ */ window.React.createElement("label", { style: pillBtn }, t("change"), /* @__PURE__ */ window.React.createElement("input", { type: "file", accept: "image/*", style: { display: "none" }, onChange: (e) => handleAvatarUpload(e, type) })), src && /* @__PURE__ */ window.React.createElement("button", { onClick: () => type === "ai" ? setAiAvatar(null) : setUserAvatar(null), style: { ...pillBtn, background: "var(--kb-bg-tile, rgba(255,255,255,0.06))", color: "var(--kb-danger, #ef4444)" } }, t("remove")))));
+    const setKeys = (patch2) => usePluginChatStore.getState().setApiKeys(patch2);
     return /* @__PURE__ */ window.React.createElement(
       "div",
       {
@@ -40037,9 +39753,17 @@ ${currentApiKeys.customInstructions}` : ""
                 /* Canlı hosts load Material Symbols Rounded; older hosts fall back to Outlined. */
                 .ai-root .material-symbols-outlined { font-family: 'Material Symbols Rounded', 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
                 .ai-root input:not([type=file]), .ai-root select, .ai-root textarea { background: var(--kb-bg-inset, rgba(0,0,0,0.4)); border-color: transparent; border-radius: 16px; }
-                .ai-chat-selectable, .ai-chat-selectable * { 
-                    -webkit-user-select: text !important; 
-                    user-select: text !important; 
+                .ai-root button, .ai-root label { cursor: pointer; }
+                .ai-root button:disabled { cursor: default; }
+                .ai-root button:focus-visible, .ai-root select:focus-visible, .ai-root textarea:focus-visible, .ai-root input:focus-visible { outline: 2px solid var(--kb-focus-ring, var(--kb-accent, var(--theme-primary))); outline-offset: 2px; }
+                .ai-root .ai-btn:hover:not(:disabled) { background: var(--kb-fill-hover, rgba(255,255,255,0.08)) !important; }
+                .ai-root .ai-row-idle:hover { background: var(--kb-fill-hover, rgba(255,255,255,0.06)); }
+                .ai-root .ai-row .ai-del, .ai-root .ai-msg .ai-msg-actions { opacity: 0; transition: opacity 120ms var(--kb-ease-standard, ease); }
+                .ai-root .ai-row:hover .ai-del, .ai-root .ai-row:focus-within .ai-del, .ai-root .ai-msg:hover .ai-msg-actions, .ai-root .ai-msg:focus-within .ai-msg-actions { opacity: 1; }
+                .ai-root .ai-md-code { font-family: var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace); }
+                .ai-chat-selectable, .ai-chat-selectable * {
+                    -webkit-user-select: text !important;
+                    user-select: text !important;
                     cursor: text !important;
                 }
                 .ai-chat-selectable *::selection {
@@ -40047,16 +39771,14 @@ ${currentApiKeys.customInstructions}` : ""
                     color: white !important;
                 }
             `),
-      /* @__PURE__ */ window.React.createElement("div", { className: `flex transition-all duration-300 shrink-0 h-full ${isSidebarOpen ? "w-48 opacity-100 border-r" : "w-0 min-w-0 opacity-0 border-none overflow-hidden"}`, style: { borderColor: "var(--kb-stroke-subtle, var(--theme-border))", minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("div", { className: `flex flex-col h-full shrink-0 ${isSidebarOpen ? "w-48" : "w-0"}` }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-between", style: { padding: 16 } }, /* @__PURE__ */ window.React.createElement("span", { className: "text-slate-200", style: { fontSize: 15, fontWeight: 600, fontFamily: "var(--kb-font-display, inherit)" } }, t("chats")), /* @__PURE__ */ window.React.createElement("button", { onClick: () => createChat(), className: "w-9 h-9 rounded-full flex items-center justify-center pointer-events-auto", style: { background: "var(--kb-bg-container, var(--theme-accent-glow))", color: "var(--kb-on-container, #fff)" }, title: t("newChat"), "aria-label": t("newChat") }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "add"))), /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 overflow-y-auto w-full custom-scrollbar p-2 flex flex-col gap-1" }, chats.map((c) => /* @__PURE__ */ window.React.createElement(
+      /* @__PURE__ */ window.React.createElement("div", { className: "flex shrink-0 h-full", style: { width: isSidebarOpen ? 208 : 0, opacity: isSidebarOpen ? 1 : 0, overflow: "hidden", borderRight: isSidebarOpen ? `1px solid ${stroke}` : "none", transition: "width 200ms var(--kb-ease-standard, ease), opacity 200ms var(--kb-ease-standard, ease)", minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col h-full shrink-0", style: { width: 208 } }, /* @__PURE__ */ window.React.createElement("div", { style: { padding: "20px 20px 12px" } }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 15, fontWeight: 600, color: fg1, fontFamily: "var(--kb-font-display, inherit)" } }, t("chats"))), /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 overflow-y-auto w-full custom-scrollbar flex flex-col", style: { padding: "0 12px 16px", gap: 6 } }, chats.map((c) => /* @__PURE__ */ window.React.createElement(
         "div",
         {
           key: c.id,
           onClick: () => setActiveChatId(c.id),
           onDoubleClick: () => startEditingTitle(c.id, c.title),
-          className: `w-full group flex items-center justify-between px-4 py-2 cursor-pointer transition-colors pointer-events-auto select-none
-                                    ${activeChatId === c.id ? "" : "hover:bg-white/5 text-slate-400"}
-                                `,
-          style: { borderRadius: 16, minHeight: 48, ...activeChatId === c.id ? { background: "var(--kb-bg-container, var(--theme-accent-glow))", color: "var(--kb-on-container, #fff)" } : null }
+          className: `ai-row ${activeChatId === c.id ? "" : "ai-row-idle"}`,
+          style: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 4, width: "100%", minHeight: 48, padding: "6px 6px 6px 14px", borderRadius: 16, cursor: "pointer", userSelect: "none", ...activeChatId === c.id ? tonal : { background: "var(--kb-bg-tile, rgba(255,255,255,0.04))", color: fg1 } }
         },
         editingChatId === c.id ? /* @__PURE__ */ window.React.createElement(
           "input",
@@ -40069,25 +39791,30 @@ ${currentApiKeys.customInstructions}` : ""
               if (e.key === "Enter") saveTitle(c.id);
               if (e.key === "Escape") setEditingChatId(null);
             },
-            className: "text-white text-sm px-2 w-full outline-none",
+            style: { width: "100%", color: fg1, fontSize: 14, padding: "6px 10px", outline: "none", border: "none", borderRadius: 12 },
             onClick: (e) => e.stopPropagation()
           }
-        ) : /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("span", { className: "truncate text-sm font-medium pr-2 block" }, c.title), /* @__PURE__ */ window.React.createElement(
+        ) : /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { fontSize: 14, fontWeight: 500, minWidth: 0, flex: 1 } }, c.title), /* @__PURE__ */ window.React.createElement(
           "button",
           {
             onClick: (e) => {
               e.stopPropagation();
               deleteChat(c.id);
             },
-            className: `p-1.5 flex items-center rounded-full hover:bg-white/10 text-red-400 transition-colors ${activeChatId === c.id ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`
+            className: "ai-del ai-btn",
+            title: t("remove"),
+            "aria-label": t("remove"),
+            style: { width: 32, height: 32, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, background: "transparent", color: activeChatId === c.id ? "var(--kb-on-container, #fff)" : fg2 }
           },
-          /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[16px]" }, "delete")
+          /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 18 } }, "delete")
         ))
       ))))),
-      /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 flex flex-col bg-transparent relative" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-between bg-transparent shrink-0 pointer-events-auto", style: { padding: 16, borderBottom: "1px solid var(--kb-stroke-subtle, var(--theme-border))" } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-3" }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => setIsSidebarOpen(!isSidebarOpen), className: "w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-white transition-colors", style: { background: "var(--kb-bg-inset, rgba(255,255,255,0.06))" }, "aria-label": isSidebarOpen ? t("chats") : t("chats") }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, isSidebarOpen ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right")), /* @__PURE__ */ window.React.createElement(
-        "select",
+      /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 flex flex-col relative", style: { minWidth: 0, minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("div", { className: "shrink-0 pointer-events-auto", style: { padding: "20px 20px 12px", display: "flex", alignItems: "center", gap: 12 } }, /* @__PURE__ */ window.React.createElement(IconTile, { size: 44, icon: "auto_awesome" }), /* @__PURE__ */ window.React.createElement("h2", { style: { flex: 1, minWidth: 0, margin: 0, fontSize: 19, fontWeight: 600, color: fg1, fontFamily: "var(--kb-font-display, inherit)", whiteSpace: "nowrap" } }, t("kobarAiHub")), /* @__PURE__ */ window.React.createElement("button", { onClick: () => createChat(), className: "ai-btn", title: t("newChat"), "aria-label": t("newChat"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "add")), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setShowSettings(!showSettings), className: "ai-btn", title: t("aiHubSettings"), "aria-label": t("aiHubSettings"), "aria-pressed": showSettings, style: iconBtn(showSettings ? tonal : null) }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "settings")), /* @__PURE__ */ window.React.createElement("button", { onClick: onClose, className: "ai-btn", title: t("closeLabel"), "aria-label": t("closeLabel"), style: iconBtn(tonal) }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "close"))), /* @__PURE__ */ window.React.createElement("div", { className: "shrink-0 pointer-events-auto", style: { padding: "0 20px 12px", display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => setIsSidebarOpen(!isSidebarOpen), className: "ai-btn", title: t("chats"), "aria-label": t("chats"), "aria-pressed": isSidebarOpen, style: iconBtn() }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, isSidebarOpen ? "left_panel_close" : "left_panel_open")), /* @__PURE__ */ window.React.createElement(
+        ModelSelect,
         {
           value: activeChat?.model || "openai:gpt-4o",
+          ariaLabel: t("defaultModel"),
+          style: { flex: 1, minWidth: 0, maxWidth: 380 },
           onChange: (e) => {
             if (activeChat) {
               usePluginChatStore.setState((s) => ({
@@ -40096,22 +39823,9 @@ ${currentApiKeys.customInstructions}` : ""
             } else {
               createChat(e.target.value);
             }
-          },
-          className: "px-4 py-2 text-sm text-slate-200 min-w-[200px] outline-none cursor-pointer",
-          style: { borderRadius: 999 }
-        },
-        MODELS$1.map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, m.label))
-      )), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ window.React.createElement(
-        "button",
-        {
-          onClick: () => setShowSettings(!showSettings),
-          className: `w-9 h-9 flex items-center justify-center rounded-full transition-colors ${showSettings ? "" : "text-slate-400 hover:text-white"}`,
-          style: showSettings ? { background: "var(--kb-bg-container, var(--theme-accent-glow))", color: "var(--kb-on-container, #fff)" } : { background: "var(--kb-bg-inset, rgba(255,255,255,0.06))" },
-          title: t("aiHubSettings"),
-          "aria-label": t("aiHubSettings")
-        },
-        /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "settings")
-      ), /* @__PURE__ */ window.React.createElement("button", { onClick: onClose, className: "w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-white transition-colors", style: { background: "var(--kb-bg-inset, rgba(255,255,255,0.06))" }, "aria-label": t("closeLabel") }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "close")))), /* @__PURE__ */ window.React.createElement(
+          }
+        }
+      )), /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 flex flex-col", style: { minHeight: 0, display: showSettings ? "none" : "flex" } }, /* @__PURE__ */ window.React.createElement(
         "div",
         {
           ref: messagesScrollRef,
@@ -40120,65 +39834,69 @@ ${currentApiKeys.customInstructions}` : ""
             const isNearBottom = scrollHeight - scrollTop - clientHeight < 150;
             setIsAutoScrollEnabled(isNearBottom);
           },
-          className: "flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-6 pointer-events-auto select-auto no-drag-region"
+          className: "flex-1 overflow-y-auto custom-scrollbar flex flex-col pointer-events-auto select-auto no-drag-region",
+          style: { padding: "4px 20px 12px", gap: 16, minHeight: 0 }
         },
-        activeChat?.messages.length === 0 ? /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 flex flex-col items-center justify-center opacity-50 select-none pointer-events-none" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[48px] text-primary mb-4" }, "smart_toy"), /* @__PURE__ */ window.React.createElement("span", { className: "text-slate-200 font-bold mb-1" }, t("kobarAiHub")), /* @__PURE__ */ window.React.createElement("span", { className: "text-sm text-slate-400 text-center max-w-[300px]" }, t("sayHello"))) : activeChat?.messages.map((msg) => /* @__PURE__ */ window.React.createElement("div", { key: msg.id, className: `flex gap-4 w-full ${msg.role === "user" ? "justify-end" : "justify-start"}` }, msg.role !== "user" && /* @__PURE__ */ window.React.createElement("div", { className: "w-8 h-8 rounded-full shrink-0 flex items-center justify-center overflow-hidden", style: { background: "var(--kb-bg-container, var(--theme-accent-glow))" } }, aiAvatar ? /* @__PURE__ */ window.React.createElement("img", { src: aiAvatar, alt: "AI", className: "w-full h-full object-cover" }) : /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-primary text-[18px]" }, "smart_toy")), /* @__PURE__ */ window.React.createElement("div", { className: `flex flex-col gap-1 max-w-[85%] ${msg.role === "user" ? "items-end" : "items-start"}` }, /* @__PURE__ */ window.React.createElement("div", { className: `p-4 group relative ai-chat-selectable ${msg.role === "user" ? "text-slate-200" : "text-slate-300"}`, style: { WebkitUserSelect: "text", userSelect: "text", borderRadius: 24, ...msg.role === "user" ? { background: "var(--kb-bg-container, var(--theme-accent-glow))", color: "var(--kb-on-container, #fff)", borderTopRightRadius: 8 } : { background: "var(--kb-bg-surface, rgba(255,255,255,0.04))", borderTopLeftRadius: 8 } } }, /* @__PURE__ */ window.React.createElement("div", { className: `absolute top-2 flex gap-1  rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 
-                                            ${msg.role === "user" ? "-left-16" : "-right-16"}` }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => handleSendToSlot(msg.content), className: "p-1 hover:text-white text-slate-400 transition-colors", title: t("sendToSlot") }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[16px]" }, "dynamic_feed")), /* @__PURE__ */ window.React.createElement("button", { onClick: () => handleCopy(msg.content), className: "p-1 hover:text-white text-slate-400 transition-colors", title: t("copyText") }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[16px]" }, "content_copy"))), msg.attachments && msg.attachments.length > 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-wrap gap-2 mb-3" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-xs px-2 py-1", style: { borderRadius: 10, background: "var(--kb-bg-container, var(--theme-accent-glow))", color: "var(--kb-on-container, #fff)" } }, "+", msg.attachments.length, " ", t("filesAttached"))), /* @__PURE__ */ window.React.createElement("div", { className: "text-[14px] leading-relaxed break-words ai-chat-selectable text-sm max-w-none" }, /* @__PURE__ */ window.React.createElement(
+        activeChat?.messages.length === 0 ? /* @__PURE__ */ window.React.createElement("div", { className: "select-none", style: { margin: "auto 0", border: `2px dashed ${stroke}`, borderRadius: 28, padding: "32px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: 12, textAlign: "center" } }, /* @__PURE__ */ window.React.createElement(IconTile, { size: 64, icon: "auto_awesome" }), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 17, fontWeight: 600, color: fg1, fontFamily: "var(--kb-font-display, inherit)" } }, t("kobarAiHub")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, color: fg2, maxWidth: 300 } }, t("sayHello"))) : activeChat?.messages.map((msg) => /* @__PURE__ */ window.React.createElement("div", { key: msg.id, className: "ai-msg", style: { display: "flex", gap: 12, width: "100%", justifyContent: msg.role === "user" ? "flex-end" : "flex-start" } }, msg.role !== "user" && /* @__PURE__ */ window.React.createElement(Avatar, { src: aiAvatar, icon: "smart_toy", tone: "ai" }), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 4, maxWidth: "85%", minWidth: 0, alignItems: msg.role === "user" ? "flex-end" : "flex-start" } }, /* @__PURE__ */ window.React.createElement("div", { className: "ai-chat-selectable", style: { WebkitUserSelect: "text", userSelect: "text", padding: "12px 16px", borderRadius: 20, minWidth: 0, maxWidth: "100%", ...msg.role === "user" ? { ...tonal, borderTopRightRadius: 6 } : { background: "var(--kb-bg-surface, rgba(255,255,255,0.04))", color: fg1, borderTopLeftRadius: 6 } } }, msg.attachments && msg.attachments.length > 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-wrap gap-2 mb-3" }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, padding: "4px 8px", borderRadius: 10, background: "var(--kb-bg-inset, rgba(0,0,0,0.25))", color: "inherit" } }, "+", msg.attachments.length, " ", t("filesAttached"))), /* @__PURE__ */ window.React.createElement("div", { className: "break-words ai-chat-selectable max-w-none", style: { fontSize: 14, lineHeight: 1.55 } }, /* @__PURE__ */ window.React.createElement(
           Markdown,
           {
             remarkPlugins: [remarkGfm],
             components: {
-              strong: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("strong", { className: "font-bold text-white", ...props }),
+              strong: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("strong", { style: { fontWeight: 700 }, ...props }),
               p: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("p", { className: "mb-3 last:mb-0 leading-relaxed", ...props }),
               ul: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("ul", { className: "list-disc pl-5 mb-3 space-y-1", ...props }),
               ol: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("ol", { className: "list-decimal pl-5 mb-3 space-y-1", ...props }),
               li: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("li", { className: "leading-relaxed", ...props }),
-              h1: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h1", { className: "text-xl font-bold mb-3 text-white", ...props }),
-              h2: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h2", { className: "text-lg font-bold mb-3 text-white", ...props }),
-              h3: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h3", { className: "text-base font-bold mb-2 text-white", ...props }),
-              em: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("em", { className: "italic text-slate-300", ...props }),
+              h1: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h1", { className: "mb-3", style: { fontSize: 20, fontWeight: 700, fontFamily: "var(--kb-font-display, inherit)" }, ...props }),
+              h2: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h2", { className: "mb-3", style: { fontSize: 17, fontWeight: 700, fontFamily: "var(--kb-font-display, inherit)" }, ...props }),
+              h3: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h3", { className: "mb-2", style: { fontSize: 15, fontWeight: 700 }, ...props }),
+              em: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("em", { className: "italic", ...props }),
               pre: ({ node: node2, children, ...props }) => /* @__PURE__ */ window.React.createElement("pre", { className: "select-text", style: { WebkitUserSelect: "text", userSelect: "text" }, ...props }, children),
               code: ({ node: node2, inline, className, children, ...props }) => {
                 const match = /language-(\w+)/.exec(className || "");
                 const language = match ? match[1] : "text";
-                return !inline ? /* @__PURE__ */ window.React.createElement("div", { className: "relative mt-2 mb-4 rounded-2xl overflow-hidden group no-drag-region select-text", style: { WebkitUserSelect: "text", userSelect: "text" } }, /* @__PURE__ */ window.React.createElement("div", { className: "absolute right-2 top-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity" }, /* @__PURE__ */ window.React.createElement(
+                return !inline ? /* @__PURE__ */ window.React.createElement("div", { className: "relative mt-2 mb-4 overflow-hidden group no-drag-region select-text", style: { WebkitUserSelect: "text", userSelect: "text", borderRadius: 16, background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", color: fg1 } }, /* @__PURE__ */ window.React.createElement("div", { className: "absolute right-2 top-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity" }, /* @__PURE__ */ window.React.createElement(
                   "button",
                   {
                     onClick: (e) => {
                       e.stopPropagation();
                       window.api?.writeToClipboard?.({ type: "text", content: String(children).replace(/\n$/, "") });
                     },
-                    className: "p-1.5 bg-white/10 hover:bg-white/20 rounded-full text-slate-300 transition-colors flex items-center",
-                    title: t("copyToOsClipboard")
+                    className: "ai-btn",
+                    style: { width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--kb-bg-tile, rgba(255,255,255,0.1))", color: fg1 },
+                    title: t("copyToOsClipboard"),
+                    "aria-label": t("copyToOsClipboard")
                   },
-                  /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "content_copy")
+                  /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 16 } }, "content_copy")
                 )), /* @__PURE__ */ window.React.createElement(
                   highlighter,
                   {
                     style: vscDarkPlus,
                     language,
                     PreTag: "div",
-                    className: "text-xs !m-0 select-text",
-                    customStyle: { WebkitUserSelect: "text", userSelect: "text", margin: 0, background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", fontFamily: "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)" }
+                    className: "text-xs !m-0 select-text ai-md-code",
+                    customStyle: { WebkitUserSelect: "text", userSelect: "text", margin: 0, padding: 14, background: "transparent", fontFamily: "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)" },
+                    codeTagProps: { style: { fontFamily: "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)" } }
                   },
                   String(children).replace(/\n$/, "")
-                )) : /* @__PURE__ */ window.React.createElement("code", { className: "text-slate-200 px-1.5 py-0.5 font-mono text-xs select-text", style: { WebkitUserSelect: "text", userSelect: "text", background: "var(--kb-bg-inset, rgba(0,0,0,0.3))", borderRadius: 8 }, ...props }, children);
+                )) : /* @__PURE__ */ window.React.createElement("code", { className: "ai-md-code select-text", style: { WebkitUserSelect: "text", userSelect: "text", fontSize: 12, padding: "2px 6px", background: "var(--kb-bg-inset, rgba(0,0,0,0.3))", color: fg1, borderRadius: 8 }, ...props }, children);
               }
             }
           },
           preprocessMarkdown(msg.content)
-        )))), msg.role === "user" && /* @__PURE__ */ window.React.createElement("div", { className: "w-8 h-8 rounded-full shrink-0 flex items-center justify-center overflow-hidden", style: { background: "var(--kb-bg-tile, #334155)" } }, userAvatar ? /* @__PURE__ */ window.React.createElement("img", { src: userAvatar, alt: "User", className: "w-full h-full object-cover" }) : /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-white text-[18px]" }, "person")))),
-        isGenerating && /* @__PURE__ */ window.React.createElement("div", { className: "flex gap-4 w-full justify-start" }, /* @__PURE__ */ window.React.createElement("div", { className: "w-8 h-8 rounded-full shrink-0 flex items-center justify-center", style: { background: "var(--kb-bg-container, var(--theme-accent-glow))" } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-primary text-[18px] animate-spin" }, "refresh")), /* @__PURE__ */ window.React.createElement("div", { className: "p-4 text-slate-300 flex items-center", style: { borderRadius: 24, borderTopLeftRadius: 8, background: "var(--kb-bg-surface, rgba(255,255,255,0.04))" } }, /* @__PURE__ */ window.React.createElement("span", null, t("thinking")))),
+        ))), /* @__PURE__ */ window.React.createElement("div", { className: "ai-msg-actions", style: { display: "flex", gap: 4 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => handleSendToSlot(msg.content), className: "ai-btn", title: t("sendToSlot"), "aria-label": t("sendToSlot"), style: { width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", color: fg2 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 16 } }, "dynamic_feed")), /* @__PURE__ */ window.React.createElement("button", { onClick: () => handleCopy(msg.content), className: "ai-btn", title: t("copyText"), "aria-label": t("copyText"), style: { width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", color: fg2 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 16 } }, "content_copy")))), msg.role === "user" && /* @__PURE__ */ window.React.createElement(Avatar, { src: userAvatar, icon: "person", tone: "user" }))),
+        isGenerating && /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", gap: 12, width: "100%", justifyContent: "flex-start" } }, /* @__PURE__ */ window.React.createElement(Avatar, { icon: "progress_activity", tone: "ai" }), /* @__PURE__ */ window.React.createElement("div", { style: { padding: "12px 16px", borderRadius: 20, borderTopLeftRadius: 6, background: "var(--kb-bg-surface, rgba(255,255,255,0.04))", color: fg2, fontSize: 14, display: "flex", alignItems: "center" } }, /* @__PURE__ */ window.React.createElement("span", null, t("thinking")))),
         /* @__PURE__ */ window.React.createElement("div", { ref: bottomRef, className: "h-1 shrink-0" })
-      ), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col shrink-0 pointer-events-auto", style: { padding: 16, borderTop: "1px solid var(--kb-stroke-subtle, var(--theme-border))" } }, attachments.length > 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-wrap gap-2 mb-2" }, attachments.map((a, i) => /* @__PURE__ */ window.React.createElement("div", { key: i, className: "flex items-center gap-1.5 px-2 py-1 text-xs text-slate-300", style: { borderRadius: 10, background: "var(--kb-bg-tile, rgba(255,255,255,0.06))" } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px] text-primary" }, a.type === "image" ? "image" : "description"), /* @__PURE__ */ window.React.createElement("span", { className: "truncate max-w-[150px]" }, a.name), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setAttachments((prev) => prev.filter((_, idx) => idx !== i)), className: "hover:text-red-400 p-0.5 rounded-sm ml-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "close"))))), /* @__PURE__ */ window.React.createElement("div", { className: "relative flex items-end" }, /* @__PURE__ */ window.React.createElement(
+      ), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col shrink-0 pointer-events-auto", style: { padding: "8px 20px 20px" } }, attachments.length > 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-wrap gap-2 mb-2" }, attachments.map((a, i) => /* @__PURE__ */ window.React.createElement("div", { key: i, style: { display: "flex", alignItems: "center", gap: 6, padding: "4px 4px 4px 10px", fontSize: 12, color: fg1, borderRadius: 10, background: "var(--kb-bg-tile, rgba(255,255,255,0.06))" } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 14, color: "var(--kb-accent, var(--theme-primary))" } }, a.type === "image" ? "image" : "description"), /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { maxWidth: 150 } }, a.name), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setAttachments((prev) => prev.filter((_, idx) => idx !== i)), className: "ai-btn", "aria-label": t("remove"), style: { width: 22, height: 22, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", color: fg2 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 14 } }, "close"))))), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "flex-end", gap: 8, background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 28, padding: 6 } }, /* @__PURE__ */ window.React.createElement(
         "textarea",
         {
           ref: inputRef,
           value: input,
           onChange: onInput,
           placeholder: t("typeMessage"),
-          className: "w-full text-slate-200 px-4 py-3 outline-none resize-none custom-scrollbar max-h-[200px] overflow-y-auto select-auto pointer-events-auto",
-          style: { minHeight: "44px", borderRadius: 24 },
+          className: "custom-scrollbar max-h-[200px] overflow-y-auto select-auto pointer-events-auto",
+          rows: 1,
+          style: { flex: 1, minWidth: 0, minHeight: 40, padding: "9px 8px 9px 14px", borderRadius: 0, background: "transparent", color: fg1, fontSize: 14, border: "none", outline: "none", resize: "none" },
           onKeyDown: (e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -40186,54 +39904,52 @@ ${currentApiKeys.customInstructions}` : ""
             }
           }
         }
-      ), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-1 ml-2" }, isGenerating ? /* @__PURE__ */ window.React.createElement("button", { onClick: handleCancel, className: "w-11 h-11 flex items-center justify-center rounded-full transition-colors", style: { background: "var(--kb-bg-container, rgba(239,68,68,0.2))", color: "var(--kb-danger, #ef4444)" }, "aria-label": t("stopLabel") }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "stop_circle")) : /* @__PURE__ */ window.React.createElement("button", { onClick: handleSend, disabled: !input.trim() && attachments.length === 0, className: "w-11 h-11 flex items-center justify-center rounded-full hover:brightness-110 transition-colors disabled:opacity-50", style: { background: "var(--kb-accent, var(--theme-primary))", color: "var(--kb-on-accent, #fff)" }, "aria-label": t("typeMessage") }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[20px] -rotate-45 ml-0.5 mt-0.5" }, "send"))))), showSettings && /* @__PURE__ */ window.React.createElement("div", { className: "absolute top-[57px] left-0 right-0 bottom-0  z-50 flex flex-col no-drag-region", style: { backgroundColor: "var(--kb-bg-shell, #1a1612)" } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8" }, /* @__PURE__ */ window.React.createElement("div", null, /* @__PURE__ */ window.React.createElement("h3", { className: "mb-4", style: { fontSize: 13, fontWeight: 600, color: "var(--kb-fg-2, #94a3b8)" } }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { className: "space-y-4" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("defaultModel")), /* @__PURE__ */ window.React.createElement(
-        "select",
+      ), isGenerating ? /* @__PURE__ */ window.React.createElement("button", { onClick: handleCancel, className: "ai-btn", title: t("stopLabel"), "aria-label": t("stopLabel"), style: { width: 40, height: 40, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, ...tonal } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "stop")) : /* @__PURE__ */ window.React.createElement("button", { onClick: handleSend, disabled: !input.trim() && attachments.length === 0, title: t("typeMessage"), "aria-label": t("typeMessage"), style: { width: 40, height: 40, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, background: "var(--kb-accent, var(--theme-primary))", color: "var(--kb-on-accent, #fff)", opacity: !input.trim() && attachments.length === 0 ? "var(--kb-opacity-disabled, 0.5)" : 1 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "arrow_upward"))))), showSettings && /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 flex flex-col no-drag-region", style: { minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 overflow-y-auto custom-scrollbar", style: { padding: "4px 20px 12px", display: "flex", flexDirection: "column", gap: 16, minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("defaultModel")), /* @__PURE__ */ window.React.createElement(
+        ModelSelect,
         {
           value: apiKeys?.defaultModel || "anthropic:claude-sonnet-4-6",
-          onChange: (e) => usePluginChatStore.getState().setApiKeys({ defaultModel: e.target.value }),
-          className: "bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 cursor-pointer"
-        },
-        MODELS$1.map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, m.label))
-      )))), /* @__PURE__ */ window.React.createElement("div", { className: "w-full h-px bg-white/5" }), /* @__PURE__ */ window.React.createElement("div", null, /* @__PURE__ */ window.React.createElement("h3", { className: "mb-4", style: { fontSize: 13, fontWeight: 600, color: "var(--kb-fg-2, #94a3b8)" } }, t("apiKeysProviders")), /* @__PURE__ */ window.React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2 relative group opacity-50" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("openaiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("willBeAddedSoon"), className: "w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed" })), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2 relative group opacity-50" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("geminiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("willBeAddedSoon"), className: "w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed" })), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("anthropicKeyLabel")), /* @__PURE__ */ window.React.createElement(
+          ariaLabel: t("defaultModel"),
+          onChange: (e) => setKeys({ defaultModel: e.target.value })
+        }
+      ))), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("apiKeysProviders")), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("openaiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("willBeAddedSoon"), style: { ...fieldStyle, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("geminiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("willBeAddedSoon"), style: { ...fieldStyle, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("anthropicKeyLabel")), /* @__PURE__ */ window.React.createElement(
         "input",
         {
           type: "password",
           value: apiKeys?.anthropic || "",
-          onChange: (e) => usePluginChatStore.getState().setApiKeys({ anthropic: e.target.value }),
+          onChange: (e) => setKeys({ anthropic: e.target.value }),
           placeholder: "sk-ant-...",
-          className: "w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 select-text"
+          style: fieldStyle
         }
-      )), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("localUrlLabel")), /* @__PURE__ */ window.React.createElement(
+      )), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("localUrlLabel")), /* @__PURE__ */ window.React.createElement(
         "input",
         {
           type: "text",
           value: apiKeys?.localUrl || "",
-          onChange: (e) => usePluginChatStore.getState().setApiKeys({ localUrl: e.target.value }),
+          onChange: (e) => setKeys({ localUrl: e.target.value }),
           placeholder: "http://localhost:11434",
-          className: "w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 select-text"
+          style: fieldStyle
         }
-      )))), /* @__PURE__ */ window.React.createElement("div", { className: "w-full h-px bg-white/5" }), /* @__PURE__ */ window.React.createElement("div", null, /* @__PURE__ */ window.React.createElement("h3", { className: "mb-4", style: { fontSize: 13, fontWeight: 600, color: "var(--kb-fg-2, #94a3b8)" } }, t("profileCustomization")), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-6 md:flex-row md:gap-8" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-4" }, /* @__PURE__ */ window.React.createElement("div", { className: "w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden shrink-0" }, aiAvatar ? /* @__PURE__ */ window.React.createElement("img", { src: aiAvatar, alt: "AI", className: "w-full h-full object-cover" }) : /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-primary text-[32px]" }, "smart_toy")), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("aiAvatar")), /* @__PURE__ */ window.React.createElement("div", { className: "flex gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-xs text-slate-200 cursor-pointer transition-colors" }, t("change"), /* @__PURE__ */ window.React.createElement("input", { type: "file", accept: "image/*", className: "hidden", onChange: (e) => handleAvatarUpload(e, "ai") })), aiAvatar && /* @__PURE__ */ window.React.createElement("button", { onClick: () => setAiAvatar(null), className: "px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 rounded-full text-xs text-red-500 transition-colors" }, t("remove"))))), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-4" }, /* @__PURE__ */ window.React.createElement("div", { className: "w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center overflow-hidden shrink-0" }, userAvatar ? /* @__PURE__ */ window.React.createElement("img", { src: userAvatar, alt: "User", className: "w-full h-full object-cover" }) : /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-white text-[32px]" }, "person")), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("userAvatar")), /* @__PURE__ */ window.React.createElement("div", { className: "flex gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-xs text-slate-200 cursor-pointer transition-colors" }, t("change"), /* @__PURE__ */ window.React.createElement("input", { type: "file", accept: "image/*", className: "hidden", onChange: (e) => handleAvatarUpload(e, "user") })), userAvatar && /* @__PURE__ */ window.React.createElement("button", { onClick: () => setUserAvatar(null), className: "px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 rounded-full text-xs text-red-500 transition-colors" }, t("remove"))))))), /* @__PURE__ */ window.React.createElement("div", { className: "w-full h-px bg-white/5" }), /* @__PURE__ */ window.React.createElement("div", null, /* @__PURE__ */ window.React.createElement("h3", { className: "mb-4", style: { fontSize: 13, fontWeight: 600, color: "var(--kb-fg-2, #94a3b8)" } }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { className: "space-y-4" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("span", { className: "text-[10px] text-slate-500 italic" }, t("definesAiBehavior"))), /* @__PURE__ */ window.React.createElement(
+      ))), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("profileCustomization")), /* @__PURE__ */ window.React.createElement(AvatarRow, { type: "ai", src: aiAvatar, icon: "smart_toy", label: t("aiAvatar") }), /* @__PURE__ */ window.React.createElement(AvatarRow, { type: "user", src: userAvatar, icon: "person", label: t("userAvatar") })), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2, opacity: 0.8 } }, t("definesAiBehavior"))), /* @__PURE__ */ window.React.createElement(
         "textarea",
         {
           value: apiKeys?.systemMessage || "",
-          onChange: (e) => usePluginChatStore.getState().setApiKeys({ systemMessage: e.target.value }),
+          onChange: (e) => setKeys({ systemMessage: e.target.value }),
           placeholder: "You are a helpful AI...",
-          className: "w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 min-h-[80px] resize-y select-text"
+          style: { ...fieldStyle, minHeight: 88, resize: "vertical" }
         }
-      )), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("span", { className: "text-[10px] text-slate-500 italic" }, t("addedToSystemPrompt"))), /* @__PURE__ */ window.React.createElement(
+      )), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2, opacity: 0.8 } }, t("addedToSystemPrompt"))), /* @__PURE__ */ window.React.createElement(
         "textarea",
         {
           value: apiKeys?.customInstructions || "",
-          onChange: (e) => usePluginChatStore.getState().setApiKeys({ customInstructions: e.target.value }),
+          onChange: (e) => setKeys({ customInstructions: e.target.value }),
           placeholder: "e.g. Always respond in Spanish",
-          className: "w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 min-h-[80px] resize-y select-text"
+          style: { ...fieldStyle, minHeight: 88, resize: "vertical" }
         }
-      ))))), /* @__PURE__ */ window.React.createElement("div", { className: "p-4 flex justify-end", style: { borderTop: "1px solid var(--kb-stroke-subtle, var(--theme-border))" } }, /* @__PURE__ */ window.React.createElement(
+      )))), /* @__PURE__ */ window.React.createElement("div", { className: "shrink-0", style: { padding: "8px 20px 20px", display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ window.React.createElement(
         "button",
         {
           onClick: () => setShowSettings(false),
-          className: "px-6 py-2.5 font-bold rounded-full hover:brightness-110 transition-colors",
-          style: { background: "var(--kb-accent, var(--theme-primary))", color: "var(--kb-on-accent, #fff)" }
+          style: { padding: "10px 24px", fontSize: 14, fontWeight: 600, borderRadius: 999, background: "var(--kb-accent, var(--theme-primary))", color: "var(--kb-on-accent, #fff)" }
         },
         t("backToChat")
       ))))
@@ -40254,72 +39970,23 @@ ${currentApiKeys.customInstructions}` : ""
     const apiKeys = usePluginChatStore((state) => state.apiKeys);
     const setApiKeys = usePluginChatStore((state) => state.setApiKeys);
     const t = (key) => getTranslation(currentLang, key);
-    return /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col text-slate-200 p-2 space-y-6" }, /* @__PURE__ */ window.React.createElement("div", null, /* @__PURE__ */ window.React.createElement("h3", { className: "mb-4", style: { fontSize: 13, fontWeight: 600, color: "var(--kb-fg-2, #94a3b8)" } }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { className: "space-y-4" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("defaultModelLabel")), /* @__PURE__ */ window.React.createElement(
+    const fg1 = "var(--kb-fg-1, #f1f5f9)";
+    const fg2 = "var(--kb-fg-2, #94a3b8)";
+    const field = { width: "100%", background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", color: fg1, borderRadius: 16, padding: "10px 14px", fontSize: 14, border: "none", outline: "none" };
+    const label = { fontSize: 12, color: fg2 };
+    const card = { background: "var(--kb-bg-surface, rgba(255,255,255,0.04))", borderRadius: 24, padding: 20, display: "flex", flexDirection: "column", gap: 16 };
+    const title = { fontSize: 15, fontWeight: 600, color: fg1, fontFamily: "var(--kb-font-display, inherit)", margin: 0 };
+    const group = { display: "flex", flexDirection: "column", gap: 8 };
+    return /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 16, color: fg1 } }, /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("defaultModel")), /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center" } }, /* @__PURE__ */ window.React.createElement(
       "select",
       {
         value: apiKeys.defaultModel,
         onChange: (e) => setApiKeys({ defaultModel: e.target.value }),
-        style: { background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 },
-        className: "px-4 py-2.5 text-sm text-slate-200 outline-none cursor-pointer"
+        "aria-label": t("defaultModel"),
+        style: { ...field, appearance: "none", WebkitAppearance: "none", borderRadius: 999, padding: "10px 40px 10px 16px", fontWeight: 500, cursor: "pointer" }
       },
       MODELS.map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, m.label))
-    )))), /* @__PURE__ */ window.React.createElement("div", { className: "w-full h-px bg-white/5" }), /* @__PURE__ */ window.React.createElement("div", null, /* @__PURE__ */ window.React.createElement("h3", { className: "mb-4", style: { fontSize: 13, fontWeight: 600, color: "var(--kb-fg-2, #94a3b8)" } }, t("apiKeysProviders")), /* @__PURE__ */ window.React.createElement("div", { className: "grid grid-cols-1 gap-4" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("anthropicKeyLabel")), /* @__PURE__ */ window.React.createElement(
-      "input",
-      {
-        type: "password",
-        value: apiKeys.anthropic || "",
-        onChange: (e) => setApiKeys({ anthropic: e.target.value }),
-        placeholder: "sk-ant-...",
-        style: { background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 },
-        className: "w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors"
-      }
-    )), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2 opacity-50" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("openaiKeyLabel")), /* @__PURE__ */ window.React.createElement(
-      "input",
-      {
-        disabled: true,
-        type: "password",
-        placeholder: t("comingSoon"),
-        style: { background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 },
-        className: "w-full px-4 py-2.5 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed"
-      }
-    )), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2 opacity-50" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("geminiKeyLabel")), /* @__PURE__ */ window.React.createElement(
-      "input",
-      {
-        disabled: true,
-        type: "password",
-        placeholder: t("comingSoon"),
-        style: { background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 },
-        className: "w-full px-4 py-2.5 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed"
-      }
-    )), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("localUrlLabel"), " (Ollama / LM Studio)"), /* @__PURE__ */ window.React.createElement(
-      "input",
-      {
-        type: "text",
-        value: apiKeys.localUrl || "",
-        onChange: (e) => setApiKeys({ localUrl: e.target.value }),
-        placeholder: "http://localhost:11434",
-        style: { background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 },
-        className: "w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors"
-      }
-    )))), /* @__PURE__ */ window.React.createElement("div", { className: "w-full h-px bg-white/5" }), /* @__PURE__ */ window.React.createElement("div", null, /* @__PURE__ */ window.React.createElement("h3", { className: "mb-4", style: { fontSize: 13, fontWeight: 600, color: "var(--kb-fg-2, #94a3b8)" } }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { className: "space-y-4" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement(
-      "textarea",
-      {
-        value: apiKeys.systemMessage || "",
-        onChange: (e) => setApiKeys({ systemMessage: e.target.value }),
-        placeholder: "You are a helpful AI assistant...",
-        style: { background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 },
-        className: "w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors min-h-[80px] custom-scrollbar resize-y"
-      }
-    )), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("label", { className: "text-xs text-slate-400" }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement(
-      "textarea",
-      {
-        value: apiKeys.customInstructions || "",
-        onChange: (e) => setApiKeys({ customInstructions: e.target.value }),
-        placeholder: "User preferences...",
-        style: { background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 },
-        className: "w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors min-h-[80px] custom-scrollbar resize-y"
-      }
-    )))));
+    ), /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", "aria-hidden": "true", style: { position: "absolute", right: 12, fontSize: 20, color: fg2, pointerEvents: "none" } }, "expand_more")))), /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("apiKeysProviders")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("anthropicKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { type: "password", value: apiKeys.anthropic || "", onChange: (e) => setApiKeys({ anthropic: e.target.value }), placeholder: "sk-ant-...", style: field })), /* @__PURE__ */ window.React.createElement("div", { style: { ...group, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("openaiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("comingSoon"), style: { ...field, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: { ...group, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("geminiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("comingSoon"), style: { ...field, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("localUrlLabel"), " (Ollama / LM Studio)"), /* @__PURE__ */ window.React.createElement("input", { type: "text", value: apiKeys.localUrl || "", onChange: (e) => setApiKeys({ localUrl: e.target.value }), placeholder: "http://localhost:11434", style: field }))), /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys.systemMessage || "", onChange: (e) => setApiKeys({ systemMessage: e.target.value }), placeholder: "You are a helpful AI assistant...", className: "custom-scrollbar", style: { ...field, minHeight: 88, resize: "vertical" } })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys.customInstructions || "", onChange: (e) => setApiKeys({ customInstructions: e.target.value }), placeholder: "User preferences...", className: "custom-scrollbar", style: { ...field, minHeight: 88, resize: "vertical" } }))));
   };
   if (window.KoBarExtensions.registerSettingsPanel) {
     window.KoBarExtensions.registerSettingsPanel("com.kobar.aihub", {

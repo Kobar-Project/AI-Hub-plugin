@@ -21,103 +21,65 @@ export const SettingsPanel = () => {
 
     const t = (key) => getTranslation(currentLang, key);
 
+    const fg1 = 'var(--kb-fg-1, #f1f5f9)';
+    const fg2 = 'var(--kb-fg-2, #94a3b8)';
+    const field = { width: '100%', background: 'var(--kb-bg-inset, rgba(0,0,0,0.4))', color: fg1, borderRadius: 16, padding: '10px 14px', fontSize: 14, border: 'none', outline: 'none' };
+    const label = { fontSize: 12, color: fg2 };
+    const card = { background: 'var(--kb-bg-surface, rgba(255,255,255,0.04))', borderRadius: 24, padding: 20, display: 'flex', flexDirection: 'column', gap: 16 };
+    const title = { fontSize: 15, fontWeight: 600, color: fg1, fontFamily: 'var(--kb-font-display, inherit)', margin: 0 };
+    const group = { display: 'flex', flexDirection: 'column', gap: 8 };
+
     return (
-        <div className="flex flex-col text-slate-200 p-2 space-y-6">
-            <div>
-                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('modelDefaults')}</h3>
-                <div className="space-y-4">
-                    <div className="flex flex-col gap-2">
-                        <label className="text-xs text-slate-400">{t('defaultModelLabel')}</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, color: fg1 }}>
+            <section style={card}>
+                <h3 style={title}>{t('modelDefaults')}</h3>
+                <div style={group}>
+                    <label style={label}>{t('defaultModel')}</label>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                         <select
                             value={apiKeys.defaultModel}
                             onChange={(e) => setApiKeys({ defaultModel: e.target.value })}
-                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }} className="px-4 py-2.5 text-sm text-slate-200 outline-none cursor-pointer"
+                            aria-label={t('defaultModel')}
+                            style={{ ...field, appearance: 'none', WebkitAppearance: 'none', borderRadius: 999, padding: '10px 40px 10px 16px', fontWeight: 500, cursor: 'pointer' }}
                         >
                             {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
                         </select>
+                        <span className="material-symbols-outlined" aria-hidden="true" style={{ position: 'absolute', right: 12, fontSize: 20, color: fg2, pointerEvents: 'none' }}>expand_more</span>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div className="w-full h-px bg-white/5" />
-
-            <div>
-                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('apiKeysProviders')}</h3>
-                <div className="grid grid-cols-1 gap-4">
-                    <div className="flex flex-col gap-2">
-                        <label className="text-xs text-slate-400">{t('anthropicKeyLabel')}</label>
-                        <input 
-                            type="password" 
-                            value={apiKeys.anthropic || ''}
-                            onChange={(e) => setApiKeys({ anthropic: e.target.value })}
-                            placeholder="sk-ant-..."
-                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
-                            className="w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors"
-                        />
-                    </div>
-                    
-                    <div className="flex flex-col gap-2 opacity-50">
-                        <label className="text-xs text-slate-400">{t('openaiKeyLabel')}</label>
-                        <input 
-                            disabled
-                            type="password" 
-                            placeholder={t('comingSoon')}
-                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
-                            className="w-full px-4 py-2.5 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 opacity-50">
-                        <label className="text-xs text-slate-400">{t('geminiKeyLabel')}</label>
-                        <input 
-                            disabled
-                            type="password" 
-                            placeholder={t('comingSoon')}
-                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
-                            className="w-full px-4 py-2.5 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed"
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <label className="text-xs text-slate-400">{t('localUrlLabel')} (Ollama / LM Studio)</label>
-                        <input 
-                            type="text" 
-                            value={apiKeys.localUrl || ''}
-                            onChange={(e) => setApiKeys({ localUrl: e.target.value })}
-                            placeholder="http://localhost:11434"
-                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
-                            className="w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors"
-                        />
-                    </div>
+            <section style={card}>
+                <h3 style={title}>{t('apiKeysProviders')}</h3>
+                <div style={group}>
+                    <label style={label}>{t('anthropicKeyLabel')}</label>
+                    <input type="password" value={apiKeys.anthropic || ''} onChange={(e) => setApiKeys({ anthropic: e.target.value })} placeholder="sk-ant-..." style={field} />
                 </div>
-            </div>
-
-            <div className="w-full h-px bg-white/5" />
-
-            <div>
-                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('promptCustomization')}</h3>
-                <div className="space-y-4">
-                    <div className="flex flex-col gap-2">
-                        <label className="text-xs text-slate-400">{t('systemMessageLabel')}</label>
-                        <textarea 
-                            value={apiKeys.systemMessage || ''}
-                            onChange={(e) => setApiKeys({ systemMessage: e.target.value })}
-                            placeholder="You are a helpful AI assistant..."
-                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
-                            className="w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors min-h-[80px] custom-scrollbar resize-y"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <label className="text-xs text-slate-400">{t('customInstructionsLabel')}</label>
-                        <textarea 
-                            value={apiKeys.customInstructions || ''}
-                            onChange={(e) => setApiKeys({ customInstructions: e.target.value })}
-                            placeholder="User preferences..."
-                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
-                            className="w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors min-h-[80px] custom-scrollbar resize-y"
-                        />
-                    </div>
+                <div style={{ ...group, opacity: 0.5 }}>
+                    <label style={label}>{t('openaiKeyLabel')}</label>
+                    <input disabled type="password" placeholder={t('comingSoon')} style={{ ...field, cursor: 'not-allowed' }} />
                 </div>
-            </div>
+                <div style={{ ...group, opacity: 0.5 }}>
+                    <label style={label}>{t('geminiKeyLabel')}</label>
+                    <input disabled type="password" placeholder={t('comingSoon')} style={{ ...field, cursor: 'not-allowed' }} />
+                </div>
+                <div style={group}>
+                    <label style={label}>{t('localUrlLabel')} (Ollama / LM Studio)</label>
+                    <input type="text" value={apiKeys.localUrl || ''} onChange={(e) => setApiKeys({ localUrl: e.target.value })} placeholder="http://localhost:11434" style={field} />
+                </div>
+            </section>
+
+            <section style={card}>
+                <h3 style={title}>{t('promptCustomization')}</h3>
+                <div style={group}>
+                    <label style={label}>{t('systemMessageLabel')}</label>
+                    <textarea value={apiKeys.systemMessage || ''} onChange={(e) => setApiKeys({ systemMessage: e.target.value })} placeholder="You are a helpful AI assistant..." className="custom-scrollbar" style={{ ...field, minHeight: 88, resize: 'vertical' }} />
+                </div>
+                <div style={group}>
+                    <label style={label}>{t('customInstructionsLabel')}</label>
+                    <textarea value={apiKeys.customInstructions || ''} onChange={(e) => setApiKeys({ customInstructions: e.target.value })} placeholder="User preferences..." className="custom-scrollbar" style={{ ...field, minHeight: 88, resize: 'vertical' }} />
+                </div>
+            </section>
         </div>
     );
 };

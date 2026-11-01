@@ -408,6 +408,68 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
             .replace(/(^|\s)\*\s+(.*?)\s+\*(\s|$)/g, '$1*$2*$3');
     };
 
+    const fg1 = 'var(--kb-fg-1, #f1f5f9)';
+    const fg2 = 'var(--kb-fg-2, #94a3b8)';
+    const stroke = 'var(--kb-stroke-subtle, var(--theme-border))';
+    const iconBtn = (extra) => ({
+        width: 36, height: 36, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0, background: 'var(--kb-bg-tile, rgba(255,255,255,0.06))', color: fg1, ...extra
+    });
+    const tonal = { background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)' };
+    const fieldStyle = { width: '100%', background: 'var(--kb-bg-inset, rgba(0,0,0,0.4))', color: fg1, borderRadius: 16, padding: '10px 14px', fontSize: 14, border: 'none', outline: 'none', userSelect: 'text' };
+    const labelStyle = { fontSize: 12, color: fg2 };
+    const cardStyle = { background: 'var(--kb-bg-surface, rgba(255,255,255,0.04))', borderRadius: 24, padding: 20, display: 'flex', flexDirection: 'column', gap: 16 };
+    const cardTitle = { fontSize: 15, fontWeight: 600, color: fg1, fontFamily: 'var(--kb-font-display, inherit)', margin: 0 };
+    const pillBtn = { borderRadius: 999, padding: '8px 16px', fontSize: 12, fontWeight: 600, cursor: 'pointer', ...tonal };
+
+    const ModelSelect = ({ value, onChange, ariaLabel, style }) => (
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', ...style }}>
+            <select
+                value={value}
+                onChange={onChange}
+                aria-label={ariaLabel}
+                style={{ ...fieldStyle, appearance: 'none', WebkitAppearance: 'none', borderRadius: 999, padding: '9px 40px 9px 16px', fontWeight: 500, cursor: 'pointer', textOverflow: 'ellipsis' }}
+            >
+                {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+            </select>
+            <span className="material-symbols-outlined" aria-hidden="true" style={{ position: 'absolute', right: 12, fontSize: 20, color: fg2, pointerEvents: 'none' }}>expand_more</span>
+        </div>
+    );
+
+    const Avatar = ({ src, icon, tone }) => (
+        <div style={{ width: 32, height: 32, borderRadius: 999, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', ...(tone === 'ai' ? tonal : { background: 'var(--kb-bg-tile, #334155)', color: fg1 }) }}>
+            {src ? <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span className="material-symbols-outlined" style={{ fontSize: 18, color: tone === 'ai' ? 'var(--kb-accent, var(--theme-primary))' : fg1 }}>{icon}</span>}
+        </div>
+    );
+
+    const IconTile = ({ size, icon, src }) => (
+        <div style={{ width: size, height: size, borderRadius: size >= 60 ? 22 : 15, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', ...tonal }}>
+            {src ? <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span className="material-symbols-outlined" style={{ fontSize: size >= 60 ? 32 : 24, color: 'var(--kb-accent, var(--theme-primary))' }}>{icon}</span>}
+        </div>
+    );
+
+    const AvatarRow = ({ type, src, icon, label }) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <IconTile size={64} icon={icon} src={src} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
+                <span style={labelStyle}>{label}</span>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <label style={pillBtn}>
+                        {t('change')}
+                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleAvatarUpload(e, type)} />
+                    </label>
+                    {src && (
+                        <button onClick={() => (type === 'ai' ? setAiAvatar(null) : setUserAvatar(null))} style={{ ...pillBtn, background: 'var(--kb-bg-tile, rgba(255,255,255,0.06))', color: 'var(--kb-danger, #ef4444)' }}>
+                            {t('remove')}
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+
+    const setKeys = (patch) => usePluginChatStore.getState().setApiKeys(patch);
+
     return (
         <div
             ref={popupRef}
@@ -429,9 +491,17 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                 /* Canlı hosts load Material Symbols Rounded; older hosts fall back to Outlined. */
                 .ai-root .material-symbols-outlined { font-family: 'Material Symbols Rounded', 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
                 .ai-root input:not([type=file]), .ai-root select, .ai-root textarea { background: var(--kb-bg-inset, rgba(0,0,0,0.4)); border-color: transparent; border-radius: 16px; }
-                .ai-chat-selectable, .ai-chat-selectable * { 
-                    -webkit-user-select: text !important; 
-                    user-select: text !important; 
+                .ai-root button, .ai-root label { cursor: pointer; }
+                .ai-root button:disabled { cursor: default; }
+                .ai-root button:focus-visible, .ai-root select:focus-visible, .ai-root textarea:focus-visible, .ai-root input:focus-visible { outline: 2px solid var(--kb-focus-ring, var(--kb-accent, var(--theme-primary))); outline-offset: 2px; }
+                .ai-root .ai-btn:hover:not(:disabled) { background: var(--kb-fill-hover, rgba(255,255,255,0.08)) !important; }
+                .ai-root .ai-row-idle:hover { background: var(--kb-fill-hover, rgba(255,255,255,0.06)); }
+                .ai-root .ai-row .ai-del, .ai-root .ai-msg .ai-msg-actions { opacity: 0; transition: opacity 120ms var(--kb-ease-standard, ease); }
+                .ai-root .ai-row:hover .ai-del, .ai-root .ai-row:focus-within .ai-del, .ai-root .ai-msg:hover .ai-msg-actions, .ai-root .ai-msg:focus-within .ai-msg-actions { opacity: 1; }
+                .ai-root .ai-md-code { font-family: var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace); }
+                .ai-chat-selectable, .ai-chat-selectable * {
+                    -webkit-user-select: text !important;
+                    user-select: text !important;
                     cursor: text !important;
                 }
                 .ai-chat-selectable *::selection {
@@ -439,25 +509,21 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                     color: white !important;
                 }
             `}</style>
-            
-            <div className={`flex transition-all duration-300 shrink-0 h-full ${isSidebarOpen ? 'w-48 opacity-100 border-r' : 'w-0 min-w-0 opacity-0 border-none overflow-hidden'}`} style={{ borderColor: 'var(--kb-stroke-subtle, var(--theme-border))', minHeight: 0 }}>
-                <div className={`flex flex-col h-full shrink-0 ${isSidebarOpen ? 'w-48' : 'w-0'}`}>
-                    <div className="flex items-center justify-between" style={{ padding: 16 }}>
-                        <span className="text-slate-200" style={{ fontSize: 15, fontWeight: 600, fontFamily: 'var(--kb-font-display, inherit)' }}>{t('chats')}</span>
-                        <button onClick={() => createChat()} className="w-9 h-9 rounded-full flex items-center justify-center pointer-events-auto" style={{ background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)' }} title={t('newChat')} aria-label={t('newChat')}>
-                            <span className="material-symbols-outlined text-[18px]">add</span>
-                        </button>
+
+            {/* Conversation list */}
+            <div className="flex shrink-0 h-full" style={{ width: isSidebarOpen ? 208 : 0, opacity: isSidebarOpen ? 1 : 0, overflow: 'hidden', borderRight: isSidebarOpen ? `1px solid ${stroke}` : 'none', transition: 'width 200ms var(--kb-ease-standard, ease), opacity 200ms var(--kb-ease-standard, ease)', minHeight: 0 }}>
+                <div className="flex flex-col h-full shrink-0" style={{ width: 208 }}>
+                    <div style={{ padding: '20px 20px 12px' }}>
+                        <span style={{ fontSize: 15, fontWeight: 600, color: fg1, fontFamily: 'var(--kb-font-display, inherit)' }}>{t('chats')}</span>
                     </div>
-                    <div className="flex-1 overflow-y-auto w-full custom-scrollbar p-2 flex flex-col gap-1">
+                    <div className="flex-1 overflow-y-auto w-full custom-scrollbar flex flex-col" style={{ padding: '0 12px 16px', gap: 6 }}>
                         {chats.map(c => (
-                            <div 
-                                key={c.id} 
+                            <div
+                                key={c.id}
                                 onClick={() => setActiveChatId(c.id)}
                                 onDoubleClick={() => startEditingTitle(c.id, c.title)}
-                                className={`w-full group flex items-center justify-between px-4 py-2 cursor-pointer transition-colors pointer-events-auto select-none
-                                    ${activeChatId === c.id ? '' : 'hover:bg-white/5 text-slate-400'}
-                                `}
-                                style={{ borderRadius: 16, minHeight: 48, ...(activeChatId === c.id ? { background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)' } : null) }}
+                                className={`ai-row ${activeChatId === c.id ? '' : 'ai-row-idle'}`}
+                                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4, width: '100%', minHeight: 48, padding: '6px 6px 6px 14px', borderRadius: 16, cursor: 'pointer', userSelect: 'none', ...(activeChatId === c.id ? tonal : { background: 'var(--kb-bg-tile, rgba(255,255,255,0.04))', color: fg1 }) }}
                             >
                                 {editingChatId === c.id ? (
                                     <input
@@ -469,17 +535,20 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                             if (e.key === 'Enter') saveTitle(c.id);
                                             if (e.key === 'Escape') setEditingChatId(null);
                                         }}
-                                        className="text-white text-sm px-2 w-full outline-none"
+                                        style={{ width: '100%', color: fg1, fontSize: 14, padding: '6px 10px', outline: 'none', border: 'none', borderRadius: 12 }}
                                         onClick={(e) => e.stopPropagation()}
                                     />
                                 ) : (
                                     <>
-                                        <span className="truncate text-sm font-medium pr-2 block">{c.title}</span>
+                                        <span className="truncate" style={{ fontSize: 14, fontWeight: 500, minWidth: 0, flex: 1 }}>{c.title}</span>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); deleteChat(c.id); }}
-                                            className={`p-1.5 flex items-center rounded-full hover:bg-white/10 text-red-400 transition-colors ${activeChatId === c.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                                            className="ai-del ai-btn"
+                                            title={t('remove')}
+                                            aria-label={t('remove')}
+                                            style={{ width: 32, height: 32, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: 'transparent', color: activeChatId === c.id ? 'var(--kb-on-container, #fff)' : fg2 }}
                                         >
-                                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                                            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
                                         </button>
                                     </>
                                 )}
@@ -490,134 +559,119 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
             </div>
 
             {/* Main Area */}
-            <div className="flex-1 flex flex-col bg-transparent relative">
-                <div className="flex items-center justify-between bg-transparent shrink-0 pointer-events-auto" style={{ padding: 16, borderBottom: '1px solid var(--kb-stroke-subtle, var(--theme-border))' }}>
-                    <div className="flex items-center gap-3">
-                        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-white transition-colors" style={{ background: 'var(--kb-bg-inset, rgba(255,255,255,0.06))' }} aria-label={isSidebarOpen ? t('chats') : t('chats')}>
-                            <span className="material-symbols-outlined text-[20px]">{isSidebarOpen ? 'keyboard_double_arrow_left' : 'keyboard_double_arrow_right'}</span>
-                        </button>
-                        <select
-                            value={activeChat?.model || 'openai:gpt-4o'}
-                            onChange={(e) => {
-                                if (activeChat) {
-                                    usePluginChatStore.setState(s => ({
-                                        chats: s.chats.map(c => c.id === activeChat.id ? {...c, model: e.target.value} : c)
-                                    }));
-                                } else {
-                                    createChat(e.target.value);
-                                }
-                            }}
-                            className="px-4 py-2 text-sm text-slate-200 min-w-[200px] outline-none cursor-pointer" style={{ borderRadius: 999 }}
-                        >
-                            {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-                        </select>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button 
-                            onClick={() => setShowSettings(!showSettings)} 
-                            className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors ${showSettings ? '' : 'text-slate-400 hover:text-white'}`}
-                            style={showSettings ? { background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)' } : { background: 'var(--kb-bg-inset, rgba(255,255,255,0.06))' }}
-                            title={t('aiHubSettings')}
-                            aria-label={t('aiHubSettings')}
-                        >
-                            <span className="material-symbols-outlined text-[20px]">settings</span>
-                        </button>
-                        <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-white transition-colors" style={{ background: 'var(--kb-bg-inset, rgba(255,255,255,0.06))' }} aria-label={t('closeLabel')}>
-                            <span className="material-symbols-outlined text-[20px]">close</span>
-                        </button>
-                    </div>
+            <div className="flex-1 flex flex-col relative" style={{ minWidth: 0, minHeight: 0 }}>
+                <div className="shrink-0 pointer-events-auto" style={{ padding: '20px 20px 12px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <IconTile size={44} icon="auto_awesome" />
+                    <h2 style={{ flex: 1, minWidth: 0, margin: 0, fontSize: 19, fontWeight: 600, color: fg1, fontFamily: 'var(--kb-font-display, inherit)', whiteSpace: 'nowrap' }}>{t('kobarAiHub')}</h2>
+                    <button onClick={() => createChat()} className="ai-btn" title={t('newChat')} aria-label={t('newChat')} style={iconBtn()}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 20 }}>add</span>
+                    </button>
+                    <button onClick={() => setShowSettings(!showSettings)} className="ai-btn" title={t('aiHubSettings')} aria-label={t('aiHubSettings')} aria-pressed={showSettings} style={iconBtn(showSettings ? tonal : null)}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 20 }}>settings</span>
+                    </button>
+                    <button onClick={onClose} className="ai-btn" title={t('closeLabel')} aria-label={t('closeLabel')} style={iconBtn(tonal)}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
+                    </button>
                 </div>
 
-                <div 
+                <div className="shrink-0 pointer-events-auto" style={{ padding: '0 20px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="ai-btn" title={t('chats')} aria-label={t('chats')} aria-pressed={isSidebarOpen} style={iconBtn()}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{isSidebarOpen ? 'left_panel_close' : 'left_panel_open'}</span>
+                    </button>
+                    <ModelSelect
+                        value={activeChat?.model || 'openai:gpt-4o'}
+                        ariaLabel={t('defaultModel')}
+                        style={{ flex: 1, minWidth: 0, maxWidth: 380 }}
+                        onChange={(e) => {
+                            if (activeChat) {
+                                usePluginChatStore.setState(s => ({
+                                    chats: s.chats.map(c => c.id === activeChat.id ? {...c, model: e.target.value} : c)
+                                }));
+                            } else {
+                                createChat(e.target.value);
+                            }
+                        }}
+                    />
+                </div>
+
+                {/* Chat view (kept mounted while Settings is open so scroll position survives) */}
+                <div className="flex-1 flex flex-col" style={{ minHeight: 0, display: showSettings ? 'none' : 'flex' }}>
+                <div
                     ref={messagesScrollRef}
                     onScroll={(e) => {
                         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
                         const isNearBottom = scrollHeight - scrollTop - clientHeight < 150;
                         setIsAutoScrollEnabled(isNearBottom);
                     }}
-                    className="flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-6 pointer-events-auto select-auto no-drag-region"
+                    className="flex-1 overflow-y-auto custom-scrollbar flex flex-col pointer-events-auto select-auto no-drag-region"
+                    style={{ padding: '4px 20px 12px', gap: 16, minHeight: 0 }}
                 >
                     {activeChat?.messages.length === 0 ? (
-                        <div className="flex-1 flex flex-col items-center justify-center opacity-50 select-none pointer-events-none">
-                            <span className="material-symbols-outlined text-[48px] text-primary mb-4">smart_toy</span>
-                            <span className="text-slate-200 font-bold mb-1">{t('kobarAiHub')}</span>
-                            <span className="text-sm text-slate-400 text-center max-w-[300px]">{t('sayHello')}</span>
+                        <div className="select-none" style={{ margin: 'auto 0', border: `2px dashed ${stroke}`, borderRadius: 28, padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, textAlign: 'center' }}>
+                            <IconTile size={64} icon="auto_awesome" />
+                            <span style={{ fontSize: 17, fontWeight: 600, color: fg1, fontFamily: 'var(--kb-font-display, inherit)' }}>{t('kobarAiHub')}</span>
+                            <span style={{ fontSize: 14, color: fg2, maxWidth: 300 }}>{t('sayHello')}</span>
                         </div>
                     ) : (
                         activeChat?.messages.map((msg) => (
-                            <div key={msg.id} className={`flex gap-4 w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                {msg.role !== 'user' && (
-                                    <div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center overflow-hidden" style={{ background: 'var(--kb-bg-container, var(--theme-accent-glow))' }}>
-                                        {aiAvatar ? (
-                                            <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <span className="material-symbols-outlined text-primary text-[18px]">smart_toy</span>
-                                        )}
-                                    </div>
-                                )}
-                                <div className={`flex flex-col gap-1 max-w-[85%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                                    <div className={`p-4 group relative ai-chat-selectable ${msg.role === 'user' ? 'text-slate-200' : 'text-slate-300'}`} style={{ WebkitUserSelect: 'text', userSelect: 'text', borderRadius: 24, ...(msg.role === 'user' ? { background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)', borderTopRightRadius: 8 } : { background: 'var(--kb-bg-surface, rgba(255,255,255,0.04))', borderTopLeftRadius: 8 }) }}>
-                                        
-                                        <div className={`absolute top-2 flex gap-1  rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 
-                                            ${msg.role === 'user' ? '-left-16' : '-right-16'}`}>
-                                            <button onClick={() => handleSendToSlot(msg.content)} className="p-1 hover:text-white text-slate-400 transition-colors" title={t('sendToSlot')}>
-                                                <span className="material-symbols-outlined text-[16px]">dynamic_feed</span>
-                                            </button>
-                                            <button onClick={() => handleCopy(msg.content)} className="p-1 hover:text-white text-slate-400 transition-colors" title={t('copyText')}>
-                                                <span className="material-symbols-outlined text-[16px]">content_copy</span>
-                                            </button>
-                                        </div>
+                            <div key={msg.id} className="ai-msg" style={{ display: 'flex', gap: 12, width: '100%', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                                {msg.role !== 'user' && <Avatar src={aiAvatar} icon="smart_toy" tone="ai" />}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '85%', minWidth: 0, alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                                    <div className="ai-chat-selectable" style={{ WebkitUserSelect: 'text', userSelect: 'text', padding: '12px 16px', borderRadius: 20, minWidth: 0, maxWidth: '100%', ...(msg.role === 'user' ? { ...tonal, borderTopRightRadius: 6 } : { background: 'var(--kb-bg-surface, rgba(255,255,255,0.04))', color: fg1, borderTopLeftRadius: 6 }) }}>
 
                                         {msg.attachments && msg.attachments.length > 0 && (
                                              <div className="flex flex-wrap gap-2 mb-3">
-                                                 <span className="text-xs px-2 py-1" style={{ borderRadius: 10, background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)' }}>+{msg.attachments.length} {t('filesAttached')}</span>
+                                                 <span style={{ fontSize: 12, padding: '4px 8px', borderRadius: 10, background: 'var(--kb-bg-inset, rgba(0,0,0,0.25))', color: 'inherit' }}>+{msg.attachments.length} {t('filesAttached')}</span>
                                              </div>
                                         )}
 
-                                        <div className="text-[14px] leading-relaxed break-words ai-chat-selectable text-sm max-w-none">
-                                            <ReactMarkdown 
+                                        <div className="break-words ai-chat-selectable max-w-none" style={{ fontSize: 14, lineHeight: 1.55 }}>
+                                            <ReactMarkdown
                                                 remarkPlugins={[remarkGfm]}
                                                 components={{
-                                                    strong: ({node, ...props}) => <strong className="font-bold text-white" {...props} />,
+                                                    strong: ({node, ...props}) => <strong style={{ fontWeight: 700 }} {...props} />,
                                                     p: ({node, ...props}) => <p className="mb-3 last:mb-0 leading-relaxed" {...props} />,
                                                     ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
                                                     ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
                                                     li: ({node, ...props}) => <li className="leading-relaxed" {...props} />,
-                                                    h1: ({node, ...props}) => <h1 className="text-xl font-bold mb-3 text-white" {...props} />,
-                                                    h2: ({node, ...props}) => <h2 className="text-lg font-bold mb-3 text-white" {...props} />,
-                                                    h3: ({node, ...props}) => <h3 className="text-base font-bold mb-2 text-white" {...props} />,
-                                                    em: ({node, ...props}) => <em className="italic text-slate-300" {...props} />,
+                                                    h1: ({node, ...props}) => <h1 className="mb-3" style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--kb-font-display, inherit)' }} {...props} />,
+                                                    h2: ({node, ...props}) => <h2 className="mb-3" style={{ fontSize: 17, fontWeight: 700, fontFamily: 'var(--kb-font-display, inherit)' }} {...props} />,
+                                                    h3: ({node, ...props}) => <h3 className="mb-2" style={{ fontSize: 15, fontWeight: 700 }} {...props} />,
+                                                    em: ({node, ...props}) => <em className="italic" {...props} />,
                                                     pre: ({node, children, ...props}) => <pre className="select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text' }} {...props}>{children}</pre>,
                                                     code: ({node, inline, className, children, ...props}) => {
                                                         const match = /language-(\w+)/.exec(className || '');
                                                         const language = match ? match[1] : 'text';
 
                                                         return !inline ? (
-                                                            <div className="relative mt-2 mb-4 rounded-2xl overflow-hidden group no-drag-region select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text' }}>
+                                                            <div className="relative mt-2 mb-4 overflow-hidden group no-drag-region select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text', borderRadius: 16, background: 'var(--kb-bg-inset, rgba(0,0,0,0.4))', color: fg1 }}>
                                                                 <div className="absolute right-2 top-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                    <button 
+                                                                    <button
                                                                         onClick={(e) => {
                                                                             e.stopPropagation();
                                                                             window.api?.writeToClipboard?.({ type: 'text', content: String(children).replace(/\n$/, '') });
                                                                         }}
-                                                                        className="p-1.5 bg-white/10 hover:bg-white/20 rounded-full text-slate-300 transition-colors flex items-center"
+                                                                        className="ai-btn"
+                                                                        style={{ width: 28, height: 28, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--kb-bg-tile, rgba(255,255,255,0.1))', color: fg1 }}
                                                                         title={t('copyToOsClipboard')}
+                                                                        aria-label={t('copyToOsClipboard')}
                                                                     >
-                                                                        <span className="material-symbols-outlined text-[14px]">content_copy</span>
+                                                                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>content_copy</span>
                                                                     </button>
                                                                 </div>
                                                                 <SyntaxHighlighter
                                                                     style={vscDarkPlus}
                                                                     language={language}
                                                                     PreTag="div"
-                                                                    className="text-xs !m-0 select-text"
-                                                                    customStyle={{ WebkitUserSelect: 'text', userSelect: 'text', margin: 0, background: 'var(--kb-bg-inset, rgba(0,0,0,0.4))', fontFamily: "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)" }}
+                                                                    className="text-xs !m-0 select-text ai-md-code"
+                                                                    customStyle={{ WebkitUserSelect: 'text', userSelect: 'text', margin: 0, padding: 14, background: 'transparent', fontFamily: "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)" }}
+                                                                    codeTagProps={{ style: { fontFamily: "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)" } }}
                                                                 >
                                                                     {String(children).replace(/\n$/, '')}
                                                                 </SyntaxHighlighter>
                                                             </div>
                                                         ) : (
-                                                            <code className="text-slate-200 px-1.5 py-0.5 font-mono text-xs select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text', background: 'var(--kb-bg-inset, rgba(0,0,0,0.3))', borderRadius: 8 }} {...props}>
+                                                            <code className="ai-md-code select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text', fontSize: 12, padding: '2px 6px', background: 'var(--kb-bg-inset, rgba(0,0,0,0.3))', color: fg1, borderRadius: 8 }} {...props}>
                                                                 {children}
                                                             </code>
                                                         );
@@ -628,25 +682,23 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                             </ReactMarkdown>
                                         </div>
                                     </div>
-                                </div>
-                                {msg.role === 'user' && (
-                                    <div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center overflow-hidden" style={{ background: 'var(--kb-bg-tile, #334155)' }}>
-                                        {userAvatar ? (
-                                            <img src={userAvatar} alt="User" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <span className="material-symbols-outlined text-white text-[18px]">person</span>
-                                        )}
+                                    <div className="ai-msg-actions" style={{ display: 'flex', gap: 4 }}>
+                                        <button onClick={() => handleSendToSlot(msg.content)} className="ai-btn" title={t('sendToSlot')} aria-label={t('sendToSlot')} style={{ width: 28, height: 28, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: fg2 }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>dynamic_feed</span>
+                                        </button>
+                                        <button onClick={() => handleCopy(msg.content)} className="ai-btn" title={t('copyText')} aria-label={t('copyText')} style={{ width: 28, height: 28, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: fg2 }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>content_copy</span>
+                                        </button>
                                     </div>
-                                )}
+                                </div>
+                                {msg.role === 'user' && <Avatar src={userAvatar} icon="person" tone="user" />}
                             </div>
                         ))
                     )}
                     {isGenerating && (
-                         <div className="flex gap-4 w-full justify-start">
-                              <div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center" style={{ background: 'var(--kb-bg-container, var(--theme-accent-glow))' }}>
-                                  <span className="material-symbols-outlined text-primary text-[18px] animate-spin">refresh</span>
-                              </div>
-                              <div className="p-4 text-slate-300 flex items-center" style={{ borderRadius: 24, borderTopLeftRadius: 8, background: 'var(--kb-bg-surface, rgba(255,255,255,0.04))' }}>
+                         <div style={{ display: 'flex', gap: 12, width: '100%', justifyContent: 'flex-start' }}>
+                              <Avatar icon="progress_activity" tone="ai" />
+                              <div style={{ padding: '12px 16px', borderRadius: 20, borderTopLeftRadius: 6, background: 'var(--kb-bg-surface, rgba(255,255,255,0.04))', color: fg2, fontSize: 14, display: 'flex', alignItems: 'center' }}>
                                   <span>{t('thinking')}</span>
                               </div>
                          </div>
@@ -654,29 +706,30 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                     <div ref={bottomRef} className="h-1 shrink-0" />
                 </div>
 
-                <div className="flex flex-col shrink-0 pointer-events-auto" style={{ padding: 16, borderTop: '1px solid var(--kb-stroke-subtle, var(--theme-border))' }}>
+                <div className="flex flex-col shrink-0 pointer-events-auto" style={{ padding: '8px 20px 20px' }}>
                     {attachments.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-2">
                              {attachments.map((a, i) => (
-                                 <div key={i} className="flex items-center gap-1.5 px-2 py-1 text-xs text-slate-300" style={{ borderRadius: 10, background: 'var(--kb-bg-tile, rgba(255,255,255,0.06))' }}>
-                                     <span className="material-symbols-outlined text-[14px] text-primary">{a.type === 'image' ? 'image' : 'description'}</span>
-                                     <span className="truncate max-w-[150px]">{a.name}</span>
-                                     <button onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} className="hover:text-red-400 p-0.5 rounded-sm ml-1">
-                                         <span className="material-symbols-outlined text-[14px]">close</span>
+                                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 4px 4px 10px', fontSize: 12, color: fg1, borderRadius: 10, background: 'var(--kb-bg-tile, rgba(255,255,255,0.06))' }}>
+                                     <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'var(--kb-accent, var(--theme-primary))' }}>{a.type === 'image' ? 'image' : 'description'}</span>
+                                     <span className="truncate" style={{ maxWidth: 150 }}>{a.name}</span>
+                                     <button onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} className="ai-btn" aria-label={t('remove')} style={{ width: 22, height: 22, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: fg2 }}>
+                                         <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
                                      </button>
                                  </div>
                              ))}
                         </div>
                     )}
 
-                    <div className="relative flex items-end">
+                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, background: 'var(--kb-bg-inset, rgba(0,0,0,0.4))', borderRadius: 28, padding: 6 }}>
                         <textarea
                             ref={inputRef}
                             value={input}
                             onChange={onInput}
                             placeholder={t('typeMessage')}
-                            className="w-full text-slate-200 px-4 py-3 outline-none resize-none custom-scrollbar max-h-[200px] overflow-y-auto select-auto pointer-events-auto"
-                            style={{ minHeight: '44px', borderRadius: 24 }}
+                            className="custom-scrollbar max-h-[200px] overflow-y-auto select-auto pointer-events-auto"
+                            rows={1}
+                            style={{ flex: 1, minWidth: 0, minHeight: 40, padding: '9px 8px 9px 14px', borderRadius: 0, background: 'transparent', color: fg1, fontSize: 14, border: 'none', outline: 'none', resize: 'none' }}
                             onKeyDown={e => {
                                 if (e.key === 'Enter' && !e.shiftKey) {
                                     e.preventDefault();
@@ -684,167 +737,105 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                 }
                             }}
                         />
-                        <div className="flex items-center gap-1 ml-2">
-                             {isGenerating ? (
-                                 <button onClick={handleCancel} className="w-11 h-11 flex items-center justify-center rounded-full transition-colors" style={{ background: 'var(--kb-bg-container, rgba(239,68,68,0.2))', color: 'var(--kb-danger, #ef4444)' }} aria-label={t('stopLabel')}>
-                                     <span className="material-symbols-outlined text-[20px]">stop_circle</span>
-                                 </button>
-                             ) : (
-                                 <button onClick={handleSend} disabled={!input.trim() && attachments.length === 0} className="w-11 h-11 flex items-center justify-center rounded-full hover:brightness-110 transition-colors disabled:opacity-50" style={{ background: 'var(--kb-accent, var(--theme-primary))', color: 'var(--kb-on-accent, #fff)' }} aria-label={t('typeMessage')}>
-                                     <span className="material-symbols-outlined text-[20px] -rotate-45 ml-0.5 mt-0.5">send</span>
-                                 </button>
-                             )}
-                        </div>
+                        {isGenerating ? (
+                            <button onClick={handleCancel} className="ai-btn" title={t('stopLabel')} aria-label={t('stopLabel')} style={{ width: 40, height: 40, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, ...tonal }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>stop</span>
+                            </button>
+                        ) : (
+                            <button onClick={handleSend} disabled={!input.trim() && attachments.length === 0} title={t('typeMessage')} aria-label={t('typeMessage')} style={{ width: 40, height: 40, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: 'var(--kb-accent, var(--theme-primary))', color: 'var(--kb-on-accent, #fff)', opacity: (!input.trim() && attachments.length === 0) ? 'var(--kb-opacity-disabled, 0.5)' : 1 }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_upward</span>
+                            </button>
+                        )}
                     </div>
                 </div>
+                </div>
 
-                {/* Settings Overlay View */}
+                {/* Settings view */}
                 {showSettings && (
-                    <div className="absolute top-[57px] left-0 right-0 bottom-0  z-50 flex flex-col no-drag-region" style={{ backgroundColor: 'var(--kb-bg-shell, #1a1612)' }}>
-                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
-                            <div>
-                                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('modelDefaults')}</h3>
-                                <div className="space-y-4">
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-xs text-slate-400">{t('defaultModel')}</label>
-                                        <select
-                                            value={apiKeys?.defaultModel || 'anthropic:claude-sonnet-4-6'}
-                                            onChange={(e) => usePluginChatStore.getState().setApiKeys({ defaultModel: e.target.value })}
-                                            className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 cursor-pointer"
-                                        >
-                                            {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-                                        </select>
-                                    </div>
+                    <div className="flex-1 flex flex-col no-drag-region" style={{ minHeight: 0 }}>
+                        <div className="flex-1 overflow-y-auto custom-scrollbar" style={{ padding: '4px 20px 12px', display: 'flex', flexDirection: 'column', gap: 16, minHeight: 0 }}>
+                            <section style={cardStyle}>
+                                <h3 style={cardTitle}>{t('modelDefaults')}</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    <label style={labelStyle}>{t('defaultModel')}</label>
+                                    <ModelSelect
+                                        value={apiKeys?.defaultModel || 'anthropic:claude-sonnet-4-6'}
+                                        ariaLabel={t('defaultModel')}
+                                        onChange={(e) => setKeys({ defaultModel: e.target.value })}
+                                    />
                                 </div>
-                            </div>
+                            </section>
 
-                            <div className="w-full h-px bg-white/5" />
-
-                            <div>
-                                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('apiKeysProviders')}</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="flex flex-col gap-2 relative group opacity-50">
-                                        <label className="text-xs text-slate-400">{t('openaiKeyLabel')}</label>
-                                        <input disabled type="password" placeholder={t('willBeAddedSoon')} className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed" />
-                                    </div>
-                                    <div className="flex flex-col gap-2 relative group opacity-50">
-                                        <label className="text-xs text-slate-400">{t('geminiKeyLabel')}</label>
-                                        <input disabled type="password" placeholder={t('willBeAddedSoon')} className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed" />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-xs text-slate-400">{t('anthropicKeyLabel')}</label>
-                                        <input 
-                                            type="password" 
-                                            value={apiKeys?.anthropic || ''}
-                                            onChange={(e) => usePluginChatStore.getState().setApiKeys({ anthropic: e.target.value })}
-                                            placeholder="sk-ant-..."
-                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 select-text"
-                                        />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-xs text-slate-400">{t('localUrlLabel')}</label>
-                                        <input 
-                                            type="text" 
-                                            value={apiKeys?.localUrl || ''}
-                                            onChange={(e) => usePluginChatStore.getState().setApiKeys({ localUrl: e.target.value })}
-                                            placeholder="http://localhost:11434"
-                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 select-text"
-                                        />
-                                    </div>
+                            <section style={cardStyle}>
+                                <h3 style={cardTitle}>{t('apiKeysProviders')}</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, opacity: 0.5 }}>
+                                    <label style={labelStyle}>{t('openaiKeyLabel')}</label>
+                                    <input disabled type="password" placeholder={t('willBeAddedSoon')} style={{ ...fieldStyle, cursor: 'not-allowed' }} />
                                 </div>
-                            </div>
-
-                            <div className="w-full h-px bg-white/5" />
-
-                            <div>
-                                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('profileCustomization')}</h3>
-                                <div className="flex flex-col gap-6 md:flex-row md:gap-8">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
-                                            {aiAvatar ? (
-                                                <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <span className="material-symbols-outlined text-primary text-[32px]">smart_toy</span>
-                                            )}
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <label className="text-xs text-slate-400">{t('aiAvatar')}</label>
-                                            <div className="flex gap-2">
-                                                <label className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-xs text-slate-200 cursor-pointer transition-colors">
-                                                    {t('change')}
-                                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleAvatarUpload(e, 'ai')} />
-                                                </label>
-                                                {aiAvatar && (
-                                                    <button onClick={() => setAiAvatar(null)} className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 rounded-full text-xs text-red-500 transition-colors">
-                                                        {t('remove')}
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center overflow-hidden shrink-0">
-                                            {userAvatar ? (
-                                                <img src={userAvatar} alt="User" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <span className="material-symbols-outlined text-white text-[32px]">person</span>
-                                            )}
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <label className="text-xs text-slate-400">{t('userAvatar')}</label>
-                                            <div className="flex gap-2">
-                                                <label className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-xs text-slate-200 cursor-pointer transition-colors">
-                                                    {t('change')}
-                                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleAvatarUpload(e, 'user')} />
-                                                </label>
-                                                {userAvatar && (
-                                                    <button onClick={() => setUserAvatar(null)} className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 rounded-full text-xs text-red-500 transition-colors">
-                                                        {t('remove')}
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, opacity: 0.5 }}>
+                                    <label style={labelStyle}>{t('geminiKeyLabel')}</label>
+                                    <input disabled type="password" placeholder={t('willBeAddedSoon')} style={{ ...fieldStyle, cursor: 'not-allowed' }} />
                                 </div>
-                            </div>
-
-                            <div className="w-full h-px bg-white/5" />
-
-                            <div>
-                                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('promptCustomization')}</h3>
-                                <div className="space-y-4">
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex justify-between items-center">
-                                            <label className="text-xs text-slate-400">{t('systemMessageLabel')}</label>
-                                            <span className="text-[10px] text-slate-500 italic">{t('definesAiBehavior')}</span>
-                                        </div>
-                                        <textarea 
-                                            value={apiKeys?.systemMessage || ''}
-                                            onChange={(e) => usePluginChatStore.getState().setApiKeys({ systemMessage: e.target.value })}
-                                            placeholder="You are a helpful AI..."
-                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 min-h-[80px] resize-y select-text"
-                                        />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex justify-between items-center">
-                                            <label className="text-xs text-slate-400">{t('customInstructionsLabel')}</label>
-                                            <span className="text-[10px] text-slate-500 italic">{t('addedToSystemPrompt')}</span>
-                                        </div>
-                                        <textarea 
-                                            value={apiKeys?.customInstructions || ''}
-                                            onChange={(e) => usePluginChatStore.getState().setApiKeys({ customInstructions: e.target.value })}
-                                            placeholder="e.g. Always respond in Spanish"
-                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 min-h-[80px] resize-y select-text"
-                                        />
-                                    </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    <label style={labelStyle}>{t('anthropicKeyLabel')}</label>
+                                    <input
+                                        type="password"
+                                        value={apiKeys?.anthropic || ''}
+                                        onChange={(e) => setKeys({ anthropic: e.target.value })}
+                                        placeholder="sk-ant-..."
+                                        style={fieldStyle}
+                                    />
                                 </div>
-                            </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    <label style={labelStyle}>{t('localUrlLabel')}</label>
+                                    <input
+                                        type="text"
+                                        value={apiKeys?.localUrl || ''}
+                                        onChange={(e) => setKeys({ localUrl: e.target.value })}
+                                        placeholder="http://localhost:11434"
+                                        style={fieldStyle}
+                                    />
+                                </div>
+                            </section>
+
+                            <section style={cardStyle}>
+                                <h3 style={cardTitle}>{t('profileCustomization')}</h3>
+                                <AvatarRow type="ai" src={aiAvatar} icon="smart_toy" label={t('aiAvatar')} />
+                                <AvatarRow type="user" src={userAvatar} icon="person" label={t('userAvatar')} />
+                            </section>
+
+                            <section style={cardStyle}>
+                                <h3 style={cardTitle}>{t('promptCustomization')}</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
+                                        <label style={labelStyle}>{t('systemMessageLabel')}</label>
+                                        <span style={{ fontSize: 12, color: fg2, opacity: 0.8 }}>{t('definesAiBehavior')}</span>
+                                    </div>
+                                    <textarea
+                                        value={apiKeys?.systemMessage || ''}
+                                        onChange={(e) => setKeys({ systemMessage: e.target.value })}
+                                        placeholder="You are a helpful AI..."
+                                        style={{ ...fieldStyle, minHeight: 88, resize: 'vertical' }}
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
+                                        <label style={labelStyle}>{t('customInstructionsLabel')}</label>
+                                        <span style={{ fontSize: 12, color: fg2, opacity: 0.8 }}>{t('addedToSystemPrompt')}</span>
+                                    </div>
+                                    <textarea
+                                        value={apiKeys?.customInstructions || ''}
+                                        onChange={(e) => setKeys({ customInstructions: e.target.value })}
+                                        placeholder="e.g. Always respond in Spanish"
+                                        style={{ ...fieldStyle, minHeight: 88, resize: 'vertical' }}
+                                    />
+                                </div>
+                            </section>
                         </div>
-                        <div className="p-4 flex justify-end" style={{ borderTop: '1px solid var(--kb-stroke-subtle, var(--theme-border))' }}>
-                            <button 
+                        <div className="shrink-0" style={{ padding: '8px 20px 20px', display: 'flex', justifyContent: 'flex-end' }}>
+                            <button
                                 onClick={() => setShowSettings(false)}
-                                className="px-6 py-2.5 font-bold rounded-full hover:brightness-110 transition-colors" style={{ background: 'var(--kb-accent, var(--theme-primary))', color: 'var(--kb-on-accent, #fff)' }}
+                                style={{ padding: '10px 24px', fontSize: 14, fontWeight: 600, borderRadius: 999, background: 'var(--kb-accent, var(--theme-primary))', color: 'var(--kb-on-accent, #fff)' }}
                             >
                                 {t('backToChat')}
                             </button>
