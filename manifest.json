@@ -32,5 +32,9 @@
     "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/AI%20Hub/AI-Hub2.png",
     "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/AI%20Hub/AI-Hub3.png"
   ],
-  "apiVersion": "1.0.0"
+  "apiVersion": "1.0.0",
+  "bar": {
+    "tile": { "sensitive": true },
+    "defaultSize": "icon"
+  }
 }

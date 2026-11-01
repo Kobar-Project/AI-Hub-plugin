@@ -24,14 +24,14 @@ export const SettingsPanel = () => {
     return (
         <div className="flex flex-col text-slate-200 p-2 space-y-6">
             <div>
-                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('modelDefaults')}</h3>
+                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('modelDefaults')}</h3>
                 <div className="space-y-4">
                     <div className="flex flex-col gap-2">
                         <label className="text-xs text-slate-400">{t('defaultModelLabel')}</label>
                         <select
                             value={apiKeys.defaultModel}
                             onChange={(e) => setApiKeys({ defaultModel: e.target.value })}
-                            className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 cursor-pointer"
+                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }} className="px-4 py-2.5 text-sm text-slate-200 outline-none cursor-pointer"
                         >
                             {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
                         </select>
@@ -42,7 +42,7 @@ export const SettingsPanel = () => {
             <div className="w-full h-px bg-white/5" />
 
             <div>
-                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('apiKeysProviders')}</h3>
+                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('apiKeysProviders')}</h3>
                 <div className="grid grid-cols-1 gap-4">
                     <div className="flex flex-col gap-2">
                         <label className="text-xs text-slate-400">{t('anthropicKeyLabel')}</label>
@@ -51,7 +51,8 @@ export const SettingsPanel = () => {
                             value={apiKeys.anthropic || ''}
                             onChange={(e) => setApiKeys({ anthropic: e.target.value })}
                             placeholder="sk-ant-..."
-                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 transition-colors"
+                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
+                            className="w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors"
                         />
                     </div>
                     
@@ -61,7 +62,8 @@ export const SettingsPanel = () => {
                             disabled
                             type="password" 
                             placeholder={t('comingSoon')}
-                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed"
+                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
+                            className="w-full px-4 py-2.5 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed"
                         />
                     </div>
                     <div className="flex flex-col gap-2 opacity-50">
@@ -70,7 +72,8 @@ export const SettingsPanel = () => {
                             disabled
                             type="password" 
                             placeholder={t('comingSoon')}
-                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed"
+                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
+                            className="w-full px-4 py-2.5 text-[10px] text-slate-500 outline-none select-none cursor-not-allowed"
                         />
                     </div>
 
@@ -81,7 +84,8 @@ export const SettingsPanel = () => {
                             value={apiKeys.localUrl || ''}
                             onChange={(e) => setApiKeys({ localUrl: e.target.value })}
                             placeholder="http://localhost:11434"
-                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 transition-colors"
+                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
+                            className="w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors"
                         />
                     </div>
                 </div>
@@ -90,7 +94,7 @@ export const SettingsPanel = () => {
             <div className="w-full h-px bg-white/5" />
 
             <div>
-                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">Context</h3>
+                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Context</h3>
                 <div className="space-y-4">
                     <div className="flex flex-col gap-2">
                         <label className="text-xs text-slate-400">{t('systemMessageLabel')}</label>
@@ -98,7 +102,8 @@ export const SettingsPanel = () => {
                             value={apiKeys.systemMessage || ''}
                             onChange={(e) => setApiKeys({ systemMessage: e.target.value })}
                             placeholder="You are a helpful AI assistant..."
-                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 transition-colors min-h-[80px] custom-scrollbar resize-y"
+                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
+                            className="w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors min-h-[80px] custom-scrollbar resize-y"
                         />
                     </div>
                     <div className="flex flex-col gap-2">
@@ -107,7 +112,8 @@ export const SettingsPanel = () => {
                             value={apiKeys.customInstructions || ''}
                             onChange={(e) => setApiKeys({ customInstructions: e.target.value })}
                             placeholder="User preferences..."
-                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-primary/50 transition-colors min-h-[80px] custom-scrollbar resize-y"
+                            style={{ background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 16 }}
+                            className="w-full px-4 py-2.5 text-sm text-slate-200 outline-none transition-colors min-h-[80px] custom-scrollbar resize-y"
                         />
                     </div>
                 </div>

@@ -109,14 +109,14 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
             display: 'flex',
             flexDirection: 'row', 
             backgroundColor: design === 'style2' 
-                ? `color-mix(in srgb, var(--theme-bg-dark) ${glassOpacity}%, transparent)` 
-                : 'var(--theme-bg-dark)',
-            borderColor: design === 'style2' ? 'rgba(255, 255, 255, 0.1)' : 'var(--theme-border)',
+                ? `color-mix(in srgb, var(--kb-bg-shell, var(--theme-bg-dark)) ${glassOpacity}%, transparent)` 
+                : 'var(--kb-bg-shell, var(--theme-bg-dark))',
+            borderColor: 'var(--kb-stroke-subtle, var(--theme-border))',
             borderWidth: '1px',
             borderStyle: 'solid',
             backdropFilter: design === 'style2' ? (isMac ? 'blur(8px)' : 'blur(20px)') : 'none',
             WebkitBackdropFilter: design === 'style2' ? (isMac ? 'blur(8px)' : 'blur(20px)') : 'none',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+            boxShadow: 'var(--kb-shadow-e3, 0 10px 40px rgba(0,0,0,0.5))',
             maxHeight: `${Math.floor((screenBounds?.height ?? 800) - 60)}px`,
             willChange: 'transform, opacity' 
         };
@@ -411,10 +411,10 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
     return (
         <div
             ref={popupRef}
-            className="overflow-hidden font-sans no-drag-region pointer-events-auto flex flex-row"
+            className="ai-root overflow-hidden font-sans no-drag-region pointer-events-auto flex flex-row"
             style={{
                 ...getPopupStyle(),
-                borderRadius: '8px'
+                borderRadius: 32
             }}
             onMouseEnter={() => window.api?.setIgnoreMouseEvents?.(false)}
             onMouseLeave={() => window.api?.setIgnoreMouseEvents?.(true)}
@@ -426,6 +426,9 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
             <ResizerHandle direction="corner" edgePosition={edgePosition} startDrag={startDrag} />
 
             <style>{`
+                /* Canlı hosts load Material Symbols Rounded; older hosts fall back to Outlined. */
+                .ai-root .material-symbols-outlined { font-family: 'Material Symbols Rounded', 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
+                .ai-root input:not([type=file]), .ai-root select, .ai-root textarea { background: var(--kb-bg-inset, rgba(0,0,0,0.4)); border-color: transparent; border-radius: 16px; }
                 .ai-chat-selectable, .ai-chat-selectable * { 
                     -webkit-user-select: text !important; 
                     user-select: text !important; 
@@ -437,11 +440,11 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                 }
             `}</style>
             
-            <div className={`flex transition-all duration-300 shrink-0 h-full ${isSidebarOpen ? 'w-48 opacity-100 border-r' : 'w-0 min-w-0 opacity-0 border-none overflow-hidden'}`} style={{ borderColor: 'var(--theme-border)', minHeight: 0 }}>
+            <div className={`flex transition-all duration-300 shrink-0 h-full ${isSidebarOpen ? 'w-48 opacity-100 border-r' : 'w-0 min-w-0 opacity-0 border-none overflow-hidden'}`} style={{ borderColor: 'var(--kb-stroke-subtle, var(--theme-border))', minHeight: 0 }}>
                 <div className={`flex flex-col h-full shrink-0 ${isSidebarOpen ? 'w-48' : 'w-0'}`}>
-                    <div className="p-3 border-b border-white/5 flex items-center justify-between">
-                        <span className="font-bold text-slate-200 text-sm">{t('chats')}</span>
-                        <button onClick={() => createChat()} className="w-8 h-8 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 flex items-center justify-center pointer-events-auto" title={t('newChat')}>
+                    <div className="flex items-center justify-between" style={{ padding: 16 }}>
+                        <span className="text-slate-200" style={{ fontSize: 15, fontWeight: 600, fontFamily: 'var(--kb-font-display, inherit)' }}>{t('chats')}</span>
+                        <button onClick={() => createChat()} className="w-9 h-9 rounded-full flex items-center justify-center pointer-events-auto" style={{ background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)' }} title={t('newChat')} aria-label={t('newChat')}>
                             <span className="material-symbols-outlined text-[18px]">add</span>
                         </button>
                     </div>
@@ -451,9 +454,10 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                 key={c.id} 
                                 onClick={() => setActiveChatId(c.id)}
                                 onDoubleClick={() => startEditingTitle(c.id, c.title)}
-                                className={`w-full group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors pointer-events-auto select-none
-                                    ${activeChatId === c.id ? 'bg-primary/20 text-primary' : 'hover:bg-white/5 text-slate-400'}
+                                className={`w-full group flex items-center justify-between px-4 py-2 cursor-pointer transition-colors pointer-events-auto select-none
+                                    ${activeChatId === c.id ? '' : 'hover:bg-white/5 text-slate-400'}
                                 `}
+                                style={{ borderRadius: 16, minHeight: 48, ...(activeChatId === c.id ? { background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)' } : null) }}
                             >
                                 {editingChatId === c.id ? (
                                     <input
@@ -465,7 +469,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                             if (e.key === 'Enter') saveTitle(c.id);
                                             if (e.key === 'Escape') setEditingChatId(null);
                                         }}
-                                        className="bg-black/40 border border-primary/50 text-white text-sm rounded px-1 w-full outline-none"
+                                        className="text-white text-sm px-2 w-full outline-none"
                                         onClick={(e) => e.stopPropagation()}
                                     />
                                 ) : (
@@ -473,7 +477,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                         <span className="truncate text-sm font-medium pr-2 block">{c.title}</span>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); deleteChat(c.id); }}
-                                            className={`p-1 flex items-center rounded-md hover:bg-red-500/20 text-red-400 transition-colors ${activeChatId === c.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                                            className={`p-1.5 flex items-center rounded-full hover:bg-white/10 text-red-400 transition-colors ${activeChatId === c.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
                                         >
                                             <span className="material-symbols-outlined text-[16px]">delete</span>
                                         </button>
@@ -487,9 +491,9 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
 
             {/* Main Area */}
             <div className="flex-1 flex flex-col bg-transparent relative">
-                <div className="p-3 border-b flex items-center justify-between bg-transparent shrink-0 pointer-events-auto" style={{ borderColor: 'var(--theme-border)' }}>
+                <div className="flex items-center justify-between bg-transparent shrink-0 pointer-events-auto" style={{ padding: 16, borderBottom: '1px solid var(--kb-stroke-subtle, var(--theme-border))' }}>
                     <div className="flex items-center gap-3">
-                        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
+                        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-white transition-colors" style={{ background: 'var(--kb-bg-inset, rgba(255,255,255,0.06))' }} aria-label={isSidebarOpen ? t('chats') : t('chats')}>
                             <span className="material-symbols-outlined text-[20px]">{isSidebarOpen ? 'keyboard_double_arrow_left' : 'keyboard_double_arrow_right'}</span>
                         </button>
                         <select
@@ -503,20 +507,22 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                     createChat(e.target.value);
                                 }
                             }}
-                            className="bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-slate-200 min-w-[200px] outline-none hover:border-primary/50 cursor-pointer"
+                            className="px-4 py-2 text-sm text-slate-200 min-w-[200px] outline-none cursor-pointer" style={{ borderRadius: 999 }}
                         >
                             {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
                         </select>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                         <button 
                             onClick={() => setShowSettings(!showSettings)} 
-                            className={`p-1.5 rounded-lg transition-colors ${showSettings ? 'bg-primary text-white' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}
+                            className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors ${showSettings ? '' : 'text-slate-400 hover:text-white'}`}
+                            style={showSettings ? { background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)' } : { background: 'var(--kb-bg-inset, rgba(255,255,255,0.06))' }}
                             title={t('aiHubSettings')}
+                            aria-label={t('aiHubSettings')}
                         >
                             <span className="material-symbols-outlined text-[20px]">settings</span>
                         </button>
-                        <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
+                        <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-white transition-colors" style={{ background: 'var(--kb-bg-inset, rgba(255,255,255,0.06))' }} aria-label={t('closeLabel')}>
                             <span className="material-symbols-outlined text-[20px]">close</span>
                         </button>
                     </div>
@@ -541,7 +547,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                         activeChat?.messages.map((msg) => (
                             <div key={msg.id} className={`flex gap-4 w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 {msg.role !== 'user' && (
-                                    <div className="w-8 h-8 rounded-full bg-primary/20 shrink-0 flex items-center justify-center overflow-hidden border border-white/10">
+                                    <div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center overflow-hidden" style={{ background: 'var(--kb-bg-container, var(--theme-accent-glow))' }}>
                                         {aiAvatar ? (
                                             <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
                                         ) : (
@@ -550,21 +556,21 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                     </div>
                                 )}
                                 <div className={`flex flex-col gap-1 max-w-[85%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                                    <div className={`p-4 rounded-2xl group relative ai-chat-selectable ${msg.role === 'user' ? 'bg-primary/10 text-slate-200 border border-primary/20 rounded-tr-sm' : 'bg-transparent text-slate-300 border border-white/5 rounded-tl-sm'}`} style={{ WebkitUserSelect: 'text', userSelect: 'text' }}>
+                                    <div className={`p-4 group relative ai-chat-selectable ${msg.role === 'user' ? 'text-slate-200' : 'text-slate-300'}`} style={{ WebkitUserSelect: 'text', userSelect: 'text', borderRadius: 24, ...(msg.role === 'user' ? { background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)', borderTopRightRadius: 8 } : { background: 'var(--kb-bg-surface, rgba(255,255,255,0.04))', borderTopLeftRadius: 8 }) }}>
                                         
-                                        <div className={`absolute top-2 flex gap-1  rounded-md border border-white/10 p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 
+                                        <div className={`absolute top-2 flex gap-1  rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 
                                             ${msg.role === 'user' ? '-left-16' : '-right-16'}`}>
-                                            <button onClick={() => handleSendToSlot(msg.content)} className="p-1 hover:text-primary text-slate-400 transition-colors" title={t('sendToSlot')}>
+                                            <button onClick={() => handleSendToSlot(msg.content)} className="p-1 hover:text-white text-slate-400 transition-colors" title={t('sendToSlot')}>
                                                 <span className="material-symbols-outlined text-[16px]">dynamic_feed</span>
                                             </button>
-                                            <button onClick={() => handleCopy(msg.content)} className="p-1 hover:text-primary text-slate-400 transition-colors" title={t('copyText')}>
+                                            <button onClick={() => handleCopy(msg.content)} className="p-1 hover:text-white text-slate-400 transition-colors" title={t('copyText')}>
                                                 <span className="material-symbols-outlined text-[16px]">content_copy</span>
                                             </button>
                                         </div>
 
                                         {msg.attachments && msg.attachments.length > 0 && (
                                              <div className="flex flex-wrap gap-2 mb-3">
-                                                 <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-md">+{msg.attachments.length} {t('filesAttached')}</span>
+                                                 <span className="text-xs px-2 py-1" style={{ borderRadius: 10, background: 'var(--kb-bg-container, var(--theme-accent-glow))', color: 'var(--kb-on-container, #fff)' }}>+{msg.attachments.length} {t('filesAttached')}</span>
                                              </div>
                                         )}
 
@@ -587,14 +593,14 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                                         const language = match ? match[1] : 'text';
 
                                                         return !inline ? (
-                                                            <div className="relative mt-2 mb-4 rounded-lg overflow-hidden group no-drag-region select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text' }}>
+                                                            <div className="relative mt-2 mb-4 rounded-2xl overflow-hidden group no-drag-region select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text' }}>
                                                                 <div className="absolute right-2 top-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                                                                     <button 
                                                                         onClick={(e) => {
                                                                             e.stopPropagation();
                                                                             window.api?.writeToClipboard?.({ type: 'text', content: String(children).replace(/\n$/, '') });
                                                                         }}
-                                                                        className="p-1.5 bg-white/10 hover:bg-white/20 rounded-md text-slate-300 transition-colors flex items-center"
+                                                                        className="p-1.5 bg-white/10 hover:bg-white/20 rounded-full text-slate-300 transition-colors flex items-center"
                                                                         title={t('copyToOsClipboard')}
                                                                     >
                                                                         <span className="material-symbols-outlined text-[14px]">content_copy</span>
@@ -604,14 +610,14 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                                                     style={vscDarkPlus}
                                                                     language={language}
                                                                     PreTag="div"
-                                                                    className="text-xs !m-0 !bg-black/40 select-text"
-                                                                    customStyle={{ WebkitUserSelect: 'text', userSelect: 'text' }}
+                                                                    className="text-xs !m-0 select-text"
+                                                                    customStyle={{ WebkitUserSelect: 'text', userSelect: 'text', margin: 0, background: 'var(--kb-bg-inset, rgba(0,0,0,0.4))', fontFamily: "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)" }}
                                                                 >
                                                                     {String(children).replace(/\n$/, '')}
                                                                 </SyntaxHighlighter>
                                                             </div>
                                                         ) : (
-                                                            <code className="bg-black/30 text-primary px-1.5 py-0.5 rounded font-mono text-xs select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text' }} {...props}>
+                                                            <code className="text-slate-200 px-1.5 py-0.5 font-mono text-xs select-text" style={{ WebkitUserSelect: 'text', userSelect: 'text', background: 'var(--kb-bg-inset, rgba(0,0,0,0.3))', borderRadius: 8 }} {...props}>
                                                                 {children}
                                                             </code>
                                                         );
@@ -624,7 +630,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                     </div>
                                 </div>
                                 {msg.role === 'user' && (
-                                    <div className="w-8 h-8 rounded-full bg-slate-700 shrink-0 flex items-center justify-center overflow-hidden border border-white/10">
+                                    <div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center overflow-hidden" style={{ background: 'var(--kb-bg-tile, #334155)' }}>
                                         {userAvatar ? (
                                             <img src={userAvatar} alt="User" className="w-full h-full object-cover" />
                                         ) : (
@@ -637,22 +643,22 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                     )}
                     {isGenerating && (
                          <div className="flex gap-4 w-full justify-start">
-                              <div className="w-8 h-8 rounded-full bg-primary/20 shrink-0 flex items-center justify-center">
+                              <div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center" style={{ background: 'var(--kb-bg-container, var(--theme-accent-glow))' }}>
                                   <span className="material-symbols-outlined text-primary text-[18px] animate-spin">refresh</span>
                               </div>
-                              <div className="p-4 rounded-2xl bg-transparent text-slate-300 border border-white/5 rounded-tl-sm flex items-center">
-                                  <span className="animate-pulse">{t('thinking')}</span>
+                              <div className="p-4 text-slate-300 flex items-center" style={{ borderRadius: 24, borderTopLeftRadius: 8, background: 'var(--kb-bg-surface, rgba(255,255,255,0.04))' }}>
+                                  <span>{t('thinking')}</span>
                               </div>
                          </div>
                     )}
                     <div ref={bottomRef} className="h-1 shrink-0" />
                 </div>
 
-                <div className="p-3 border-t flex flex-col bg-black/10 shrink-0 pointer-events-auto" style={{ borderColor: 'var(--theme-border)' }}>
+                <div className="flex flex-col shrink-0 pointer-events-auto" style={{ padding: 16, borderTop: '1px solid var(--kb-stroke-subtle, var(--theme-border))' }}>
                     {attachments.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-2">
                              {attachments.map((a, i) => (
-                                 <div key={i} className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 rounded-md text-xs text-slate-300">
+                                 <div key={i} className="flex items-center gap-1.5 px-2 py-1 text-xs text-slate-300" style={{ borderRadius: 10, background: 'var(--kb-bg-tile, rgba(255,255,255,0.06))' }}>
                                      <span className="material-symbols-outlined text-[14px] text-primary">{a.type === 'image' ? 'image' : 'description'}</span>
                                      <span className="truncate max-w-[150px]">{a.name}</span>
                                      <button onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} className="hover:text-red-400 p-0.5 rounded-sm ml-1">
@@ -663,14 +669,14 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                         </div>
                     )}
 
-                    <div className="relative flex items-end focus-within:border-primary/50 transition-colors">
+                    <div className="relative flex items-end">
                         <textarea
                             ref={inputRef}
                             value={input}
                             onChange={onInput}
                             placeholder={t('typeMessage')}
-                            className="w-full bg-black/20 text-slate-200 rounded-lg p-3 outline-none resize-none custom-scrollbar border border-white/5 focus:border-primary/50 transition-colors max-h-[200px] overflow-y-auto select-auto pointer-events-auto"
-                            style={{ minHeight: '44px' }}
+                            className="w-full text-slate-200 px-4 py-3 outline-none resize-none custom-scrollbar max-h-[200px] overflow-y-auto select-auto pointer-events-auto"
+                            style={{ minHeight: '44px', borderRadius: 24 }}
                             onKeyDown={e => {
                                 if (e.key === 'Enter' && !e.shiftKey) {
                                     e.preventDefault();
@@ -678,13 +684,13 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                 }
                             }}
                         />
-                        <div className="flex items-center gap-1 pb-1 ml-2">
+                        <div className="flex items-center gap-1 ml-2">
                              {isGenerating ? (
-                                 <button onClick={handleCancel} className="p-2 rounded-xl bg-red-500/20 text-red-500 hover:bg-red-500/30 transition-colors">
+                                 <button onClick={handleCancel} className="w-11 h-11 flex items-center justify-center rounded-full transition-colors" style={{ background: 'var(--kb-bg-container, rgba(239,68,68,0.2))', color: 'var(--kb-danger, #ef4444)' }} aria-label={t('stopLabel')}>
                                      <span className="material-symbols-outlined text-[20px]">stop_circle</span>
                                  </button>
                              ) : (
-                                 <button onClick={handleSend} disabled={!input.trim() && attachments.length === 0} className="p-2 rounded-xl bg-primary text-white hover:brightness-110 transition-colors disabled:opacity-50">
+                                 <button onClick={handleSend} disabled={!input.trim() && attachments.length === 0} className="w-11 h-11 flex items-center justify-center rounded-full hover:brightness-110 transition-colors disabled:opacity-50" style={{ background: 'var(--kb-accent, var(--theme-primary))', color: 'var(--kb-on-accent, #fff)' }} aria-label={t('typeMessage')}>
                                      <span className="material-symbols-outlined text-[20px] -rotate-45 ml-0.5 mt-0.5">send</span>
                                  </button>
                              )}
@@ -694,10 +700,10 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
 
                 {/* Settings Overlay View */}
                 {showSettings && (
-                    <div className="absolute top-[57px] left-0 right-0 bottom-0  z-50 flex flex-col no-drag-region" style={{ backgroundColor: '#1a1612' }}>
+                    <div className="absolute top-[57px] left-0 right-0 bottom-0  z-50 flex flex-col no-drag-region" style={{ backgroundColor: 'var(--kb-bg-shell, #1a1612)' }}>
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
                             <div>
-                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('modelDefaults')}</h3>
+                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('modelDefaults')}</h3>
                                 <div className="space-y-4">
                                     <div className="flex flex-col gap-2">
                                         <label className="text-xs text-slate-400">{t('defaultModel')}</label>
@@ -715,7 +721,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                             <div className="w-full h-px bg-white/5" />
 
                             <div>
-                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('apiKeysProviders')}</h3>
+                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('apiKeysProviders')}</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="flex flex-col gap-2 relative group opacity-50">
                                         <label className="text-xs text-slate-400">{t('openaiKeyLabel')}</label>
@@ -751,10 +757,10 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                             <div className="w-full h-px bg-white/5" />
 
                             <div>
-                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('profileCustomization')}</h3>
+                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('profileCustomization')}</h3>
                                 <div className="flex flex-col gap-6 md:flex-row md:gap-8">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-xl bg-primary/10 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                                        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
                                             {aiAvatar ? (
                                                 <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
                                             ) : (
@@ -764,12 +770,12 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                         <div className="flex flex-col gap-2">
                                             <label className="text-xs text-slate-400">{t('aiAvatar')}</label>
                                             <div className="flex gap-2">
-                                                <label className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-slate-200 cursor-pointer transition-colors">
+                                                <label className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-xs text-slate-200 cursor-pointer transition-colors">
                                                     {t('change')}
                                                     <input type="file" accept="image/*" className="hidden" onChange={(e) => handleAvatarUpload(e, 'ai')} />
                                                 </label>
                                                 {aiAvatar && (
-                                                    <button onClick={() => setAiAvatar(null)} className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-xs text-red-500 transition-colors">
+                                                    <button onClick={() => setAiAvatar(null)} className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 rounded-full text-xs text-red-500 transition-colors">
                                                         {t('remove')}
                                                     </button>
                                                 )}
@@ -778,7 +784,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                     </div>
 
                                     <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                                        <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center overflow-hidden shrink-0">
                                             {userAvatar ? (
                                                 <img src={userAvatar} alt="User" className="w-full h-full object-cover" />
                                             ) : (
@@ -788,12 +794,12 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                         <div className="flex flex-col gap-2">
                                             <label className="text-xs text-slate-400">{t('userAvatar')}</label>
                                             <div className="flex gap-2">
-                                                <label className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-slate-200 cursor-pointer transition-colors">
+                                                <label className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-xs text-slate-200 cursor-pointer transition-colors">
                                                     {t('change')}
                                                     <input type="file" accept="image/*" className="hidden" onChange={(e) => handleAvatarUpload(e, 'user')} />
                                                 </label>
                                                 {userAvatar && (
-                                                    <button onClick={() => setUserAvatar(null)} className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-xs text-red-500 transition-colors">
+                                                    <button onClick={() => setUserAvatar(null)} className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 rounded-full text-xs text-red-500 transition-colors">
                                                         {t('remove')}
                                                     </button>
                                                 )}
@@ -806,7 +812,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                             <div className="w-full h-px bg-white/5" />
 
                             <div>
-                                <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4">{t('promptCustomization')}</h3>
+                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('promptCustomization')}</h3>
                                 <div className="space-y-4">
                                     <div className="flex flex-col gap-2">
                                         <div className="flex justify-between items-center">
@@ -835,10 +841,10 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="p-4 border-t border-white/5 bg-black/20 flex justify-end">
+                        <div className="p-4 flex justify-end" style={{ borderTop: '1px solid var(--kb-stroke-subtle, var(--theme-border))' }}>
                             <button 
                                 onClick={() => setShowSettings(false)}
-                                className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:brightness-110 transition-all shadow-lg"
+                                className="px-6 py-2.5 font-bold rounded-full hover:brightness-110 transition-colors" style={{ background: 'var(--kb-accent, var(--theme-primary))', color: 'var(--kb-on-accent, #fff)' }}
                             >
                                 {t('backToChat')}
                             </button>

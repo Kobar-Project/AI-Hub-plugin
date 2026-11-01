@@ -1,6 +1,7 @@
 import { AiHubPanel } from './AiHubPanel';
 import { SettingsPanel } from './SettingsPanel';
 import { getTranslation } from './translations';
+import { usePluginChatStore } from './usePluginChatStore';
 
 // Register Settings Panel
 if (window.KoBarExtensions.registerSettingsPanel) {
@@ -36,4 +37,49 @@ if (window.KoBarExtensions.registerSidebarButton) {
             }
         }
     });
+}
+
+// Bar badge: 'dot' when an AI Hub reply finished while the panel was closed.
+// Feature-detected: older hosts without the tile API simply ignore it.
+{
+    const BTN_ID = 'com.kobar.aihub.btn';
+    const PANEL_ID = 'com.kobar.aihub.panel';
+    const ext = window.KoBarExtensions;
+    let unread = false;
+
+    const pushState = () => {
+        if (typeof ext?.setBarItemState !== 'function') return;
+        try {
+            ext.setBarItemState(BTN_ID, {
+                label: getTranslation(window.useAppStore.getState().language, 'pluginName'),
+                badge: unread ? 'dot' : 0
+            });
+        } catch (e) { /* host without the tile API */ }
+    };
+
+    const isPanelOpen = () => window.useAppStore.getState().activeExtensionPanelId === PANEL_ID;
+    const isOurMessage = (data) => {
+        const chat = usePluginChatStore.getState().chats.find(c => c.id === data?.chatId);
+        return !!chat && chat.messages.some(m => m.id === data?.messageId);
+    };
+    const markUnread = (data) => {
+        if (isPanelOpen() || !isOurMessage(data) || unread) return;
+        unread = true;
+        pushState();
+    };
+
+    if (typeof ext?.setBarItemState === 'function') {
+        window.api?.onLlmStreamEnd?.(markUnread);
+        window.api?.onLlmStreamError?.(markUnread);
+        // Clear the dot when the user opens the panel (they have seen the reply).
+        window.useAppStore.subscribe((state) => {
+            if (unread && state.activeExtensionPanelId === PANEL_ID) {
+                unread = false;
+                pushState();
+            }
+        });
+        if (typeof ext?.onBarItemChange === 'function') {
+            ext.onBarItemChange(BTN_ID, () => pushState());
+        }
+    }
 }

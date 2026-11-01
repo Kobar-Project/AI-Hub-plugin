@@ -1,6 +1,8 @@
 export const TRANSLATIONS = {
     en: {
         pluginName: "AI Hub (Plugin)",
+        closeLabel: "Close",
+        stopLabel: "Stop",
         chats: "Chats",
         newChat: "New Chat",
         aiHubSettings: "AI Hub Settings",
@@ -35,6 +37,8 @@ export const TRANSLATIONS = {
     },
     tr: {
         pluginName: "Yapay Zeka Merkezi (Eklenti)",
+        closeLabel: "Kapat",
+        stopLabel: "Durdur",
         chats: "Sohbetler",
         newChat: "Yeni Sohbet",
         aiHubSettings: "Yapay Zeka Merkezi Ayarları",
@@ -69,6 +73,8 @@ export const TRANSLATIONS = {
     },
     de: {
         pluginName: "KI Hub (Plugin)",
+        closeLabel: "Schließen",
+        stopLabel: "Stoppen",
         chats: "Chats",
         newChat: "Neuer Chat",
         aiHubSettings: "KI Hub Einstellungen",
@@ -103,6 +109,8 @@ export const TRANSLATIONS = {
     },
     es: {
         pluginName: "Centro de IA (Plugin)",
+        closeLabel: "Cerrar",
+        stopLabel: "Detener",
         chats: "Chats",
         newChat: "Nuevo Chat",
         aiHubSettings: "Ajustes del Centro de IA",
@@ -137,6 +145,8 @@ export const TRANSLATIONS = {
     },
     fr: {
         pluginName: "Hub IA (Plugin)",
+        closeLabel: "Fermer",
+        stopLabel: "Arrêter",
         chats: "Chats",
         newChat: "Nouveau Chat",
         aiHubSettings: "Paramètres du Hub IA",
@@ -171,6 +181,8 @@ export const TRANSLATIONS = {
     },
     ru: {
         pluginName: "Центр ИИ (Плагин)",
+        closeLabel: "Закрыть",
+        stopLabel: "Остановить",
         chats: "Чаты",
         newChat: "Новый чат",
         aiHubSettings: "Настройки Центра ИИ",
@@ -205,6 +217,8 @@ export const TRANSLATIONS = {
     },
     ar: {
         pluginName: "مركز الذكاء الاصطناعي (مكون إضافي)",
+        closeLabel: "إغلاق",
+        stopLabel: "إيقاف",
         chats: "المحادثات",
         newChat: "محادثة جديدة",
         aiHubSettings: "إعدادات مركز الذكاء الاصطناعي",
@@ -239,6 +253,8 @@ export const TRANSLATIONS = {
     },
     zh: {
         pluginName: "AI 中心 (插件)",
+        closeLabel: "关闭",
+        stopLabel: "停止",
         chats: "聊天",
         newChat: "新聊天",
         aiHubSettings: "AI 中心设置",
@@ -273,6 +289,8 @@ export const TRANSLATIONS = {
     },
     ja: {
         pluginName: "AIハブ (プラグイン)",
+        closeLabel: "閉じる",
+        stopLabel: "停止",
         chats: "チャット",
         newChat: "新しいチャット",
         aiHubSettings: "AIハブ設定",
@@ -307,6 +325,8 @@ export const TRANSLATIONS = {
     },
     hi: {
         pluginName: "एआई हब (प्लगइन)",
+        closeLabel: "बंद करें",
+        stopLabel: "रोकें",
         chats: "चैट्स",
         newChat: "नया चैट",
         aiHubSettings: "एआई हब सेटिंग्स",
