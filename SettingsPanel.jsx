@@ -24,7 +24,7 @@ export const SettingsPanel = () => {
     return (
         <div className="flex flex-col text-slate-200 p-2 space-y-6">
             <div>
-                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('modelDefaults')}</h3>
+                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('modelDefaults')}</h3>
                 <div className="space-y-4">
                     <div className="flex flex-col gap-2">
                         <label className="text-xs text-slate-400">{t('defaultModelLabel')}</label>
@@ -42,7 +42,7 @@ export const SettingsPanel = () => {
             <div className="w-full h-px bg-white/5" />
 
             <div>
-                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('apiKeysProviders')}</h3>
+                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('apiKeysProviders')}</h3>
                 <div className="grid grid-cols-1 gap-4">
                     <div className="flex flex-col gap-2">
                         <label className="text-xs text-slate-400">{t('anthropicKeyLabel')}</label>
@@ -94,7 +94,7 @@ export const SettingsPanel = () => {
             <div className="w-full h-px bg-white/5" />
 
             <div>
-                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Context</h3>
+                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('promptCustomization')}</h3>
                 <div className="space-y-4">
                     <div className="flex flex-col gap-2">
                         <label className="text-xs text-slate-400">{t('systemMessageLabel')}</label>

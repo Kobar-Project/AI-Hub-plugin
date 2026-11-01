@@ -703,7 +703,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                     <div className="absolute top-[57px] left-0 right-0 bottom-0  z-50 flex flex-col no-drag-region" style={{ backgroundColor: 'var(--kb-bg-shell, #1a1612)' }}>
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
                             <div>
-                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('modelDefaults')}</h3>
+                                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('modelDefaults')}</h3>
                                 <div className="space-y-4">
                                     <div className="flex flex-col gap-2">
                                         <label className="text-xs text-slate-400">{t('defaultModel')}</label>
@@ -721,7 +721,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                             <div className="w-full h-px bg-white/5" />
 
                             <div>
-                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('apiKeysProviders')}</h3>
+                                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('apiKeysProviders')}</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="flex flex-col gap-2 relative group opacity-50">
                                         <label className="text-xs text-slate-400">{t('openaiKeyLabel')}</label>
@@ -757,7 +757,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                             <div className="w-full h-px bg-white/5" />
 
                             <div>
-                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('profileCustomization')}</h3>
+                                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('profileCustomization')}</h3>
                                 <div className="flex flex-col gap-6 md:flex-row md:gap-8">
                                     <div className="flex items-center gap-4">
                                         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
@@ -812,7 +812,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                             <div className="w-full h-px bg-white/5" />
 
                             <div>
-                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">{t('promptCustomization')}</h3>
+                                <h3 className="mb-4" style={{ fontSize: 13, fontWeight: 600, color: 'var(--kb-fg-2, #94a3b8)' }}>{t('promptCustomization')}</h3>
                                 <div className="space-y-4">
                                     <div className="flex flex-col gap-2">
                                         <div className="flex justify-between items-center">
