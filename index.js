@@ -39613,7 +39613,7 @@
     },
     preprocessMarkdown(text2)
   );
-  const HistoryList = ({ t, chats, activeChatId, onPick, onNew, onRename, onDelete, editingChatId, editTitle, setEditTitle, saveTitle, cancelEdit, editInputRef, primaryNew }) => {
+  const HistoryList = ({ t, chats, activeChatId, onPick, onNew, onRename, onDelete, editingChatId, editTitle, setEditTitle, saveTitle, cancelEdit, editInputRef, primaryNew, headerEdits }) => {
     const { useState } = window.React;
     const [query, setQuery] = useState("");
     const q = query.trim().toLowerCase();
@@ -39652,7 +39652,7 @@
           className: `ai-row ${active ? "" : "ai-row-idle"}`,
           style: { display: "flex", alignItems: "center", gap: 4, minHeight: 56, padding: "6px 6px 6px 14px", borderRadius: 16, cursor: "pointer", userSelect: "none", flexShrink: 0, ...active ? tonal : { background: "var(--kb-bg-tile, rgba(255,255,255,0.04))", color: fg1 } }
         },
-        editingChatId === c.id ? /* @__PURE__ */ window.React.createElement(
+        editingChatId === c.id && !(headerEdits && active) ? /* @__PURE__ */ window.React.createElement(
           "input",
           {
             ref: editInputRef,
@@ -39726,6 +39726,7 @@
     const [editTitle, setEditTitle] = useState("");
     const editInputRef = useRef(null);
     const messagesScrollRef = useRef(null);
+    const rootRef = useRef(null);
     const activeChat = chats.find((c) => c.id === activeChatId) || null;
     const wide = aiHubWidth >= WIDE;
     useEffect(() => {
@@ -39742,6 +39743,10 @@
         });
       }
     }, [activeChat?.messages.length, activeChat?.messages[activeChat?.messages.length - 1]?.content, isAutoScrollEnabled, view]);
+    useEffect(() => {
+      if (view === "chat") setTimeout(() => inputRef.current?.focus(), 60);
+      else rootRef.current?.focus();
+    }, [view]);
     const getPopupStyle = () => {
       if (!anchorRect) return { display: "none" };
       const screenHeight = screenBounds?.height ?? 800;
@@ -40146,6 +40151,8 @@ ${currentApiKeys.customInstructions}` : ""
     return /* @__PURE__ */ window.React.createElement(
       "div",
       {
+        ref: rootRef,
+        tabIndex: -1,
         className: "ai-root font-sans no-drag-region pointer-events-auto",
         style: { ...getPopupStyle(), borderRadius: 32, overflow: "hidden", fontFamily: "var(--kb-font-body, inherit)" },
         onKeyDown,
@@ -40168,6 +40175,7 @@ ${currentApiKeys.customInstructions}` : ""
       /* @__PURE__ */ window.React.createElement("style", null, `
                 /* Canli hosts load Material Symbols Rounded; older hosts fall back to Outlined. */
                 .ai-root .material-symbols-outlined { font-family: 'Material Symbols Rounded', 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
+                .ai-root:focus { outline: none; }
                 .ai-root input:not([type=file]), .ai-root select, .ai-root textarea { font-family: inherit; }
                 .ai-root input::placeholder, .ai-root textarea::placeholder { color: var(--kb-fg-2, #94a3b8); opacity: 1; }
                 .ai-root select option { background: var(--kb-bg-surface, #1f2937); color: var(--kb-fg-1, #f1f5f9); }
@@ -40183,7 +40191,7 @@ ${currentApiKeys.customInstructions}` : ""
                 .ai-root .ai-md > :last-child { margin-bottom: 0 !important; }
                 .ai-root .ai-resizer:hover { background: var(--kb-fill-hover, rgba(255,255,255,0.08)); }
             `),
-      wide && view === "chat" && /* @__PURE__ */ window.React.createElement("div", { style: { width: 232, flexShrink: 0, display: "flex", flexDirection: "column", minHeight: 0, padding: "20px 12px 20px 20px", borderRight: `1px solid ${stroke}` } }, /* @__PURE__ */ window.React.createElement(HistoryList, { ...historyProps })),
+      wide && view === "chat" && /* @__PURE__ */ window.React.createElement("div", { style: { width: 232, flexShrink: 0, display: "flex", flexDirection: "column", minHeight: 0, padding: "20px 12px 20px 20px", borderRight: `1px solid ${stroke}` } }, /* @__PURE__ */ window.React.createElement(HistoryList, { ...historyProps, headerEdits: true })),
       /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column", position: "relative" } }, header, view === "chat" && chatView, view === "history" && /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minHeight: 0, display: "flex", flexDirection: "column", padding: "4px 20px 20px" } }, /* @__PURE__ */ window.React.createElement(HistoryList, { ...historyProps, primaryNew: true })), view === "settings" && settingsView),
       dragging && /* @__PURE__ */ window.React.createElement("div", { style: { position: "absolute", inset: 12, zIndex: 40, borderRadius: 24, border: `2px dashed ${accent}`, background: "color-mix(in srgb, var(--kb-bg-shell, #111827) 88%, transparent)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, pointerEvents: "none", color: fg1 } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "upload_file", size: 32, style: { color: accent } }), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 15, fontWeight: 600, fontFamily: display } }, t("dropFiles")))
     );
@@ -40261,7 +40269,7 @@ ${currentApiKeys.customInstructions}` : ""
       try {
         const { busy, unread, error } = getBarState();
         const lang = window.useAppStore.getState().language;
-        const key = busy ? "tileBusy" : unread ? "tileUnread" : error ? "tileError" : "pluginName";
+        const key = busy ? "tileBusy" : error ? "tileError" : unread ? "tileUnread" : "pluginName";
         ext.setBarItemState(BTN_ID, {
           label: getTranslation(lang, key),
           icon: busy ? "more_horiz" : "smart_toy",

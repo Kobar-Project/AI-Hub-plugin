@@ -53,7 +53,7 @@ if (window.KoBarExtensions.registerSidebarButton) {
         try {
             const { busy, unread, error } = getBarState();
             const lang = window.useAppStore.getState().language;
-            const key = busy ? 'tileBusy' : unread ? 'tileUnread' : error ? 'tileError' : 'pluginName';
+            const key = busy ? 'tileBusy' : error ? 'tileError' : unread ? 'tileUnread' : 'pluginName';
             ext.setBarItemState(BTN_ID, {
                 label: getTranslation(lang, key),
                 icon: busy ? 'more_horiz' : 'smart_toy',

@@ -151,7 +151,7 @@ const MarkdownBody = ({ text, t }) => (
 );
 
 /** Chat list: search, new chat, rows with rename and delete. Used as a fixed column (wide) or as its own view. */
-const HistoryList = ({ t, chats, activeChatId, onPick, onNew, onRename, onDelete, editingChatId, editTitle, setEditTitle, saveTitle, cancelEdit, editInputRef, primaryNew }) => {
+const HistoryList = ({ t, chats, activeChatId, onPick, onNew, onRename, onDelete, editingChatId, editTitle, setEditTitle, saveTitle, cancelEdit, editInputRef, primaryNew, headerEdits }) => {
     const { useState } = window.React;
     const [query, setQuery] = useState('');
     const q = query.trim().toLowerCase();
@@ -195,7 +195,7 @@ const HistoryList = ({ t, chats, activeChatId, onPick, onNew, onRename, onDelete
                             className={`ai-row ${active ? '' : 'ai-row-idle'}`}
                             style={{ display: 'flex', alignItems: 'center', gap: 4, minHeight: 56, padding: '6px 6px 6px 14px', borderRadius: 16, cursor: 'pointer', userSelect: 'none', flexShrink: 0, ...(active ? tonal : { background: 'var(--kb-bg-tile, rgba(255,255,255,0.04))', color: fg1 }) }}
                         >
-                            {editingChatId === c.id ? (
+                            {editingChatId === c.id && !(headerEdits && active) ? (
                                 <input
                                     ref={editInputRef}
                                     value={editTitle}
@@ -275,6 +275,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
     const editInputRef = useRef(null);
 
     const messagesScrollRef = useRef(null);
+    const rootRef = useRef(null);
     const activeChat = chats.find(c => c.id === activeChatId) || null;
     const wide = aiHubWidth >= WIDE;
 
@@ -294,6 +295,12 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
             });
         }
     }, [activeChat?.messages.length, activeChat?.messages[activeChat?.messages.length - 1]?.content, isAutoScrollEnabled, view]);
+
+    // The view switch unmounts the button that had focus; keep focus inside the panel so Esc (back / close) still works.
+    useEffect(() => {
+        if (view === 'chat') setTimeout(() => inputRef.current?.focus(), 60);
+        else rootRef.current?.focus();
+    }, [view]);
 
     const getPopupStyle = () => {
         if (!anchorRect) return { display: 'none' };
@@ -927,6 +934,8 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
 
     return (
         <div
+            ref={rootRef}
+            tabIndex={-1}
             className="ai-root font-sans no-drag-region pointer-events-auto"
             style={{ ...getPopupStyle(), borderRadius: 32, overflow: 'hidden', fontFamily: 'var(--kb-font-body, inherit)' }}
             onKeyDown={onKeyDown}
@@ -944,6 +953,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
             <style>{`
                 /* Canli hosts load Material Symbols Rounded; older hosts fall back to Outlined. */
                 .ai-root .material-symbols-outlined { font-family: 'Material Symbols Rounded', 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
+                .ai-root:focus { outline: none; }
                 .ai-root input:not([type=file]), .ai-root select, .ai-root textarea { font-family: inherit; }
                 .ai-root input::placeholder, .ai-root textarea::placeholder { color: var(--kb-fg-2, #94a3b8); opacity: 1; }
                 .ai-root select option { background: var(--kb-bg-surface, #1f2937); color: var(--kb-fg-1, #f1f5f9); }
@@ -962,7 +972,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
 
             {wide && view === 'chat' && (
                 <div style={{ width: 232, flexShrink: 0, display: 'flex', flexDirection: 'column', minHeight: 0, padding: '20px 12px 20px 20px', borderRight: `1px solid ${stroke}` }}>
-                    <HistoryList {...historyProps} />
+                    <HistoryList {...historyProps} headerEdits />
                 </div>
             )}
 
