@@ -1591,7 +1591,7 @@
       }
       create2 = productionCreate(filePath, options.jsx, options.jsxs);
     }
-    const state = {
+    const state2 = {
       Fragment: options.Fragment,
       ancestors: [],
       components: options.components || {},
@@ -1606,107 +1606,107 @@
       stylePropertyNameCase: options.stylePropertyNameCase || "dom",
       tableCellAlignToStyle: options.tableCellAlignToStyle !== false
     };
-    const result = one$1(state, tree, void 0);
+    const result = one$1(state2, tree, void 0);
     if (result && typeof result !== "string") {
       return result;
     }
-    return state.create(
+    return state2.create(
       tree,
-      state.Fragment,
+      state2.Fragment,
       { children: result || void 0 },
       void 0
     );
   }
-  function one$1(state, node2, key) {
+  function one$1(state2, node2, key) {
     if (node2.type === "element") {
-      return element$1(state, node2, key);
+      return element$1(state2, node2, key);
     }
     if (node2.type === "mdxFlowExpression" || node2.type === "mdxTextExpression") {
-      return mdxExpression(state, node2);
+      return mdxExpression(state2, node2);
     }
     if (node2.type === "mdxJsxFlowElement" || node2.type === "mdxJsxTextElement") {
-      return mdxJsxElement(state, node2, key);
+      return mdxJsxElement(state2, node2, key);
     }
     if (node2.type === "mdxjsEsm") {
-      return mdxEsm(state, node2);
+      return mdxEsm(state2, node2);
     }
     if (node2.type === "root") {
-      return root$2(state, node2, key);
+      return root$2(state2, node2, key);
     }
     if (node2.type === "text") {
-      return text$5(state, node2);
+      return text$5(state2, node2);
     }
   }
-  function element$1(state, node2, key) {
-    const parentSchema = state.schema;
+  function element$1(state2, node2, key) {
+    const parentSchema = state2.schema;
     let schema2 = parentSchema;
     if (node2.tagName.toLowerCase() === "svg" && parentSchema.space === "html") {
       schema2 = svg;
-      state.schema = schema2;
+      state2.schema = schema2;
     }
-    state.ancestors.push(node2);
-    const type = findComponentFromName(state, node2.tagName, false);
-    const props = createElementProps(state, node2);
-    let children = createChildren$1(state, node2);
+    state2.ancestors.push(node2);
+    const type = findComponentFromName(state2, node2.tagName, false);
+    const props = createElementProps(state2, node2);
+    let children = createChildren$1(state2, node2);
     if (tableElements.has(node2.tagName)) {
       children = children.filter(function(child) {
         return typeof child === "string" ? !whitespace(child) : true;
       });
     }
-    addNode(state, props, type, node2);
+    addNode(state2, props, type, node2);
     addChildren(props, children);
-    state.ancestors.pop();
-    state.schema = parentSchema;
-    return state.create(node2, type, props, key);
+    state2.ancestors.pop();
+    state2.schema = parentSchema;
+    return state2.create(node2, type, props, key);
   }
-  function mdxExpression(state, node2) {
-    if (node2.data && node2.data.estree && state.evaluater) {
+  function mdxExpression(state2, node2) {
+    if (node2.data && node2.data.estree && state2.evaluater) {
       const program = node2.data.estree;
       const expression = program.body[0];
       ok$1(expression.type === "ExpressionStatement");
       return (
         /** @type {Child | undefined} */
-        state.evaluater.evaluateExpression(expression.expression)
+        state2.evaluater.evaluateExpression(expression.expression)
       );
     }
-    crashEstree(state, node2.position);
+    crashEstree(state2, node2.position);
   }
-  function mdxEsm(state, node2) {
-    if (node2.data && node2.data.estree && state.evaluater) {
+  function mdxEsm(state2, node2) {
+    if (node2.data && node2.data.estree && state2.evaluater) {
       return (
         /** @type {Child | undefined} */
-        state.evaluater.evaluateProgram(node2.data.estree)
+        state2.evaluater.evaluateProgram(node2.data.estree)
       );
     }
-    crashEstree(state, node2.position);
+    crashEstree(state2, node2.position);
   }
-  function mdxJsxElement(state, node2, key) {
-    const parentSchema = state.schema;
+  function mdxJsxElement(state2, node2, key) {
+    const parentSchema = state2.schema;
     let schema2 = parentSchema;
     if (node2.name === "svg" && parentSchema.space === "html") {
       schema2 = svg;
-      state.schema = schema2;
+      state2.schema = schema2;
     }
-    state.ancestors.push(node2);
-    const type = node2.name === null ? state.Fragment : findComponentFromName(state, node2.name, true);
-    const props = createJsxElementProps(state, node2);
-    const children = createChildren$1(state, node2);
-    addNode(state, props, type, node2);
+    state2.ancestors.push(node2);
+    const type = node2.name === null ? state2.Fragment : findComponentFromName(state2, node2.name, true);
+    const props = createJsxElementProps(state2, node2);
+    const children = createChildren$1(state2, node2);
+    addNode(state2, props, type, node2);
     addChildren(props, children);
-    state.ancestors.pop();
-    state.schema = parentSchema;
-    return state.create(node2, type, props, key);
+    state2.ancestors.pop();
+    state2.schema = parentSchema;
+    return state2.create(node2, type, props, key);
   }
-  function root$2(state, node2, key) {
+  function root$2(state2, node2, key) {
     const props = {};
-    addChildren(props, createChildren$1(state, node2));
-    return state.create(node2, state.Fragment, props, key);
+    addChildren(props, createChildren$1(state2, node2));
+    return state2.create(node2, state2.Fragment, props, key);
   }
   function text$5(_, node2) {
     return node2.value;
   }
-  function addNode(state, props, type, node2) {
-    if (typeof type !== "string" && type !== state.Fragment && state.passNode) {
+  function addNode(state2, props, type, node2) {
+    if (typeof type !== "string" && type !== state2.Fragment && state2.passNode) {
       props.node = node2;
     }
   }
@@ -1745,16 +1745,16 @@
       );
     }
   }
-  function createElementProps(state, node2) {
+  function createElementProps(state2, node2) {
     const props = {};
     let alignValue;
     let prop;
     for (prop in node2.properties) {
       if (prop !== "children" && own$3.call(node2.properties, prop)) {
-        const result = createProperty(state, prop, node2.properties[prop]);
+        const result = createProperty(state2, prop, node2.properties[prop]);
         if (result) {
           const [key, value] = result;
-          if (state.tableCellAlignToStyle && key === "align" && typeof value === "string" && tableCellElement.has(node2.tagName)) {
+          if (state2.tableCellAlignToStyle && key === "align" && typeof value === "string" && tableCellElement.has(node2.tagName)) {
             alignValue = value;
           } else {
             props[key] = value;
@@ -1767,15 +1767,15 @@
         /** @type {Style} */
         props.style || (props.style = {})
       );
-      style[state.stylePropertyNameCase === "css" ? "text-align" : "textAlign"] = alignValue;
+      style[state2.stylePropertyNameCase === "css" ? "text-align" : "textAlign"] = alignValue;
     }
     return props;
   }
-  function createJsxElementProps(state, node2) {
+  function createJsxElementProps(state2, node2) {
     const props = {};
     for (const attribute of node2.attributes) {
       if (attribute.type === "mdxJsxExpressionAttribute") {
-        if (attribute.data && attribute.data.estree && state.evaluater) {
+        if (attribute.data && attribute.data.estree && state2.evaluater) {
           const program = attribute.data.estree;
           const expression = program.body[0];
           ok$1(expression.type === "ExpressionStatement");
@@ -1785,22 +1785,22 @@
           ok$1(property.type === "SpreadElement");
           Object.assign(
             props,
-            state.evaluater.evaluateExpression(property.argument)
+            state2.evaluater.evaluateExpression(property.argument)
           );
         } else {
-          crashEstree(state, node2.position);
+          crashEstree(state2, node2.position);
         }
       } else {
         const { name: name2 } = attribute;
         let value;
         if (attribute.value && typeof attribute.value === "object") {
-          if (attribute.value.data && attribute.value.data.estree && state.evaluater) {
+          if (attribute.value.data && attribute.value.data.estree && state2.evaluater) {
             const program = attribute.value.data.estree;
             const expression = program.body[0];
             ok$1(expression.type === "ExpressionStatement");
-            value = state.evaluater.evaluateExpression(expression.expression);
+            value = state2.evaluater.evaluateExpression(expression.expression);
           } else {
-            crashEstree(state, node2.position);
+            crashEstree(state2, node2.position);
           }
         } else {
           value = attribute.value === null ? true : attribute.value;
@@ -1811,14 +1811,14 @@
     }
     return props;
   }
-  function createChildren$1(state, node2) {
+  function createChildren$1(state2, node2) {
     const children = [];
     let index2 = -1;
-    const countsByName = state.passKeys ? /* @__PURE__ */ new Map() : emptyMap;
+    const countsByName = state2.passKeys ? /* @__PURE__ */ new Map() : emptyMap;
     while (++index2 < node2.children.length) {
       const child = node2.children[index2];
       let key;
-      if (state.passKeys) {
+      if (state2.passKeys) {
         const name2 = child.type === "element" ? child.tagName : child.type === "mdxJsxFlowElement" || child.type === "mdxJsxTextElement" ? child.name : void 0;
         if (name2) {
           const count = countsByName.get(name2) || 0;
@@ -1826,29 +1826,29 @@
           countsByName.set(name2, count + 1);
         }
       }
-      const result = one$1(state, child, key);
+      const result = one$1(state2, child, key);
       if (result !== void 0) children.push(result);
     }
     return children;
   }
-  function createProperty(state, prop, value) {
+  function createProperty(state2, prop, value) {
     if (value === null || value === void 0 || typeof value === "number" && Number.isNaN(value)) {
       return;
     }
-    const info2 = find(state.schema, prop);
+    const info2 = find(state2.schema, prop);
     if (Array.isArray(value)) {
       value = info2.commaSeparated ? stringify$1(value) : stringify(value);
     }
     if (info2.property === "style") {
-      const styleObject = typeof value === "object" ? state.stylePropertyNameCase === "dom" ? value : transformStylesToCssCasing(value) : parseStyle(state, String(value));
+      const styleObject = typeof value === "object" ? state2.stylePropertyNameCase === "dom" ? value : transformStylesToCssCasing(value) : parseStyle(state2, String(value));
       return ["style", styleObject];
     }
     return [
-      state.elementAttributeNameCase === "react" && info2.space ? hastToReact[info2.property] || info2.property : info2.attribute,
+      state2.elementAttributeNameCase === "react" && info2.space ? hastToReact[info2.property] || info2.property : info2.attribute,
       value
     ];
   }
-  function parseStyle(state, value) {
+  function parseStyle(state2, value) {
     const result = {};
     try {
       StyleToObject(value, function(property, value2) {
@@ -1856,7 +1856,7 @@
           let name2 = property;
           if (name2.slice(0, 2) !== "--") {
             name2 = name2.toLowerCase();
-            if (state.stylePropertyNameCase === "dom") {
+            if (state2.stylePropertyNameCase === "dom") {
               if (name2.slice(0, 4) === "-ms-") name2 = name2.slice(1);
               name2 = name2.replace(dashLetter, toCamel);
             }
@@ -1865,7 +1865,7 @@
         }
       });
     } catch (error) {
-      if (state.ignoreInvalidStyle) {
+      if (state2.ignoreInvalidStyle) {
         return {};
       }
       const cause = (
@@ -1873,18 +1873,18 @@
         error
       );
       const message = new VFileMessage("Cannot parse `style` attribute", {
-        ancestors: state.ancestors,
+        ancestors: state2.ancestors,
         cause,
         ruleId: "style",
         source: "hast-util-to-jsx-runtime"
       });
-      message.file = state.filePath || void 0;
+      message.file = state2.filePath || void 0;
       message.url = docs + "#cannot-parse-style-attribute";
       throw message;
     }
     return result;
   }
-  function findComponentFromName(state, name$1, allowExpression) {
+  function findComponentFromName(state2, name$1, allowExpression) {
     let result;
     if (!allowExpression) {
       result = { type: "Literal", value: name$1 };
@@ -1911,24 +1911,24 @@
         /** @type {string | number} */
         result.value
       );
-      return own$3.call(state.components, name2) ? state.components[name2] : name2;
+      return own$3.call(state2.components, name2) ? state2.components[name2] : name2;
     }
-    if (state.evaluater) {
-      return state.evaluater.evaluateExpression(result);
+    if (state2.evaluater) {
+      return state2.evaluater.evaluateExpression(result);
     }
-    crashEstree(state);
+    crashEstree(state2);
   }
-  function crashEstree(state, place) {
+  function crashEstree(state2, place) {
     const message = new VFileMessage(
       "Cannot handle MDX estrees without `createEvaluater`",
       {
-        ancestors: state.ancestors,
+        ancestors: state2.ancestors,
         place,
         ruleId: "mdx-estree",
         source: "hast-util-to-jsx-runtime"
       }
     );
-    message.file = state.filePath || void 0;
+    message.file = state2.filePath || void 0;
     message.url = docs + "#cannot-handle-mdx-estrees-without-createevaluater";
     throw message;
   }
@@ -2669,7 +2669,7 @@
                 ...events[index2][1].start
               }
             };
-            const group = {
+            const group2 = {
               type: use > 1 ? "strong" : "emphasis",
               start: {
                 ...openingSequence.start
@@ -2688,9 +2688,9 @@
             if (events[open][1].end.offset - events[open][1].start.offset) {
               nextEvents = push(nextEvents, [["enter", events[open][1], context], ["exit", events[open][1], context]]);
             }
-            nextEvents = push(nextEvents, [["enter", group, context], ["enter", openingSequence, context], ["exit", openingSequence, context], ["enter", text2, context]]);
+            nextEvents = push(nextEvents, [["enter", group2, context], ["enter", openingSequence, context], ["exit", openingSequence, context], ["enter", text2, context]]);
             nextEvents = push(nextEvents, resolveAll(context.parser.constructs.insideSpan.null, events.slice(open + 1, index2), context));
-            nextEvents = push(nextEvents, [["exit", text2, context], ["enter", closingSequence, context], ["exit", closingSequence, context], ["exit", group, context]]);
+            nextEvents = push(nextEvents, [["exit", text2, context], ["enter", closingSequence, context], ["exit", closingSequence, context], ["exit", group2, context]]);
             let offset = 0;
             if (events[index2][1].end.offset - events[index2][1].start.offset) {
               offset = 2;
@@ -2866,12 +2866,12 @@
     return start;
     function start(code2) {
       if (code2 === 62) {
-        const state = self2.containerState;
-        if (!state.open) {
+        const state2 = self2.containerState;
+        if (!state2.open) {
           effects.enter("blockQuote", {
             _container: true
           });
-          state.open = true;
+          state2.open = true;
         }
         effects.enter("blockQuotePrefix");
         effects.enter("blockQuoteMarker");
@@ -4957,7 +4957,7 @@
         close = index2;
       }
     }
-    const group = {
+    const group2 = {
       type: events[open][1].type === "labelLink" ? "link" : "image",
       start: {
         ...events[open][1].start
@@ -4984,13 +4984,13 @@
         ...events[close - 2][1].start
       }
     };
-    media = [["enter", group, context], ["enter", label, context]];
+    media = [["enter", group2, context], ["enter", label, context]];
     media = push(media, events.slice(open + 1, open + offset + 3));
     media = push(media, [["enter", text2, context]]);
     media = push(media, resolveAll(context.parser.constructs.insideSpan.null, events.slice(open + offset + 4, close - 3), context));
     media = push(media, [["exit", text2, context], events[close - 2], events[close - 1], ["exit", label, context]]);
     media = push(media, events.slice(close + 1));
-    media = push(media, [["exit", group, context]]);
+    media = push(media, [["exit", group2, context]]);
     splice(events, open, events.length, media);
     return events;
   }
@@ -5736,7 +5736,7 @@
       sliceStream,
       write
     };
-    let state = initialize.tokenize.call(context, effects);
+    let state2 = initialize.tokenize.call(context, effects);
     if (initialize.resolveAll) {
       resolveAllConstructs.push(initialize);
     }
@@ -5794,7 +5794,7 @@
       }
     }
     function go(code2) {
-      state = state(code2);
+      state2 = state2(code2);
     }
     function consume(code2) {
       if (markdownLineEnding(code2)) {
@@ -6330,10 +6330,10 @@
       }
       return tree;
     }
-    function callListeners(listeners, context, token) {
+    function callListeners(listeners2, context, token) {
       let index2 = -1;
-      while (++index2 < listeners.length) {
-        listeners[index2].call(context, token);
+      while (++index2 < listeners2.length) {
+        listeners2[index2].call(context, token);
       }
     }
     function prepareList(events, start) {
@@ -6925,22 +6925,22 @@
       });
     }
   }
-  function blockquote$1(state, node2) {
+  function blockquote$1(state2, node2) {
     const result = {
       type: "element",
       tagName: "blockquote",
       properties: {},
-      children: state.wrap(state.all(node2), true)
+      children: state2.wrap(state2.all(node2), true)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function hardBreak$1(state, node2) {
+  function hardBreak$1(state2, node2) {
     const result = { type: "element", tagName: "br", properties: {}, children: [] };
-    state.patch(node2, result);
-    return [state.applyData(node2, result), { type: "text", value: "\n" }];
+    state2.patch(node2, result);
+    return [state2.applyData(node2, result), { type: "text", value: "\n" }];
   }
-  function code$2(state, node2) {
+  function code$2(state2, node2) {
     const value = node2.value ? node2.value + "\n" : "";
     const properties = {};
     const language = node2.lang ? node2.lang.split(/\s+/) : [];
@@ -6956,48 +6956,48 @@
     if (node2.meta) {
       result.data = { meta: node2.meta };
     }
-    state.patch(node2, result);
-    result = state.applyData(node2, result);
+    state2.patch(node2, result);
+    result = state2.applyData(node2, result);
     result = { type: "element", tagName: "pre", properties: {}, children: [result] };
-    state.patch(node2, result);
+    state2.patch(node2, result);
     return result;
   }
-  function strikethrough(state, node2) {
+  function strikethrough(state2, node2) {
     const result = {
       type: "element",
       tagName: "del",
       properties: {},
-      children: state.all(node2)
+      children: state2.all(node2)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function emphasis$1(state, node2) {
+  function emphasis$1(state2, node2) {
     const result = {
       type: "element",
       tagName: "em",
       properties: {},
-      children: state.all(node2)
+      children: state2.all(node2)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function footnoteReference$1(state, node2) {
-    const clobberPrefix = typeof state.options.clobberPrefix === "string" ? state.options.clobberPrefix : "user-content-";
+  function footnoteReference$1(state2, node2) {
+    const clobberPrefix = typeof state2.options.clobberPrefix === "string" ? state2.options.clobberPrefix : "user-content-";
     const id = String(node2.identifier).toUpperCase();
     const safeId = normalizeUri(id.toLowerCase());
-    const index2 = state.footnoteOrder.indexOf(id);
+    const index2 = state2.footnoteOrder.indexOf(id);
     let counter;
-    let reuseCounter = state.footnoteCounts.get(id);
+    let reuseCounter = state2.footnoteCounts.get(id);
     if (reuseCounter === void 0) {
       reuseCounter = 0;
-      state.footnoteOrder.push(id);
-      counter = state.footnoteOrder.length;
+      state2.footnoteOrder.push(id);
+      counter = state2.footnoteOrder.length;
     } else {
       counter = index2 + 1;
     }
     reuseCounter += 1;
-    state.footnoteCounts.set(id, reuseCounter);
+    state2.footnoteCounts.set(id, reuseCounter);
     const link2 = {
       type: "element",
       tagName: "a",
@@ -7009,35 +7009,35 @@
       },
       children: [{ type: "text", value: String(counter) }]
     };
-    state.patch(node2, link2);
+    state2.patch(node2, link2);
     const sup = {
       type: "element",
       tagName: "sup",
       properties: {},
       children: [link2]
     };
-    state.patch(node2, sup);
-    return state.applyData(node2, sup);
+    state2.patch(node2, sup);
+    return state2.applyData(node2, sup);
   }
-  function heading$1(state, node2) {
+  function heading$1(state2, node2) {
     const result = {
       type: "element",
       tagName: "h" + node2.depth,
       properties: {},
-      children: state.all(node2)
+      children: state2.all(node2)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function html$2(state, node2) {
-    if (state.options.allowDangerousHtml) {
+  function html$2(state2, node2) {
+    if (state2.options.allowDangerousHtml) {
       const result = { type: "raw", value: node2.value };
-      state.patch(node2, result);
-      return state.applyData(node2, result);
+      state2.patch(node2, result);
+      return state2.applyData(node2, result);
     }
     return void 0;
   }
-  function revert(state, node2) {
+  function revert(state2, node2) {
     const subtype = node2.referenceType;
     let suffix = "]";
     if (subtype === "collapsed") {
@@ -7048,7 +7048,7 @@
     if (node2.type === "imageReference") {
       return [{ type: "text", value: "![" + node2.alt + suffix }];
     }
-    const contents = state.all(node2);
+    const contents = state2.all(node2);
     const head = contents[0];
     if (head && head.type === "text") {
       head.value = "[" + head.value;
@@ -7063,21 +7063,21 @@
     }
     return contents;
   }
-  function imageReference$1(state, node2) {
+  function imageReference$1(state2, node2) {
     const id = String(node2.identifier).toUpperCase();
-    const definition2 = state.definitionById.get(id);
+    const definition2 = state2.definitionById.get(id);
     if (!definition2) {
-      return revert(state, node2);
+      return revert(state2, node2);
     }
     const properties = { src: normalizeUri(definition2.url || ""), alt: node2.alt };
     if (definition2.title !== null && definition2.title !== void 0) {
       properties.title = definition2.title;
     }
     const result = { type: "element", tagName: "img", properties, children: [] };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function image$1(state, node2) {
+  function image$1(state2, node2) {
     const properties = { src: normalizeUri(node2.url) };
     if (node2.alt !== null && node2.alt !== void 0) {
       properties.alt = node2.alt;
@@ -7086,26 +7086,26 @@
       properties.title = node2.title;
     }
     const result = { type: "element", tagName: "img", properties, children: [] };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function inlineCode$1(state, node2) {
+  function inlineCode$1(state2, node2) {
     const text2 = { type: "text", value: node2.value.replace(/\r?\n|\r/g, " ") };
-    state.patch(node2, text2);
+    state2.patch(node2, text2);
     const result = {
       type: "element",
       tagName: "code",
       properties: {},
       children: [text2]
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function linkReference$1(state, node2) {
+  function linkReference$1(state2, node2) {
     const id = String(node2.identifier).toUpperCase();
-    const definition2 = state.definitionById.get(id);
+    const definition2 = state2.definitionById.get(id);
     if (!definition2) {
-      return revert(state, node2);
+      return revert(state2, node2);
     }
     const properties = { href: normalizeUri(definition2.url || "") };
     if (definition2.title !== null && definition2.title !== void 0) {
@@ -7115,12 +7115,12 @@
       type: "element",
       tagName: "a",
       properties,
-      children: state.all(node2)
+      children: state2.all(node2)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function link$1(state, node2) {
+  function link$1(state2, node2) {
     const properties = { href: normalizeUri(node2.url) };
     if (node2.title !== null && node2.title !== void 0) {
       properties.title = node2.title;
@@ -7129,13 +7129,13 @@
       type: "element",
       tagName: "a",
       properties,
-      children: state.all(node2)
+      children: state2.all(node2)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function listItem$1(state, node2, parent) {
-    const results = state.all(node2);
+  function listItem$1(state2, node2, parent) {
+    const results = state2.all(node2);
     const loose = parent ? listLoose(parent) : listItemLoose(node2);
     const properties = {};
     const children = [];
@@ -7176,8 +7176,8 @@
       children.push({ type: "text", value: "\n" });
     }
     const result = { type: "element", tagName: "li", properties, children };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
   function listLoose(node2) {
     let loose = false;
@@ -7195,9 +7195,9 @@
     const spread = node2.spread;
     return spread === null || spread === void 0 ? node2.children.length > 1 : spread;
   }
-  function list$1(state, node2) {
+  function list$1(state2, node2) {
     const properties = {};
-    const results = state.all(node2);
+    const results = state2.all(node2);
     let index2 = -1;
     if (typeof node2.start === "number" && node2.start !== 1) {
       properties.start = node2.start;
@@ -7213,38 +7213,38 @@
       type: "element",
       tagName: node2.ordered ? "ol" : "ul",
       properties,
-      children: state.wrap(results, true)
+      children: state2.wrap(results, true)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function paragraph$1(state, node2) {
+  function paragraph$1(state2, node2) {
     const result = {
       type: "element",
       tagName: "p",
       properties: {},
-      children: state.all(node2)
+      children: state2.all(node2)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function root$1(state, node2) {
-    const result = { type: "root", children: state.wrap(state.all(node2)) };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+  function root$1(state2, node2) {
+    const result = { type: "root", children: state2.wrap(state2.all(node2)) };
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function strong$1(state, node2) {
+  function strong$1(state2, node2) {
     const result = {
       type: "element",
       tagName: "strong",
       properties: {},
-      children: state.all(node2)
+      children: state2.all(node2)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function table(state, node2) {
-    const rows = state.all(node2);
+  function table(state2, node2) {
+    const rows = state2.all(node2);
     const firstRow = rows.shift();
     const tableContent = [];
     if (firstRow) {
@@ -7252,9 +7252,9 @@
         type: "element",
         tagName: "thead",
         properties: {},
-        children: state.wrap([firstRow], true)
+        children: state2.wrap([firstRow], true)
       };
-      state.patch(node2.children[0], head);
+      state2.patch(node2.children[0], head);
       tableContent.push(head);
     }
     if (rows.length > 0) {
@@ -7262,7 +7262,7 @@
         type: "element",
         tagName: "tbody",
         properties: {},
-        children: state.wrap(rows, true)
+        children: state2.wrap(rows, true)
       };
       const start = pointStart(node2.children[1]);
       const end = pointEnd(node2.children[node2.children.length - 1]);
@@ -7273,12 +7273,12 @@
       type: "element",
       tagName: "table",
       properties: {},
-      children: state.wrap(tableContent, true)
+      children: state2.wrap(tableContent, true)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function tableRow(state, node2, parent) {
+  function tableRow(state2, node2, parent) {
     const siblings = parent ? parent.children : void 0;
     const rowIndex = siblings ? siblings.indexOf(node2) : 1;
     const tagName = rowIndex === 0 ? "th" : "td";
@@ -7295,9 +7295,9 @@
       }
       let result2 = { type: "element", tagName, properties, children: [] };
       if (cell) {
-        result2.children = state.all(cell);
-        state.patch(cell, result2);
-        result2 = state.applyData(cell, result2);
+        result2.children = state2.all(cell);
+        state2.patch(cell, result2);
+        result2 = state2.applyData(cell, result2);
       }
       cells.push(result2);
     }
@@ -7305,21 +7305,21 @@
       type: "element",
       tagName: "tr",
       properties: {},
-      children: state.wrap(cells, true)
+      children: state2.wrap(cells, true)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function tableCell(state, node2) {
+  function tableCell(state2, node2) {
     const result = {
       type: "element",
       tagName: "td",
       // Assume body cell.
       properties: {},
-      children: state.all(node2)
+      children: state2.all(node2)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
   const tab = 9;
   const space = 32;
@@ -7359,20 +7359,20 @@
     }
     return endIndex > startIndex ? value.slice(startIndex, endIndex) : "";
   }
-  function text$2(state, node2) {
+  function text$2(state2, node2) {
     const result = { type: "text", value: trimLines(String(node2.value)) };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
-  function thematicBreak$1(state, node2) {
+  function thematicBreak$1(state2, node2) {
     const result = {
       type: "element",
       tagName: "hr",
       properties: {},
       children: []
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
   const handlers = {
     blockquote: blockquote$1,
@@ -7661,30 +7661,30 @@
   function defaultFootnoteBackLabel(referenceIndex, rereferenceIndex) {
     return "Back to reference " + (referenceIndex + 1) + (rereferenceIndex > 1 ? "-" + rereferenceIndex : "");
   }
-  function footer(state) {
-    const clobberPrefix = typeof state.options.clobberPrefix === "string" ? state.options.clobberPrefix : "user-content-";
-    const footnoteBackContent = state.options.footnoteBackContent || defaultFootnoteBackContent;
-    const footnoteBackLabel = state.options.footnoteBackLabel || defaultFootnoteBackLabel;
-    const footnoteLabel = state.options.footnoteLabel || "Footnotes";
-    const footnoteLabelTagName = state.options.footnoteLabelTagName || "h2";
-    const footnoteLabelProperties = state.options.footnoteLabelProperties || {
+  function footer(state2) {
+    const clobberPrefix = typeof state2.options.clobberPrefix === "string" ? state2.options.clobberPrefix : "user-content-";
+    const footnoteBackContent = state2.options.footnoteBackContent || defaultFootnoteBackContent;
+    const footnoteBackLabel = state2.options.footnoteBackLabel || defaultFootnoteBackLabel;
+    const footnoteLabel = state2.options.footnoteLabel || "Footnotes";
+    const footnoteLabelTagName = state2.options.footnoteLabelTagName || "h2";
+    const footnoteLabelProperties = state2.options.footnoteLabelProperties || {
       className: ["sr-only"]
     };
     const listItems = [];
     let referenceIndex = -1;
-    while (++referenceIndex < state.footnoteOrder.length) {
-      const definition2 = state.footnoteById.get(
-        state.footnoteOrder[referenceIndex]
+    while (++referenceIndex < state2.footnoteOrder.length) {
+      const definition2 = state2.footnoteById.get(
+        state2.footnoteOrder[referenceIndex]
       );
       if (!definition2) {
         continue;
       }
-      const content2 = state.all(definition2);
+      const content2 = state2.all(definition2);
       const id = String(definition2.identifier).toUpperCase();
       const safeId = normalizeUri(id.toLowerCase());
       let rereferenceIndex = 0;
       const backReferences = [];
-      const counts = state.footnoteCounts.get(id);
+      const counts = state2.footnoteCounts.get(id);
       while (counts !== void 0 && ++rereferenceIndex <= counts) {
         if (backReferences.length > 0) {
           backReferences.push({ type: "text", value: " " });
@@ -7721,9 +7721,9 @@
         type: "element",
         tagName: "li",
         properties: { id: clobberPrefix + "fn-" + safeId },
-        children: state.wrap(content2, true)
+        children: state2.wrap(content2, true)
       };
-      state.patch(definition2, listItem2);
+      state2.patch(definition2, listItem2);
       listItems.push(listItem2);
     }
     if (listItems.length === 0) {
@@ -7748,7 +7748,7 @@
           type: "element",
           tagName: "ol",
           properties: {},
-          children: state.wrap(listItems, true)
+          children: state2.wrap(listItems, true)
         },
         { type: "text", value: "\n" }
       ]
@@ -8008,7 +8008,7 @@
     const footnoteById = /* @__PURE__ */ new Map();
     const footnoteCounts = /* @__PURE__ */ new Map();
     const handlers$1 = { ...handlers, ...settings.handlers };
-    const state = {
+    const state2 = {
       all: all2,
       applyData,
       definitionById,
@@ -8030,24 +8030,24 @@
         }
       }
     });
-    return state;
+    return state2;
     function one2(node2, parent) {
       const type = node2.type;
-      const handle2 = state.handlers[type];
-      if (own$1.call(state.handlers, type) && handle2) {
-        return handle2(state, node2, parent);
+      const handle2 = state2.handlers[type];
+      if (own$1.call(state2.handlers, type) && handle2) {
+        return handle2(state2, node2, parent);
       }
-      if (state.options.passThrough && state.options.passThrough.includes(type)) {
+      if (state2.options.passThrough && state2.options.passThrough.includes(type)) {
         if ("children" in node2) {
           const { children, ...shallow } = node2;
           const result = structuredClone$1(shallow);
-          result.children = state.all(node2);
+          result.children = state2.all(node2);
           return result;
         }
         return structuredClone$1(node2);
       }
-      const unknown = state.options.unknownHandler || defaultUnknownHandler;
-      return unknown(state, node2, parent);
+      const unknown = state2.options.unknownHandler || defaultUnknownHandler;
+      return unknown(state2, node2, parent);
     }
     function all2(parent) {
       const values = [];
@@ -8055,7 +8055,7 @@
         const nodes = parent.children;
         let index2 = -1;
         while (++index2 < nodes.length) {
-          const result = state.one(nodes[index2], parent);
+          const result = state2.one(nodes[index2], parent);
           if (result) {
             if (index2 && nodes[index2 - 1].type === "break") {
               if (!Array.isArray(result) && result.type === "text") {
@@ -8105,16 +8105,16 @@
     }
     return result;
   }
-  function defaultUnknownHandler(state, node2) {
+  function defaultUnknownHandler(state2, node2) {
     const data = node2.data || {};
     const result = "value" in node2 && !(own$1.call(data, "hProperties") || own$1.call(data, "hChildren")) ? { type: "text", value: node2.value } : {
       type: "element",
       tagName: "div",
       properties: {},
-      children: state.all(node2)
+      children: state2.all(node2)
     };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
+    state2.patch(node2, result);
+    return state2.applyData(node2, result);
   }
   function wrap$1(nodes, loose) {
     const result = [];
@@ -8141,9 +8141,9 @@
     return value.slice(index2);
   }
   function toHast(tree, options) {
-    const state = createState(tree, options);
-    const node2 = state.one(tree, void 0);
-    const foot = footer(state);
+    const state2 = createState(tree, options);
+    const node2 = state2.one(tree, void 0);
+    const foot = footer(state2);
     const result = Array.isArray(node2) ? { type: "root", children: node2 } : node2 || { type: "root", children: [] };
     if (foot) {
       result.children.push({ type: "text", value: "\n" }, foot);
@@ -35666,13 +35666,13 @@
   function footnoteReferencePeek() {
     return "[";
   }
-  function footnoteReference(node2, _, state, info2) {
-    const tracker = state.createTracker(info2);
+  function footnoteReference(node2, _, state2, info2) {
+    const tracker = state2.createTracker(info2);
     let value = tracker.move("[^");
-    const exit2 = state.enter("footnoteReference");
-    const subexit = state.enter("reference");
+    const exit2 = state2.enter("footnoteReference");
+    const subexit = state2.enter("reference");
     value += tracker.move(
-      state.safe(state.associationId(node2), { after: "]", before: value })
+      state2.safe(state2.associationId(node2), { after: "]", before: value })
     );
     subexit();
     exit2();
@@ -35705,21 +35705,21 @@
       // This is on by default already.
       unsafe: [{ character: "[", inConstruct: ["label", "phrasing", "reference"] }]
     };
-    function footnoteDefinition(node2, _, state, info2) {
-      const tracker = state.createTracker(info2);
+    function footnoteDefinition(node2, _, state2, info2) {
+      const tracker = state2.createTracker(info2);
       let value = tracker.move("[^");
-      const exit2 = state.enter("footnoteDefinition");
-      const subexit = state.enter("label");
+      const exit2 = state2.enter("footnoteDefinition");
+      const subexit = state2.enter("label");
       value += tracker.move(
-        state.safe(state.associationId(node2), { before: value, after: "]" })
+        state2.safe(state2.associationId(node2), { before: value, after: "]" })
       );
       subexit();
       value += tracker.move("]:");
       if (node2.children && node2.children.length > 0) {
         tracker.shift(4);
         value += tracker.move(
-          (firstLineBlank ? "\n" : " ") + state.indentLines(
-            state.containerFlow(node2, tracker.current()),
+          (firstLineBlank ? "\n" : " ") + state2.indentLines(
+            state2.containerFlow(node2, tracker.current()),
             firstLineBlank ? mapAll : mapExceptFirst
           )
         );
@@ -35769,12 +35769,12 @@
   function exitStrikethrough(token) {
     this.exit(token);
   }
-  function handleDelete(node2, _, state, info2) {
-    const tracker = state.createTracker(info2);
-    const sequence = state.stack.includes("strikethrough") ? "~" : "~~";
-    const exit2 = state.enter("strikethrough");
+  function handleDelete(node2, _, state2, info2) {
+    const tracker = state2.createTracker(info2);
+    const sequence = state2.stack.includes("strikethrough") ? "~" : "~~";
+    const exit2 = state2.enter("strikethrough");
     let value = tracker.move(sequence);
-    value += state.containerPhrasing(node2, {
+    value += state2.containerPhrasing(node2, {
       ...tracker.current(),
       before: value,
       after: "~"
@@ -35954,13 +35954,13 @@
       "textDirective"
     ])
   );
-  function blockquote(node2, _, state, info2) {
-    const exit2 = state.enter("blockquote");
-    const tracker = state.createTracker(info2);
+  function blockquote(node2, _, state2, info2) {
+    const exit2 = state2.enter("blockquote");
+    const tracker = state2.createTracker(info2);
     tracker.move("> ");
     tracker.shift(2);
-    const value = state.indentLines(
-      state.containerFlow(node2, tracker.current()),
+    const value = state2.indentLines(
+      state2.containerFlow(node2, tracker.current()),
       map$1
     );
     exit2();
@@ -35987,11 +35987,11 @@
     }
     return false;
   }
-  function hardBreak(_, _1, state, info2) {
+  function hardBreak(_, _1, state2, info2) {
     let index2 = -1;
-    while (++index2 < state.unsafe.length) {
-      const pattern = state.unsafe[index2];
-      if (pattern.character === "\n" && !pattern.before && !pattern.after && patternInScope(state.stack, pattern)) {
+    while (++index2 < state2.unsafe.length) {
+      const pattern = state2.unsafe[index2];
+      if (pattern.character === "\n" && !pattern.before && !pattern.after && patternInScope(state2.stack, pattern)) {
         return /[\t ]/.test(info2.before) ? "" : " ";
       }
     }
@@ -36019,16 +36019,16 @@
     }
     return max;
   }
-  function formatCodeAsIndented(node2, state) {
+  function formatCodeAsIndented(node2, state2) {
     return Boolean(
-      state.options.fences === false && node2.value && // If there’s no info…
+      state2.options.fences === false && node2.value && // If there’s no info…
       !node2.lang && // And there’s a non-whitespace character…
       /[^\n\r ]/.test(node2.value) && // And the value doesn’t start or end in a blank…
       !/^[\t ]*(?:[\n\r]|$)|(?:^|[\n\r])[\t ]*$/.test(node2.value)
     );
   }
-  function checkFence(state) {
-    const marker = state.options.fence || "`";
+  function checkFence(state2) {
+    const marker = state2.options.fence || "`";
     if (marker !== "`" && marker !== "~") {
       throw new Error(
         "Cannot serialize code with `" + marker + "` for `options.fence`, expected `` ` `` or `~`"
@@ -36036,24 +36036,24 @@
     }
     return marker;
   }
-  function code$1(node2, _, state, info2) {
-    const marker = checkFence(state);
+  function code$1(node2, _, state2, info2) {
+    const marker = checkFence(state2);
     const raw = node2.value || "";
-    if (formatCodeAsIndented(node2, state)) {
-      const exit3 = state.enter("codeIndented");
-      const value2 = state.indentLines(raw, map);
+    if (formatCodeAsIndented(node2, state2)) {
+      const exit3 = state2.enter("codeIndented");
+      const value2 = state2.indentLines(raw, map);
       exit3();
       return value2;
     }
-    const tracker = state.createTracker(info2);
+    const tracker = state2.createTracker(info2);
     const sequence = marker.repeat(Math.max(longestStreak(raw, marker) + 1, 3));
-    const exit2 = state.enter("codeFenced");
+    const exit2 = state2.enter("codeFenced");
     const suffix = marker === "`" ? "GraveAccent" : "Tilde";
     let value = tracker.move(sequence);
     if (node2.lang) {
-      const subexit = state.enter(`codeFencedLang${suffix}`);
+      const subexit = state2.enter(`codeFencedLang${suffix}`);
       value += tracker.move(
-        state.safe(node2.lang, {
+        state2.safe(node2.lang, {
           before: value,
           after: " ",
           encode: ["`"],
@@ -36063,10 +36063,10 @@
       subexit();
     }
     if (node2.lang && node2.meta) {
-      const subexit = state.enter(`codeFencedMeta${suffix}`);
+      const subexit = state2.enter(`codeFencedMeta${suffix}`);
       value += tracker.move(" ");
       value += tracker.move(
-        state.safe(node2.meta, {
+        state2.safe(node2.meta, {
           before: value,
           after: "\n",
           encode: ["`"],
@@ -36086,8 +36086,8 @@
   function map(line, _, blank) {
     return (blank ? "" : "    ") + line;
   }
-  function checkQuote(state) {
-    const marker = state.options.quote || '"';
+  function checkQuote(state2) {
+    const marker = state2.options.quote || '"';
     if (marker !== '"' && marker !== "'") {
       throw new Error(
         "Cannot serialize title with `" + marker + "` for `options.quote`, expected `\"`, or `'`"
@@ -36095,15 +36095,15 @@
     }
     return marker;
   }
-  function definition(node2, _, state, info2) {
-    const quote = checkQuote(state);
+  function definition(node2, _, state2, info2) {
+    const quote = checkQuote(state2);
     const suffix = quote === '"' ? "Quote" : "Apostrophe";
-    const exit2 = state.enter("definition");
-    let subexit = state.enter("label");
-    const tracker = state.createTracker(info2);
+    const exit2 = state2.enter("definition");
+    let subexit = state2.enter("label");
+    const tracker = state2.createTracker(info2);
     let value = tracker.move("[");
     value += tracker.move(
-      state.safe(state.associationId(node2), {
+      state2.safe(state2.associationId(node2), {
         before: value,
         after: "]",
         ...tracker.current()
@@ -36116,16 +36116,16 @@
       !node2.url || // If there are control characters or whitespace.
       /[\0- \u007F]/.test(node2.url)
     ) {
-      subexit = state.enter("destinationLiteral");
+      subexit = state2.enter("destinationLiteral");
       value += tracker.move("<");
       value += tracker.move(
-        state.safe(node2.url, { before: value, after: ">", ...tracker.current() })
+        state2.safe(node2.url, { before: value, after: ">", ...tracker.current() })
       );
       value += tracker.move(">");
     } else {
-      subexit = state.enter("destinationRaw");
+      subexit = state2.enter("destinationRaw");
       value += tracker.move(
-        state.safe(node2.url, {
+        state2.safe(node2.url, {
           before: value,
           after: node2.title ? " " : "\n",
           ...tracker.current()
@@ -36134,10 +36134,10 @@
     }
     subexit();
     if (node2.title) {
-      subexit = state.enter(`title${suffix}`);
+      subexit = state2.enter(`title${suffix}`);
       value += tracker.move(" " + quote);
       value += tracker.move(
-        state.safe(node2.title, {
+        state2.safe(node2.title, {
           before: value,
           after: quote,
           ...tracker.current()
@@ -36149,8 +36149,8 @@
     exit2();
     return value;
   }
-  function checkEmphasis(state) {
-    const marker = state.options.emphasis || "*";
+  function checkEmphasis(state2) {
+    const marker = state2.options.emphasis || "*";
     if (marker !== "*" && marker !== "_") {
       throw new Error(
         "Cannot serialize emphasis with `" + marker + "` for `options.emphasis`, expected `*`, or `_`"
@@ -36432,23 +36432,23 @@
     }
     return sequences;
   }
-  function phrasing(parent, state, info2) {
-    const indexStack = state.indexStack;
+  function phrasing(parent, state2, info2) {
+    const indexStack = state2.indexStack;
     const children = parent.children || [];
     const results = [];
     let index2 = -1;
     let before = info2.before;
     indexStack.push(-1);
-    let tracker = state.createTracker(info2);
+    let tracker = state2.createTracker(info2);
     while (++index2 < children.length) {
       const child = children[index2];
       let after;
       indexStack[indexStack.length - 1] = index2;
       if (index2 + 1 < children.length) {
-        let handle3 = state.handle.handlers[children[index2 + 1].type];
+        let handle3 = state2.handle.handlers[children[index2 + 1].type];
         if (handle3 && handle3.peek) handle3 = handle3.peek;
         after = handle3 ? firstCharacter(
-          handle3(children[index2 + 1], parent, state, {
+          handle3(children[index2 + 1], parent, state2, {
             before: "",
             after: "",
             ...tracker.current()
@@ -36461,22 +36461,22 @@
       if (typeof previous2 === "string" && (before === "\r" || before === "\n") && child.type === "html" && htmlKind(child.value) !== 7) {
         results[results.length - 1] = previous2.replace(/(\r?\n|\r)$/, " ");
         before = " ";
-        tracker = state.createTracker(info2);
+        tracker = state2.createTracker(info2);
         tracker.move(serialize(results, info2.before, info2.after));
       }
-      const handle2 = state.handle.handlers[child.type];
+      const handle2 = state2.handle.handlers[child.type];
       if (handle2 && handle2.attention) {
         const item = attentionItem(
           /** @type {PhrasingParents} */
           child,
           handle2.attention,
-          state,
+          state2,
           tracker
         );
         results.push(item);
         before = lastCharacter(item.sequences[0]);
       } else {
-        const value = state.handle(child, parent, state, {
+        const value = state2.handle(child, parent, state2, {
           ...tracker.current(),
           after,
           before
@@ -36490,13 +36490,13 @@
     indexStack.pop();
     return results;
   }
-  function attentionItem(node2, attention2, state, tracker) {
-    const { construct, markers, sizes } = attention2(node2, state);
+  function attentionItem(node2, attention2, state2, tracker) {
+    const { construct, markers, sizes } = attention2(node2, state2);
     const sequences = attentionSequences(node2.type, markers, sizes);
     const sequence = sequences[0];
-    const exit2 = state.enter(construct);
+    const exit2 = state2.enter(construct);
     tracker.move(sequence);
-    const children = phrasing(node2, state, {
+    const children = phrasing(node2, state2, {
       ...tracker.current(),
       before: sequence,
       after: sequence
@@ -36578,25 +36578,25 @@
   }
   emphasis.attention = attention$1;
   emphasis.peek = peek$1;
-  function emphasis(node2, _, state, info2) {
-    const exit2 = state.enter("phrasing");
-    const item = attentionItem(node2, attention$1, state, state.createTracker(info2));
+  function emphasis(node2, _, state2, info2) {
+    const exit2 = state2.enter("phrasing");
+    const item = attentionItem(node2, attention$1, state2, state2.createTracker(info2));
     const value = serialize([item], info2.before, info2.after);
     exit2();
     return value;
   }
-  function attention$1(_, state) {
-    const marker = checkEmphasis(state);
+  function attention$1(_, state2) {
+    const marker = checkEmphasis(state2);
     return {
       construct: "emphasis",
       markers: marker === "*" ? ["*", "_"] : ["_", "*"],
       sizes: [1]
     };
   }
-  function peek$1(_, _1, state) {
-    return state.options.emphasis || "*";
+  function peek$1(_, _1, state2) {
+    return state2.options.emphasis || "*";
   }
-  function formatHeadingAsSetext(node2, state) {
+  function formatHeadingAsSetext(node2, state2) {
     let literalWithBreak = false;
     visit(node2, function(node3) {
       if ("value" in node3 && /\r?\n|\r/.test(node3.value) || node3.type === "break") {
@@ -36605,16 +36605,16 @@
       }
     });
     return Boolean(
-      (!node2.depth || node2.depth < 3) && toString$1(node2) && (state.options.setext || literalWithBreak)
+      (!node2.depth || node2.depth < 3) && toString$1(node2) && (state2.options.setext || literalWithBreak)
     );
   }
-  function heading(node2, _, state, info2) {
+  function heading(node2, _, state2, info2) {
     const rank = Math.max(Math.min(6, node2.depth || 1), 1);
-    const tracker = state.createTracker(info2);
-    if (formatHeadingAsSetext(node2, state)) {
-      const exit3 = state.enter("headingSetext");
-      const subexit2 = state.enter("phrasing");
-      const value2 = state.containerPhrasing(node2, {
+    const tracker = state2.createTracker(info2);
+    if (formatHeadingAsSetext(node2, state2)) {
+      const exit3 = state2.enter("headingSetext");
+      const subexit2 = state2.enter("phrasing");
+      const value2 = state2.containerPhrasing(node2, {
         ...tracker.current(),
         before: "\n",
         after: "\n"
@@ -36629,10 +36629,10 @@
       );
     }
     const sequence = "#".repeat(rank);
-    const exit2 = state.enter("headingAtx");
-    const subexit = state.enter("phrasing");
+    const exit2 = state2.enter("headingAtx");
+    const subexit = state2.enter("phrasing");
     tracker.move(sequence + " ");
-    let value = state.containerPhrasing(node2, {
+    let value = state2.containerPhrasing(node2, {
       before: "# ",
       after: "\n",
       ...tracker.current()
@@ -36642,7 +36642,7 @@
       value = encodeCharacterReference(head) + value.slice(1);
     }
     value = value ? sequence + " " + value : sequence;
-    if (state.options.closeAtx) {
+    if (state2.options.closeAtx) {
       value += " " + sequence;
     }
     subexit();
@@ -36657,15 +36657,15 @@
     return "<";
   }
   image.peek = imagePeek;
-  function image(node2, _, state, info2) {
-    const quote = checkQuote(state);
+  function image(node2, _, state2, info2) {
+    const quote = checkQuote(state2);
     const suffix = quote === '"' ? "Quote" : "Apostrophe";
-    const exit2 = state.enter("image");
-    let subexit = state.enter("label");
-    const tracker = state.createTracker(info2);
+    const exit2 = state2.enter("image");
+    let subexit = state2.enter("label");
+    const tracker = state2.createTracker(info2);
     let value = tracker.move("![");
     value += tracker.move(
-      state.safe(node2.alt, { before: value, after: "]", ...tracker.current() })
+      state2.safe(node2.alt, { before: value, after: "]", ...tracker.current() })
     );
     value += tracker.move("](");
     subexit();
@@ -36674,16 +36674,16 @@
       !node2.url && node2.title || // If there are control characters or whitespace.
       /[\0- \u007F]/.test(node2.url)
     ) {
-      subexit = state.enter("destinationLiteral");
+      subexit = state2.enter("destinationLiteral");
       value += tracker.move("<");
       value += tracker.move(
-        state.safe(node2.url, { before: value, after: ">", ...tracker.current() })
+        state2.safe(node2.url, { before: value, after: ">", ...tracker.current() })
       );
       value += tracker.move(">");
     } else {
-      subexit = state.enter("destinationRaw");
+      subexit = state2.enter("destinationRaw");
       value += tracker.move(
-        state.safe(node2.url, {
+        state2.safe(node2.url, {
           before: value,
           after: node2.title ? " " : ")",
           ...tracker.current()
@@ -36692,10 +36692,10 @@
     }
     subexit();
     if (node2.title) {
-      subexit = state.enter(`title${suffix}`);
+      subexit = state2.enter(`title${suffix}`);
       value += tracker.move(" " + quote);
       value += tracker.move(
-        state.safe(node2.title, {
+        state2.safe(node2.title, {
           before: value,
           after: quote,
           ...tracker.current()
@@ -36712,31 +36712,31 @@
     return "!";
   }
   imageReference.peek = imageReferencePeek;
-  function imageReference(node2, _, state, info2) {
+  function imageReference(node2, _, state2, info2) {
     const type = node2.referenceType;
-    const exit2 = state.enter("imageReference");
-    let subexit = state.enter("label");
-    const tracker = state.createTracker(info2);
+    const exit2 = state2.enter("imageReference");
+    let subexit = state2.enter("label");
+    const tracker = state2.createTracker(info2);
     let value = tracker.move("![");
-    const alt = state.safe(node2.alt, {
+    const alt = state2.safe(node2.alt, {
       before: value,
       after: "]",
       ...tracker.current()
     });
     value += tracker.move(alt + "][");
     subexit();
-    const stack = state.stack;
-    state.stack = stack.filter(function(d) {
+    const stack = state2.stack;
+    state2.stack = stack.filter(function(d) {
       return d !== "phrasing";
     });
-    subexit = state.enter("reference");
-    const reference = state.safe(state.associationId(node2), {
+    subexit = state2.enter("reference");
+    const reference = state2.safe(state2.associationId(node2), {
       before: value,
       after: "]",
       ...tracker.current()
     });
     subexit();
-    state.stack = stack;
+    state2.stack = stack;
     exit2();
     if (type === "full" || !alt || alt !== reference) {
       value += tracker.move(reference + "]");
@@ -36751,7 +36751,7 @@
     return "!";
   }
   inlineCode.peek = inlineCodePeek;
-  function inlineCode(node2, _, state) {
+  function inlineCode(node2, _, state2) {
     let value = node2.value || "";
     let sequence = "`";
     let index2 = -1;
@@ -36761,9 +36761,9 @@
     if (/[^\n\r ]/.test(value) && (/^[\n\r ]/.test(value) && /[\n\r ]$/.test(value) || /^`|`$/.test(value))) {
       value = " " + value + " ";
     }
-    while (++index2 < state.unsafe.length) {
-      const pattern = state.unsafe[index2];
-      const expression = state.compilePattern(pattern);
+    while (++index2 < state2.unsafe.length) {
+      const pattern = state2.unsafe[index2];
+      const expression = state2.compilePattern(pattern);
       if (!pattern.atBreak) continue;
       let match;
       while (match = expression.exec(value)) {
@@ -36779,10 +36779,10 @@
   function inlineCodePeek() {
     return "`";
   }
-  function formatLinkAsAutolink(node2, state) {
+  function formatLinkAsAutolink(node2, state2) {
     const raw = toString$1(node2);
     return Boolean(
-      !state.options.resourceLink && // If there’s a url…
+      !state2.options.resourceLink && // If there’s a url…
       node2.url && // And there’s no title…
       !node2.title && // And the content of `node` is a single text node…
       node2.children && node2.children.length === 1 && node2.children[0].type === "text" && // And if the url is the same as the content…
@@ -36793,19 +36793,19 @@
     );
   }
   link.peek = linkPeek;
-  function link(node2, _, state, info2) {
-    const quote = checkQuote(state);
+  function link(node2, _, state2, info2) {
+    const quote = checkQuote(state2);
     const suffix = quote === '"' ? "Quote" : "Apostrophe";
-    const tracker = state.createTracker(info2);
-    if (formatLinkAsAutolink(node2, state)) {
-      const stack = state.stack;
-      state.stack = stack.filter(function(d) {
+    const tracker = state2.createTracker(info2);
+    if (formatLinkAsAutolink(node2, state2)) {
+      const stack = state2.stack;
+      state2.stack = stack.filter(function(d) {
         return d !== "phrasing";
       });
-      const exit3 = state.enter("autolink");
+      const exit3 = state2.enter("autolink");
       let value2 = tracker.move("<");
       value2 += tracker.move(
-        state.containerPhrasing(node2, {
+        state2.containerPhrasing(node2, {
           before: value2,
           after: ">",
           ...tracker.current()
@@ -36813,13 +36813,13 @@
       );
       value2 += tracker.move(">");
       exit3();
-      state.stack = stack;
+      state2.stack = stack;
       return value2;
     }
-    const exit2 = state.enter("link");
-    let subexit = state.enter("label");
+    const exit2 = state2.enter("link");
+    let subexit = state2.enter("label");
     let value = tracker.move("[");
-    const text2 = state.containerPhrasing(node2, {
+    const text2 = state2.containerPhrasing(node2, {
       before: value,
       after: "](",
       ...tracker.current()
@@ -36842,16 +36842,16 @@
       !node2.url && typeof title === "string" || // If there are control characters or whitespace.
       enclose
     ) {
-      subexit = state.enter("destinationLiteral");
+      subexit = state2.enter("destinationLiteral");
       value += tracker.move("<");
       value += tracker.move(
-        state.safe(node2.url, { before: value, after: ">", ...tracker.current() })
+        state2.safe(node2.url, { before: value, after: ">", ...tracker.current() })
       );
       value += tracker.move(">");
     } else {
-      subexit = state.enter("destinationRaw");
+      subexit = state2.enter("destinationRaw");
       value += tracker.move(
-        state.safe(node2.url, {
+        state2.safe(node2.url, {
           before: value,
           after: typeof title === "string" ? " " : ")",
           ...tracker.current()
@@ -36860,10 +36860,10 @@
     }
     subexit();
     if (typeof title === "string") {
-      subexit = state.enter(`title${suffix}`);
+      subexit = state2.enter(`title${suffix}`);
       value += tracker.move(" " + quote);
       value += tracker.move(
-        state.safe(title, {
+        state2.safe(title, {
           before: value,
           after: quote,
           ...tracker.current()
@@ -36876,35 +36876,35 @@
     exit2();
     return value;
   }
-  function linkPeek(node2, _, state) {
-    return formatLinkAsAutolink(node2, state) ? "<" : "[";
+  function linkPeek(node2, _, state2) {
+    return formatLinkAsAutolink(node2, state2) ? "<" : "[";
   }
   linkReference.peek = linkReferencePeek;
-  function linkReference(node2, _, state, info2) {
+  function linkReference(node2, _, state2, info2) {
     const type = node2.referenceType;
-    const exit2 = state.enter("linkReference");
-    let subexit = state.enter("label");
-    const tracker = state.createTracker(info2);
+    const exit2 = state2.enter("linkReference");
+    let subexit = state2.enter("label");
+    const tracker = state2.createTracker(info2);
     let value = tracker.move("[");
-    const text2 = state.containerPhrasing(node2, {
+    const text2 = state2.containerPhrasing(node2, {
       before: value,
       after: "]",
       ...tracker.current()
     });
     value += tracker.move(text2 + "][");
     subexit();
-    const stack = state.stack;
-    state.stack = stack.filter(function(d) {
+    const stack = state2.stack;
+    state2.stack = stack.filter(function(d) {
       return d !== "phrasing";
     });
-    subexit = state.enter("reference");
-    const reference = state.safe(state.associationId(node2), {
+    subexit = state2.enter("reference");
+    const reference = state2.safe(state2.associationId(node2), {
       before: value,
       after: "]",
       ...tracker.current()
     });
     subexit();
-    state.stack = stack;
+    state2.stack = stack;
     exit2();
     if (type === "full" || !text2 || text2 !== reference) {
       value += tracker.move(reference + "]");
@@ -36918,8 +36918,8 @@
   function linkReferencePeek() {
     return "[";
   }
-  function checkBullet(state) {
-    const marker = state.options.bullet || "*";
+  function checkBullet(state2) {
+    const marker = state2.options.bullet || "*";
     if (marker !== "*" && marker !== "+" && marker !== "-") {
       throw new Error(
         "Cannot serialize items with `" + marker + "` for `options.bullet`, expected `*`, `+`, or `-`"
@@ -36927,9 +36927,9 @@
     }
     return marker;
   }
-  function checkBulletOther(state) {
-    const bullet = checkBullet(state);
-    const bulletOther = state.options.bulletOther;
+  function checkBulletOther(state2) {
+    const bullet = checkBullet(state2);
+    const bulletOther = state2.options.bulletOther;
     if (!bulletOther) {
       return bullet === "*" ? "-" : "*";
     }
@@ -36945,8 +36945,8 @@
     }
     return bulletOther;
   }
-  function checkBulletOrdered(state) {
-    const marker = state.options.bulletOrdered || ".";
+  function checkBulletOrdered(state2) {
+    const marker = state2.options.bulletOrdered || ".";
     if (marker !== "." && marker !== ")") {
       throw new Error(
         "Cannot serialize items with `" + marker + "` for `options.bulletOrdered`, expected `.` or `)`"
@@ -36954,8 +36954,8 @@
     }
     return marker;
   }
-  function checkRule(state) {
-    const marker = state.options.rule || "*";
+  function checkRule(state2) {
+    const marker = state2.options.rule || "*";
     if (marker !== "*" && marker !== "-" && marker !== "_") {
       throw new Error(
         "Cannot serialize rules with `" + marker + "` for `options.rule`, expected `*`, `-`, or `_`"
@@ -36963,24 +36963,24 @@
     }
     return marker;
   }
-  function list(node2, parent, state, info2) {
-    const exit2 = state.enter("list");
-    const bulletCurrent = state.bulletCurrent;
-    let bullet = node2.ordered ? checkBulletOrdered(state) : checkBullet(state);
-    const bulletOther = node2.ordered ? bullet === "." ? ")" : "." : checkBulletOther(state);
-    let useDifferentMarker = parent && state.bulletLastUsed ? bullet === state.bulletLastUsed : false;
+  function list(node2, parent, state2, info2) {
+    const exit2 = state2.enter("list");
+    const bulletCurrent = state2.bulletCurrent;
+    let bullet = node2.ordered ? checkBulletOrdered(state2) : checkBullet(state2);
+    const bulletOther = node2.ordered ? bullet === "." ? ")" : "." : checkBulletOther(state2);
+    let useDifferentMarker = parent && state2.bulletLastUsed ? bullet === state2.bulletLastUsed : false;
     if (!node2.ordered) {
       const firstListItem = node2.children ? node2.children[0] : void 0;
       if (
         // Bullet could be used as a thematic break marker:
         (bullet === "*" || bullet === "-") && // Empty first list item:
         firstListItem && (!firstListItem.children || !firstListItem.children[0]) && // Directly in two other list items:
-        state.stack[state.stack.length - 1] === "list" && state.stack[state.stack.length - 2] === "listItem" && state.stack[state.stack.length - 3] === "list" && state.stack[state.stack.length - 4] === "listItem" && // That are each the first child.
-        state.indexStack[state.indexStack.length - 1] === 0 && state.indexStack[state.indexStack.length - 2] === 0 && state.indexStack[state.indexStack.length - 3] === 0
+        state2.stack[state2.stack.length - 1] === "list" && state2.stack[state2.stack.length - 2] === "listItem" && state2.stack[state2.stack.length - 3] === "list" && state2.stack[state2.stack.length - 4] === "listItem" && // That are each the first child.
+        state2.indexStack[state2.indexStack.length - 1] === 0 && state2.indexStack[state2.indexStack.length - 2] === 0 && state2.indexStack[state2.indexStack.length - 3] === 0
       ) {
         useDifferentMarker = true;
       }
-      if (checkRule(state) === bullet && firstListItem) {
+      if (checkRule(state2) === bullet && firstListItem) {
         let index2 = -1;
         while (++index2 < node2.children.length) {
           const item = node2.children[index2];
@@ -36994,15 +36994,15 @@
     if (useDifferentMarker) {
       bullet = bulletOther;
     }
-    state.bulletCurrent = bullet;
-    const value = state.containerFlow(node2, info2);
-    state.bulletLastUsed = bullet;
-    state.bulletCurrent = bulletCurrent;
+    state2.bulletCurrent = bullet;
+    const value = state2.containerFlow(node2, info2);
+    state2.bulletLastUsed = bullet;
+    state2.bulletCurrent = bulletCurrent;
     exit2();
     return value;
   }
-  function checkListItemIndent(state) {
-    const style = state.options.listItemIndent || "one";
+  function checkListItemIndent(state2) {
+    const style = state2.options.listItemIndent || "one";
     if (style !== "tab" && style !== "one" && style !== "mixed") {
       throw new Error(
         "Cannot serialize items with `" + style + "` for `options.listItemIndent`, expected `tab`, `one`, or `mixed`"
@@ -37010,22 +37010,22 @@
     }
     return style;
   }
-  function listItem(node2, parent, state, info2) {
-    const listItemIndent = checkListItemIndent(state);
-    let bullet = state.bulletCurrent || checkBullet(state);
+  function listItem(node2, parent, state2, info2) {
+    const listItemIndent = checkListItemIndent(state2);
+    let bullet = state2.bulletCurrent || checkBullet(state2);
     if (parent && parent.type === "list" && parent.ordered) {
-      bullet = (typeof parent.start === "number" && parent.start > -1 ? parent.start : 1) + (state.options.incrementListMarker === false ? 0 : parent.children.indexOf(node2)) + bullet;
+      bullet = (typeof parent.start === "number" && parent.start > -1 ? parent.start : 1) + (state2.options.incrementListMarker === false ? 0 : parent.children.indexOf(node2)) + bullet;
     }
     let size = bullet.length + 1;
     if (listItemIndent === "tab" || listItemIndent === "mixed" && (parent && parent.type === "list" && parent.spread || node2.spread)) {
       size = Math.ceil(size / 4) * 4;
     }
-    const tracker = state.createTracker(info2);
+    const tracker = state2.createTracker(info2);
     tracker.move(bullet + " ".repeat(size - bullet.length));
     tracker.shift(size);
-    const exit2 = state.enter("listItem");
-    const value = state.indentLines(
-      state.containerFlow(node2, tracker.current()),
+    const exit2 = state2.enter("listItem");
+    const value = state2.indentLines(
+      state2.containerFlow(node2, tracker.current()),
       map2
     );
     exit2();
@@ -37037,26 +37037,26 @@
       return (blank ? bullet : bullet + " ".repeat(size - bullet.length)) + line;
     }
   }
-  function paragraph(node2, _, state, info2) {
-    const exit2 = state.enter("paragraph");
-    const subexit = state.enter("phrasing");
-    const value = state.containerPhrasing(node2, info2);
+  function paragraph(node2, _, state2, info2) {
+    const exit2 = state2.enter("paragraph");
+    const subexit = state2.enter("phrasing");
+    const value = state2.containerPhrasing(node2, info2);
     subexit();
     exit2();
     return value;
   }
-  function root(node2, _, state, info2) {
+  function root(node2, _, state2, info2) {
     const hasPhrasing = node2.children.some(function(d) {
       return phrasing$1(d);
     });
-    if (!hasPhrasing) return state.containerFlow(node2, info2);
-    const exit2 = state.enter("phrasing");
-    const value = state.containerPhrasing(node2, info2);
+    if (!hasPhrasing) return state2.containerFlow(node2, info2);
+    const exit2 = state2.enter("phrasing");
+    const value = state2.containerPhrasing(node2, info2);
     exit2();
     return value;
   }
-  function checkStrong(state) {
-    const marker = state.options.strong || "*";
+  function checkStrong(state2) {
+    const marker = state2.options.strong || "*";
     if (marker !== "*" && marker !== "_") {
       throw new Error(
         "Cannot serialize strong with `" + marker + "` for `options.strong`, expected `*`, or `_`"
@@ -37066,35 +37066,35 @@
   }
   strong.attention = attention;
   strong.peek = peek;
-  function strong(node2, _, state, info2) {
-    const exit2 = state.enter("phrasing");
-    const item = attentionItem(node2, attention, state, state.createTracker(info2));
+  function strong(node2, _, state2, info2) {
+    const exit2 = state2.enter("phrasing");
+    const item = attentionItem(node2, attention, state2, state2.createTracker(info2));
     const value = serialize([item], info2.before, info2.after);
     exit2();
     return value;
   }
-  function attention(_, state) {
-    const marker = checkStrong(state);
+  function attention(_, state2) {
+    const marker = checkStrong(state2);
     return {
       construct: "strong",
       markers: marker === "*" ? ["*", "_"] : ["_", "*"],
       sizes: [2]
     };
   }
-  function peek(_, _1, state) {
-    return state.options.strong || "*";
+  function peek(_, _1, state2) {
+    return state2.options.strong || "*";
   }
-  function text$1(node2, parent, state, info2) {
+  function text$1(node2, parent, state2, info2) {
     const siblings = parent ? parent.children : [];
-    const index2 = state.indexStack[state.indexStack.length - 1];
-    return state.safe(node2.value, {
+    const index2 = state2.indexStack[state2.indexStack.length - 1];
+    return state2.safe(node2.value, {
       ...info2,
       afterNode: siblings[index2 + 1],
       beforeNode: siblings[index2 - 1]
     });
   }
-  function checkRuleRepetition(state) {
-    const repetition = state.options.ruleRepetition || 3;
+  function checkRuleRepetition(state2) {
+    const repetition = state2.options.ruleRepetition || 3;
     if (repetition < 3) {
       throw new Error(
         "Cannot serialize rules with repetition `" + repetition + "` for `options.ruleRepetition`, expected `3` or more"
@@ -37102,9 +37102,9 @@
     }
     return repetition;
   }
-  function thematicBreak(_, _1, state) {
-    const value = (checkRule(state) + (state.options.ruleSpaces ? " " : "")).repeat(checkRuleRepetition(state));
-    return state.options.ruleSpaces ? value.slice(0, -1) : value;
+  function thematicBreak(_, _1, state2) {
+    const value = (checkRule(state2) + (state2.options.ruleSpaces ? " " : "")).repeat(checkRuleRepetition(state2));
+    return state2.options.ruleSpaces ? value.slice(0, -1) : value;
   }
   const handle = {
     blockquote,
@@ -37217,18 +37217,18 @@
         tableRow: handleTableRow
       }
     };
-    function handleTable(node2, _, state, info2) {
-      return serializeData(handleTableAsData(node2, state, info2), node2.align);
+    function handleTable(node2, _, state2, info2) {
+      return serializeData(handleTableAsData(node2, state2, info2), node2.align);
     }
-    function handleTableRow(node2, _, state, info2) {
-      const row = handleTableRowAsData(node2, state, info2);
+    function handleTableRow(node2, _, state2, info2) {
+      const row = handleTableRowAsData(node2, state2, info2);
       const value = serializeData([row]);
       return value.slice(0, value.indexOf("\n"));
     }
-    function handleTableCell(node2, _, state, info2) {
-      const exit2 = state.enter("tableCell");
-      const subexit = state.enter("phrasing");
-      const value = state.containerPhrasing(node2, {
+    function handleTableCell(node2, _, state2, info2) {
+      const exit2 = state2.enter("tableCell");
+      const subexit = state2.enter("phrasing");
+      const value = state2.containerPhrasing(node2, {
         ...info2,
         before: around,
         after: around
@@ -37248,31 +37248,31 @@
         stringLength
       });
     }
-    function handleTableAsData(node2, state, info2) {
+    function handleTableAsData(node2, state2, info2) {
       const children = node2.children;
       let index2 = -1;
       const result = [];
-      const subexit = state.enter("table");
+      const subexit = state2.enter("table");
       while (++index2 < children.length) {
-        result[index2] = handleTableRowAsData(children[index2], state, info2);
+        result[index2] = handleTableRowAsData(children[index2], state2, info2);
       }
       subexit();
       return result;
     }
-    function handleTableRowAsData(node2, state, info2) {
+    function handleTableRowAsData(node2, state2, info2) {
       const children = node2.children;
       let index2 = -1;
       const result = [];
-      const subexit = state.enter("tableRow");
+      const subexit = state2.enter("tableRow");
       while (++index2 < children.length) {
-        result[index2] = handleTableCell(children[index2], node2, state, info2);
+        result[index2] = handleTableCell(children[index2], node2, state2, info2);
       }
       subexit();
       return result;
     }
-    function inlineCodeWithTable(node2, parent, state) {
-      let value = handle.inlineCode(node2, parent, state);
-      if (state.stack.includes("tableCell")) {
+    function inlineCodeWithTable(node2, parent, state2) {
+      let value = handle.inlineCode(node2, parent, state2);
+      if (state2.stack.includes("tableCell")) {
         value = value.replace(/\|/g, "\\$&");
       }
       return value;
@@ -37329,15 +37329,15 @@
     }
     this.exit(token);
   }
-  function listItemWithTaskListItem(node2, parent, state, info2) {
+  function listItemWithTaskListItem(node2, parent, state2, info2) {
     const head = node2.children[0];
     const checkable = typeof node2.checked === "boolean" && head && head.type === "paragraph";
     const checkbox = "[" + (node2.checked ? "x" : " ") + "] ";
-    const tracker = state.createTracker(info2);
+    const tracker = state2.createTracker(info2);
     if (checkable) {
       tracker.move(checkbox);
     }
-    let value = handle.listItem(node2, parent, state, {
+    let value = handle.listItem(node2, parent, state2, {
       ...info2,
       ...tracker.current()
     });
@@ -38668,24 +38668,24 @@
     toMarkdownExtensions.push(gfmToMarkdown(settings));
   }
   const createStoreImpl = (createState2) => {
-    let state;
-    const listeners = /* @__PURE__ */ new Set();
+    let state2;
+    const listeners2 = /* @__PURE__ */ new Set();
     const setState = (partial, replace2) => {
-      const nextState = typeof partial === "function" ? partial(state) : partial;
-      if (!Object.is(nextState, state)) {
-        const previousState = state;
-        state = (replace2 != null ? replace2 : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state, nextState);
-        listeners.forEach((listener) => listener(state, previousState));
+      const nextState = typeof partial === "function" ? partial(state2) : partial;
+      if (!Object.is(nextState, state2)) {
+        const previousState = state2;
+        state2 = (replace2 != null ? replace2 : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state2, nextState);
+        listeners2.forEach((listener) => listener(state2, previousState));
       }
     };
-    const getState = () => state;
+    const getState = () => state2;
     const getInitialState = () => initialState;
     const subscribe = (listener) => {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
+      listeners2.add(listener);
+      return () => listeners2.delete(listener);
     };
     const api = { setState, getState, getInitialState, subscribe };
-    const initialState = state = createState2(setState, getState, api);
+    const initialState = state2 = createState2(setState, getState, api);
     return api;
   };
   const createStore = ((createState2) => createState2 ? createStoreImpl(createState2) : createStoreImpl);
@@ -38761,7 +38761,7 @@
   const persistImpl = (config, baseOptions) => (set, get, api) => {
     let options = {
       storage: createJSONStorage(() => window.localStorage),
-      partialize: (state) => state,
+      partialize: (state2) => state2,
       version: 0,
       merge: (persistedState, currentState) => ({
         ...currentState,
@@ -38787,9 +38787,9 @@
       );
     }
     const setItem = () => {
-      const state = options.partialize({ ...get() });
+      const state2 = options.partialize({ ...get() });
       return storage.setItem(options.name, {
-        state,
+        state: state2,
         version: options.version
       });
     };
@@ -38921,7 +38921,7 @@
         aiAvatar: null,
         userAvatar: null,
         panelSize: { width: 600, height: 600 },
-        setApiKeys: (keys2) => set((state) => ({ apiKeys: { ...state.apiKeys, ...keys2 } })),
+        setApiKeys: (keys2) => set((state2) => ({ apiKeys: { ...state2.apiKeys, ...keys2 } })),
         setPanelSize: (width, height) => set({ panelSize: { width, height } }),
         setAiAvatar: (avatar) => set({ aiAvatar: avatar }),
         setUserAvatar: (avatar) => set({ userAvatar: avatar }),
@@ -38936,21 +38936,21 @@
             model: selectedModel,
             updatedAt: Date.now()
           };
-          set((state) => ({
-            chats: [newChat, ...state.chats],
+          set((state2) => ({
+            chats: [newChat, ...state2.chats],
             activeChatId: id
           }));
           return id;
         },
-        deleteChat: (id) => set((state) => ({
-          chats: state.chats.filter((c) => c.id !== id),
-          activeChatId: state.activeChatId === id ? null : state.activeChatId
+        deleteChat: (id) => set((state2) => ({
+          chats: state2.chats.filter((c) => c.id !== id),
+          activeChatId: state2.activeChatId === id ? null : state2.activeChatId
         })),
-        addMessage: (chatId, message) => set((state) => ({
-          chats: state.chats.map((c) => c.id === chatId ? { ...c, messages: [...c.messages, message], updatedAt: Date.now() } : c)
+        addMessage: (chatId, message) => set((state2) => ({
+          chats: state2.chats.map((c) => c.id === chatId ? { ...c, messages: [...c.messages, message], updatedAt: Date.now() } : c)
         })),
-        updateMessageContent: (chatId, messageId, newContent) => set((state) => ({
-          chats: state.chats.map((c) => {
+        updateMessageContent: (chatId, messageId, newContent) => set((state2) => ({
+          chats: state2.chats.map((c) => {
             if (c.id !== chatId) return c;
             return {
               ...c,
@@ -38959,8 +38959,8 @@
             };
           })
         })),
-        appendStreamToMessage: (chatId, messageId, chunk) => set((state) => ({
-          chats: state.chats.map((c) => {
+        appendStreamToMessage: (chatId, messageId, chunk) => set((state2) => ({
+          chats: state2.chats.map((c) => {
             if (c.id !== chatId) return c;
             return {
               ...c,
@@ -38969,8 +38969,8 @@
             };
           })
         })),
-        updateChatTitle: (chatId, title) => set((state) => ({
-          chats: state.chats.map((c) => c.id === chatId ? { ...c, title } : c)
+        updateChatTitle: (chatId, title) => set((state2) => ({
+          chats: state2.chats.map((c) => c.id === chatId ? { ...c, title } : c)
         }))
       }),
       {
@@ -38984,6 +38984,20 @@
       pluginName: "AI Hub (Plugin)",
       closeLabel: "Close",
       stopLabel: "Stop",
+      tileBusy: "AI Hub, answering",
+      tileUnread: "AI Hub, new reply",
+      tileError: "AI Hub, last request failed",
+      history: "History",
+      searchChats: "Search chats",
+      noResults: "No chats match",
+      dropFiles: "Drop files to attach",
+      scrollBottom: "Scroll to bottom",
+      rename: "Rename",
+      attachFile: "Attach a file",
+      noKeyTitle: "Add your Anthropic key",
+      noKeyBody: "Claude models need an API key. Local models run without one.",
+      openKeys: "Add key",
+      replyHint: "Enter to send, Shift+Enter for a new line",
       chats: "Chats",
       newChat: "New Chat",
       aiHubSettings: "AI Hub Settings",
@@ -39020,6 +39034,20 @@
       pluginName: "Yapay Zeka Merkezi (Eklenti)",
       closeLabel: "Kapat",
       stopLabel: "Durdur",
+      tileBusy: "AI Hub, yanıt yazıyor",
+      tileUnread: "AI Hub, yeni yanıt var",
+      tileError: "AI Hub, son istek başarısız",
+      history: "Geçmiş",
+      searchChats: "Sohbetlerde ara",
+      noResults: "Eşleşen sohbet yok",
+      dropFiles: "Eklemek için dosyaları bırakın",
+      scrollBottom: "En alta in",
+      rename: "Yeniden adlandır",
+      attachFile: "Dosya ekle",
+      noKeyTitle: "Anthropic anahtarınızı ekleyin",
+      noKeyBody: "Claude modelleri için API anahtarı gerekir. Yerel modeller anahtarsız çalışır.",
+      openKeys: "Anahtar ekle",
+      replyHint: "Göndermek için Enter, yeni satır için Shift+Enter",
       chats: "Sohbetler",
       newChat: "Yeni Sohbet",
       aiHubSettings: "Yapay Zeka Merkezi Ayarları",
@@ -39056,6 +39084,20 @@
       pluginName: "KI Hub (Plugin)",
       closeLabel: "Schließen",
       stopLabel: "Stoppen",
+      tileBusy: "AI Hub, antwortet",
+      tileUnread: "AI Hub, neue Antwort",
+      tileError: "AI Hub, letzte Anfrage fehlgeschlagen",
+      history: "Verlauf",
+      searchChats: "Chats durchsuchen",
+      noResults: "Keine passenden Chats",
+      dropFiles: "Dateien zum Anhängen ablegen",
+      scrollBottom: "Nach unten",
+      rename: "Umbenennen",
+      attachFile: "Datei anhängen",
+      noKeyTitle: "Anthropic-Schlüssel hinzufügen",
+      noKeyBody: "Claude-Modelle brauchen einen API-Schlüssel. Lokale Modelle laufen ohne.",
+      openKeys: "Schlüssel hinzufügen",
+      replyHint: "Enter zum Senden, Umschalt+Enter für eine neue Zeile",
       chats: "Chats",
       newChat: "Neuer Chat",
       aiHubSettings: "KI Hub Einstellungen",
@@ -39092,6 +39134,20 @@
       pluginName: "Centro de IA (Plugin)",
       closeLabel: "Cerrar",
       stopLabel: "Detener",
+      tileBusy: "AI Hub, respondiendo",
+      tileUnread: "AI Hub, nueva respuesta",
+      tileError: "AI Hub, la última solicitud falló",
+      history: "Historial",
+      searchChats: "Buscar chats",
+      noResults: "Ningún chat coincide",
+      dropFiles: "Suelta archivos para adjuntar",
+      scrollBottom: "Ir al final",
+      rename: "Renombrar",
+      attachFile: "Adjuntar un archivo",
+      noKeyTitle: "Añade tu clave de Anthropic",
+      noKeyBody: "Los modelos Claude necesitan una clave de API. Los modelos locales no.",
+      openKeys: "Añadir clave",
+      replyHint: "Intro para enviar, Mayús+Intro para una línea nueva",
       chats: "Chats",
       newChat: "Nuevo Chat",
       aiHubSettings: "Ajustes del Centro de IA",
@@ -39128,6 +39184,20 @@
       pluginName: "Hub IA (Plugin)",
       closeLabel: "Fermer",
       stopLabel: "Arrêter",
+      tileBusy: "AI Hub, en train de répondre",
+      tileUnread: "AI Hub, nouvelle réponse",
+      tileError: "AI Hub, la dernière requête a échoué",
+      history: "Historique",
+      searchChats: "Rechercher des chats",
+      noResults: "Aucun chat ne correspond",
+      dropFiles: "Déposez des fichiers à joindre",
+      scrollBottom: "Aller en bas",
+      rename: "Renommer",
+      attachFile: "Joindre un fichier",
+      noKeyTitle: "Ajoutez votre clé Anthropic",
+      noKeyBody: "Les modèles Claude demandent une clé API. Les modèles locaux n’en ont pas besoin.",
+      openKeys: "Ajouter la clé",
+      replyHint: "Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne",
       chats: "Chats",
       newChat: "Nouveau Chat",
       aiHubSettings: "Paramètres du Hub IA",
@@ -39164,6 +39234,20 @@
       pluginName: "Центр ИИ (Плагин)",
       closeLabel: "Закрыть",
       stopLabel: "Остановить",
+      tileBusy: "AI Hub, отвечает",
+      tileUnread: "AI Hub, новый ответ",
+      tileError: "AI Hub, последний запрос не удался",
+      history: "История",
+      searchChats: "Поиск по чатам",
+      noResults: "Чаты не найдены",
+      dropFiles: "Перетащите файлы, чтобы прикрепить",
+      scrollBottom: "Вниз",
+      rename: "Переименовать",
+      attachFile: "Прикрепить файл",
+      noKeyTitle: "Добавьте ключ Anthropic",
+      noKeyBody: "Моделям Claude нужен API-ключ. Локальные модели работают без него.",
+      openKeys: "Добавить ключ",
+      replyHint: "Enter отправляет, Shift+Enter переносит строку",
       chats: "Чаты",
       newChat: "Новый чат",
       aiHubSettings: "Настройки Центра ИИ",
@@ -39200,6 +39284,20 @@
       pluginName: "مركز الذكاء الاصطناعي (مكون إضافي)",
       closeLabel: "إغلاق",
       stopLabel: "إيقاف",
+      tileBusy: "AI Hub، يكتب ردًا",
+      tileUnread: "AI Hub، رد جديد",
+      tileError: "AI Hub، فشل الطلب الأخير",
+      history: "السجل",
+      searchChats: "ابحث في المحادثات",
+      noResults: "لا توجد محادثات مطابقة",
+      dropFiles: "أفلت الملفات لإرفاقها",
+      scrollBottom: "إلى الأسفل",
+      rename: "إعادة التسمية",
+      attachFile: "إرفاق ملف",
+      noKeyTitle: "أضف مفتاح Anthropic",
+      noKeyBody: "نماذج Claude تحتاج إلى مفتاح API. النماذج المحلية تعمل بدونه.",
+      openKeys: "إضافة المفتاح",
+      replyHint: "Enter للإرسال وShift+Enter لسطر جديد",
       chats: "المحادثات",
       newChat: "محادثة جديدة",
       aiHubSettings: "إعدادات مركز الذكاء الاصطناعي",
@@ -39236,6 +39334,20 @@
       pluginName: "AI 中心 (插件)",
       closeLabel: "关闭",
       stopLabel: "停止",
+      tileBusy: "AI Hub，正在回复",
+      tileUnread: "AI Hub，有新回复",
+      tileError: "AI Hub，上次请求失败",
+      history: "历史",
+      searchChats: "搜索对话",
+      noResults: "没有匹配的对话",
+      dropFiles: "拖放文件以添加附件",
+      scrollBottom: "滚动到底部",
+      rename: "重命名",
+      attachFile: "添加文件",
+      noKeyTitle: "添加你的 Anthropic 密钥",
+      noKeyBody: "Claude 模型需要 API 密钥，本地模型无需密钥。",
+      openKeys: "添加密钥",
+      replyHint: "按 Enter 发送，Shift+Enter 换行",
       chats: "聊天",
       newChat: "新聊天",
       aiHubSettings: "AI 中心设置",
@@ -39272,6 +39384,20 @@
       pluginName: "AIハブ (プラグイン)",
       closeLabel: "閉じる",
       stopLabel: "停止",
+      tileBusy: "AI Hub、返信中",
+      tileUnread: "AI Hub、新しい返信があります",
+      tileError: "AI Hub、直前のリクエストに失敗しました",
+      history: "履歴",
+      searchChats: "チャットを検索",
+      noResults: "一致するチャットはありません",
+      dropFiles: "ファイルをドロップして添付",
+      scrollBottom: "一番下へ",
+      rename: "名前を変更",
+      attachFile: "ファイルを添付",
+      noKeyTitle: "Anthropic キーを追加",
+      noKeyBody: "Claude モデルには API キーが必要です。ローカルモデルは不要です。",
+      openKeys: "キーを追加",
+      replyHint: "Enter で送信、Shift+Enter で改行",
       chats: "チャット",
       newChat: "新しいチャット",
       aiHubSettings: "AIハブ設定",
@@ -39308,6 +39434,20 @@
       pluginName: "एआई हब (प्लगइन)",
       closeLabel: "बंद करें",
       stopLabel: "रोकें",
+      tileBusy: "AI Hub, जवाब लिख रहा है",
+      tileUnread: "AI Hub, नया जवाब",
+      tileError: "AI Hub, पिछला अनुरोध विफल रहा",
+      history: "इतिहास",
+      searchChats: "चैट खोजें",
+      noResults: "कोई चैट मेल नहीं खाती",
+      dropFiles: "जोड़ने के लिए फ़ाइलें छोड़ें",
+      scrollBottom: "सबसे नीचे जाएँ",
+      rename: "नाम बदलें",
+      attachFile: "फ़ाइल जोड़ें",
+      noKeyTitle: "अपनी Anthropic कुंजी जोड़ें",
+      noKeyBody: "Claude मॉडल के लिए API कुंजी चाहिए। लोकल मॉडल बिना कुंजी चलते हैं।",
+      openKeys: "कुंजी जोड़ें",
+      replyHint: "भेजने के लिए Enter, नई पंक्ति के लिए Shift+Enter",
       chats: "चैट्स",
       newChat: "नया चैट",
       aiHubSettings: "एआई हब सेटिंग्स",
@@ -39345,46 +39485,214 @@
     const langDict = TRANSLATIONS[currentLang] || TRANSLATIONS["en"];
     return langDict[key] || TRANSLATIONS["en"][key] || key;
   };
-  const ResizerHandle = ({ direction, edgePosition, startDrag }) => {
-    const directionClasses = (() => {
-      switch (direction) {
-        case "side":
-          return `absolute top-0 bottom-0 w-6 cursor-ew-resize ${edgePosition === "right" ? "left-0 -ml-3" : "right-0 -mr-3"}`;
-        case "bottom":
-          return "absolute bottom-0 left-0 right-0 h-6 -mb-3 cursor-ns-resize";
-        case "corner":
-          return `absolute bottom-0 w-6 h-6 -mb-3 cursor-nwse-resize ${edgePosition === "right" ? "left-0 -ml-3" : "right-0 -mr-3"}`;
+  const state = { busy: false, unread: false, error: false };
+  const listeners = /* @__PURE__ */ new Set();
+  const getBarState = () => state;
+  const setBarState = (patch2) => {
+    let changed = false;
+    for (const key of Object.keys(patch2)) {
+      if (state[key] !== patch2[key]) {
+        state[key] = patch2[key];
+        changed = true;
       }
-    })();
-    return /* @__PURE__ */ window.React.createElement(
-      "div",
-      {
-        onMouseDown: (e) => startDrag(e, direction),
-        className: `${directionClasses} resizer-handle hover:bg-primary/30 transition-colors z-50 [-webkit-app-region:no-drag] bg-black/1`
-      }
-    );
+    }
+    if (changed) listeners.forEach((fn) => fn(state));
   };
+  const subscribeBarState = (fn) => {
+    listeners.add(fn);
+    return () => listeners.delete(fn);
+  };
+  const fg1 = "var(--kb-fg-1, #f1f5f9)";
+  const fg2 = "var(--kb-fg-2, #94a3b8)";
+  const stroke = "var(--kb-stroke-subtle, var(--theme-border))";
+  const accent = "var(--kb-accent, var(--theme-primary))";
+  const tonal = { background: "var(--kb-bg-container, var(--theme-accent-glow))", color: "var(--kb-on-container, #fff)" };
+  const inset = "var(--kb-bg-inset, rgba(0,0,0,0.4))";
+  const display = "var(--kb-font-display, inherit)";
+  const mono = "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)";
   const MODELS$1 = [
-    { id: "anthropic:claude-sonnet-4-6", label: "Claude 4.6 Sonnet (Anthropic - Best)" },
-    { id: "anthropic:claude-opus-4-6", label: "Claude 4.6 Opus (Anthropic - Heavy)" },
-    { id: "anthropic:claude-haiku-4-5-20251001", label: "Claude 4.5 Haiku (Anthropic - Fast)" },
-    { id: "local:llama3", label: "Local Default (Ollama / LM Studio)" },
-    { id: "local:llava", label: "Local Vision (Ollama - LLaVA)" }
+    { id: "anthropic:claude-sonnet-4-6", label: "Claude 4.6 Sonnet (Anthropic - Best)", short: "Claude Sonnet 4.6" },
+    { id: "anthropic:claude-opus-4-6", label: "Claude 4.6 Opus (Anthropic - Heavy)", short: "Claude Opus 4.6" },
+    { id: "anthropic:claude-haiku-4-5-20251001", label: "Claude 4.5 Haiku (Anthropic - Fast)", short: "Claude Haiku 4.5" },
+    { id: "local:llama3", label: "Local Default (Ollama / LM Studio)", short: "Local (Llama 3)" },
+    { id: "local:llava", label: "Local Vision (Ollama - LLaVA)", short: "Local vision (LLaVA)" }
   ];
+  const shortModel = (id) => MODELS$1.find((m) => m.id === id)?.short || id;
+  const WIDE = 560;
+  const iconBtn = (extra) => ({
+    width: 36,
+    height: 36,
+    borderRadius: 999,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    background: "var(--kb-bg-tile, rgba(255,255,255,0.06))",
+    color: fg1,
+    border: "none",
+    ...extra
+  });
+  const fieldStyle = { width: "100%", background: inset, color: fg1, borderRadius: 16, padding: "10px 14px", fontSize: 14, border: "none", outline: "none", userSelect: "text" };
+  const labelStyle = { fontSize: 12, color: fg2 };
+  const cardStyle = { background: "var(--kb-bg-surface, rgba(255,255,255,0.04))", borderRadius: 24, padding: 20, display: "flex", flexDirection: "column", gap: 16 };
+  const cardTitle = { fontSize: 15, fontWeight: 600, color: fg1, fontFamily: display, margin: 0 };
+  const pillBtn = { borderRadius: 999, padding: "8px 16px", fontSize: 12, fontWeight: 600, border: "none", ...tonal };
+  const group = { display: "flex", flexDirection: "column", gap: 8 };
+  const Icon = ({ name: name2, size = 20, style }) => /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", "aria-hidden": "true", style: { fontSize: size, ...style } }, name2);
+  const IconTile = ({ size, icon, src }) => /* @__PURE__ */ window.React.createElement("div", { style: { width: size, height: size, borderRadius: size >= 60 ? 22 : 15, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", ...tonal } }, src ? /* @__PURE__ */ window.React.createElement("img", { src, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } }) : /* @__PURE__ */ window.React.createElement(Icon, { name: icon, size: size >= 60 ? 32 : 24, style: { color: accent } }));
+  const Avatar = ({ src, icon, ai }) => /* @__PURE__ */ window.React.createElement("div", { style: { width: 28, height: 28, borderRadius: 999, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", marginTop: 2, ...ai ? tonal : { background: "var(--kb-bg-tile, #334155)", color: fg1 } } }, src ? /* @__PURE__ */ window.React.createElement("img", { src, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } }) : /* @__PURE__ */ window.React.createElement(Icon, { name: icon, size: 16, style: { color: ai ? accent : fg1 } }));
+  const ModelSelect = ({ value, onChange, ariaLabel, chip, full }) => /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center", minWidth: 0, flex: chip ? "0 1 auto" : void 0 } }, /* @__PURE__ */ window.React.createElement(
+    "select",
+    {
+      value,
+      onChange,
+      "aria-label": ariaLabel,
+      style: chip ? { ...fieldStyle, width: "auto", maxWidth: "100%", background: "var(--kb-bg-tile, rgba(255,255,255,0.06))", appearance: "none", WebkitAppearance: "none", borderRadius: 999, padding: "8px 32px 8px 14px", fontSize: 13, fontWeight: 500, textOverflow: "ellipsis" } : { ...fieldStyle, appearance: "none", WebkitAppearance: "none", borderRadius: 999, padding: "9px 40px 9px 16px", fontWeight: 500, textOverflow: "ellipsis" }
+    },
+    MODELS$1.map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, full ? m.label : m.short))
+  ), /* @__PURE__ */ window.React.createElement(Icon, { name: "expand_more", size: chip ? 18 : 20, style: { position: "absolute", right: chip ? 8 : 12, color: fg2, pointerEvents: "none" } }));
+  const preprocessMarkdown = (text2) => {
+    if (!text2) return "";
+    return text2.replace(/\\\*/g, "*").replace(/\*\*\s+(.*?)\s+\*\*/g, "**$1**").replace(/(^|\s)\*\s+(.*?)\s+\*(\s|$)/g, "$1*$2*$3");
+  };
+  const ResizerHandle = ({ direction, edgePosition, startDrag }) => {
+    const base = { position: "absolute", zIndex: 50, WebkitAppRegion: "no-drag" };
+    const side = edgePosition === "right" ? { left: -12 } : { right: -12 };
+    const style = direction === "side" ? { ...base, top: 0, bottom: 0, width: 24, cursor: "ew-resize", ...side } : direction === "bottom" ? { ...base, bottom: -12, left: 0, right: 0, height: 24, cursor: "ns-resize" } : { ...base, bottom: -12, width: 24, height: 24, cursor: "nwse-resize", ...side };
+    return /* @__PURE__ */ window.React.createElement("div", { onMouseDown: (e) => startDrag(e, direction), className: "resizer-handle ai-resizer", style });
+  };
+  const MarkdownBody = ({ text: text2, t }) => /* @__PURE__ */ window.React.createElement(
+    Markdown,
+    {
+      remarkPlugins: [remarkGfm],
+      components: {
+        strong: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("strong", { style: { fontWeight: 700 }, ...props }),
+        p: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("p", { style: { margin: "0 0 12px" }, ...props }),
+        ul: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("ul", { style: { listStyle: "disc", paddingLeft: 20, margin: "0 0 12px" }, ...props }),
+        ol: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("ol", { style: { listStyle: "decimal", paddingLeft: 20, margin: "0 0 12px" }, ...props }),
+        li: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("li", { style: { marginBottom: 4 }, ...props }),
+        a: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("a", { style: { color: accent, textDecoration: "underline" }, ...props }),
+        h1: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h1", { style: { fontSize: 20, fontWeight: 700, fontFamily: display, margin: "0 0 12px" }, ...props }),
+        h2: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h2", { style: { fontSize: 17, fontWeight: 700, fontFamily: display, margin: "0 0 12px" }, ...props }),
+        h3: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h3", { style: { fontSize: 15, fontWeight: 700, margin: "0 0 8px" }, ...props }),
+        em: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("em", { style: { fontStyle: "italic" }, ...props }),
+        table: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("div", { style: { overflowX: "auto", margin: "0 0 12px" } }, /* @__PURE__ */ window.React.createElement("table", { style: { borderCollapse: "collapse", fontSize: 13 }, ...props })),
+        th: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("th", { style: { textAlign: "left", padding: "6px 10px", borderBottom: `1px solid ${stroke}` }, ...props }),
+        td: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("td", { style: { padding: "6px 10px", borderBottom: `1px solid ${stroke}` }, ...props }),
+        pre: ({ node: node2, children, ...props }) => /* @__PURE__ */ window.React.createElement("pre", { style: { margin: 0, userSelect: "text" }, ...props }, children),
+        code: ({ node: node2, inline, className, children, ...props }) => {
+          const match = /language-(\w+)/.exec(className || "");
+          const language = match ? match[1] : "text";
+          const body = String(children).replace(/\n$/, "");
+          return !inline && (match || body.includes("\n")) ? /* @__PURE__ */ window.React.createElement("div", { className: "no-drag-region", style: { borderRadius: 16, overflow: "hidden", margin: "4px 0 14px", background: "#1e1e1e", color: "#d4d4d4", userSelect: "text" } }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 6px 4px 14px", background: "rgba(255,255,255,0.06)" } }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: "#a1a1aa", fontFamily: mono } }, language), /* @__PURE__ */ window.React.createElement(
+            "button",
+            {
+              onClick: (e) => {
+                e.stopPropagation();
+                window.api?.writeToClipboard?.({ type: "text", content: body });
+              },
+              className: "ai-btn ai-code-copy",
+              style: { width: 32, height: 32, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", color: "#d4d4d4", border: "none" },
+              title: t("copyToOsClipboard"),
+              "aria-label": t("copyToOsClipboard")
+            },
+            /* @__PURE__ */ window.React.createElement(Icon, { name: "content_copy", size: 16 })
+          )), /* @__PURE__ */ window.React.createElement(
+            highlighter,
+            {
+              style: vscDarkPlus,
+              language,
+              PreTag: "div",
+              customStyle: { userSelect: "text", margin: 0, padding: 14, background: "transparent", fontSize: 12.5, fontFamily: mono },
+              codeTagProps: { style: { fontFamily: mono } }
+            },
+            body
+          )) : /* @__PURE__ */ window.React.createElement("code", { style: { userSelect: "text", fontSize: 12.5, padding: "2px 6px", background: inset, color: fg1, borderRadius: 8, fontFamily: mono }, ...props }, children);
+        }
+      }
+    },
+    preprocessMarkdown(text2)
+  );
+  const HistoryList = ({ t, chats, activeChatId, onPick, onNew, onRename, onDelete, editingChatId, editTitle, setEditTitle, saveTitle, cancelEdit, editInputRef, primaryNew }) => {
+    const { useState } = window.React;
+    const [query, setQuery] = useState("");
+    const q = query.trim().toLowerCase();
+    const shown = q ? chats.filter((c) => c.title.toLowerCase().includes(q) || c.messages.some((m) => (m.content || "").toLowerCase().includes(q))) : chats;
+    const label = (c) => c.title === "New Chat" ? t("newChat") : c.title;
+    const snippet = (c) => {
+      const last = [...c.messages].reverse().find((m) => (m.content || "").trim());
+      return last ? last.content.replace(/\s+/g, " ").slice(0, 60) : "";
+    };
+    return /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", minHeight: 0, flex: 1, gap: 12 } }, /* @__PURE__ */ window.React.createElement(
+      "button",
+      {
+        onClick: onNew,
+        className: "ai-btn",
+        style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 44, borderRadius: 999, border: "none", fontSize: 14, fontWeight: 600, flexShrink: 0, ...primaryNew ? { background: accent, color: "var(--kb-on-accent, #fff)" } : tonal }
+      },
+      /* @__PURE__ */ window.React.createElement(Icon, { name: "add", size: 20 }),
+      /* @__PURE__ */ window.React.createElement("span", null, t("newChat"))
+    ), chats.length > 7 && /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "search", size: 18, style: { position: "absolute", left: 14, top: 11, color: fg2, pointerEvents: "none" } }), /* @__PURE__ */ window.React.createElement(
+      "input",
+      {
+        value: query,
+        onChange: (e) => setQuery(e.target.value),
+        placeholder: t("searchChats"),
+        "aria-label": t("searchChats"),
+        style: { ...fieldStyle, borderRadius: 999, padding: "9px 14px 9px 40px" }
+      }
+    )), /* @__PURE__ */ window.React.createElement("div", { className: "custom-scrollbar", style: { flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 6 } }, shown.length === 0 && /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 13, color: fg2, padding: "8px 4px" } }, t("noResults")), shown.map((c) => {
+      const active = activeChatId === c.id;
+      return /* @__PURE__ */ window.React.createElement(
+        "div",
+        {
+          key: c.id,
+          onClick: () => onPick(c.id),
+          onDoubleClick: () => onRename(c.id, c.title),
+          className: `ai-row ${active ? "" : "ai-row-idle"}`,
+          style: { display: "flex", alignItems: "center", gap: 4, minHeight: 56, padding: "6px 6px 6px 14px", borderRadius: 16, cursor: "pointer", userSelect: "none", flexShrink: 0, ...active ? tonal : { background: "var(--kb-bg-tile, rgba(255,255,255,0.04))", color: fg1 } }
+        },
+        editingChatId === c.id ? /* @__PURE__ */ window.React.createElement(
+          "input",
+          {
+            ref: editInputRef,
+            value: editTitle,
+            onChange: (e) => setEditTitle(e.target.value),
+            onBlur: () => saveTitle(c.id),
+            onKeyDown: (e) => {
+              if (e.key === "Enter") saveTitle(c.id);
+              if (e.key === "Escape") {
+                e.stopPropagation();
+                cancelEdit();
+              }
+            },
+            "aria-label": t("rename"),
+            style: { ...fieldStyle, padding: "6px 10px", borderRadius: 12 },
+            onClick: (e) => e.stopPropagation()
+          }
+        ) : /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 } }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, label(c)), snippet(c) && /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: active ? "var(--kb-on-container, #fff)" : fg2, opacity: active ? 0.8 : 1 } }, snippet(c))), /* @__PURE__ */ window.React.createElement("div", { className: "ai-row-actions", style: { display: "flex", flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: (e) => {
+          e.stopPropagation();
+          onRename(c.id, c.title);
+        }, className: "ai-btn", title: t("rename"), "aria-label": t("rename"), style: { width: 32, height: 32, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", color: active ? "var(--kb-on-container, #fff)" : fg2, border: "none" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "edit", size: 18 })), /* @__PURE__ */ window.React.createElement("button", { onClick: (e) => {
+          e.stopPropagation();
+          onDelete(c.id);
+        }, className: "ai-btn", title: t("remove"), "aria-label": t("remove"), style: { width: 32, height: 32, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", color: active ? "var(--kb-on-container, #fff)" : fg2, border: "none" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "delete", size: 18 }))))
+      );
+    })));
+  };
   const AiHubPanel = ({ onClose, anchorRect }) => {
     const React2 = window.React;
     const { useState, useEffect, useRef } = React2;
     const useAppStore = window.useAppStore;
-    const edgePosition = useAppStore((state) => state.edgePosition);
-    const design = useAppStore((state) => state.design);
-    const glassOpacity = useAppStore((state) => state.glassOpacity);
-    useAppStore((state) => state.t);
-    const currentLang = useAppStore((state) => state.language);
+    const edgePosition = useAppStore((state2) => state2.edgePosition);
+    const design = useAppStore((state2) => state2.design);
+    const glassOpacity = useAppStore((state2) => state2.glassOpacity);
+    const currentLang = useAppStore((state2) => state2.language);
     const t = (key) => getTranslation(currentLang, key);
-    const isMac = useAppStore((state) => state.isMac);
-    const screenBounds = useAppStore((state) => state.screenBounds);
-    const sidebarPosition = useAppStore((state) => state.sidebarPosition);
-    const orientation = useAppStore((state) => state.orientation);
+    const isMac = useAppStore((state2) => state2.isMac);
+    const screenBounds = useAppStore((state2) => state2.screenBounds);
+    const sidebarPosition = useAppStore((state2) => state2.sidebarPosition);
+    const orientation = useAppStore((state2) => state2.orientation);
     const {
       chats,
       activeChatId,
@@ -39404,25 +39712,27 @@
     } = usePluginChatStore();
     const [input, setInput] = useState("");
     const [attachments, setAttachments] = useState([]);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [view, setView] = useState("chat");
     const [isGenerating, setIsGenerating] = useState(false);
     const [generatingMessageId, setGeneratingMessageId] = useState(null);
-    const [showSettings, setShowSettings] = useState(false);
+    const [dragging, setDragging] = useState(false);
     const [aiHubWidth, setAiHubWidth] = useState(panelSize?.width || 600);
     const [aiHubHeight, setAiHubHeight] = useState(panelSize?.height || 600);
-    const [isSmartPositioning] = useState(true);
     const inputRef = useRef(null);
-    const popupRef = useRef(null);
+    const fileInputRef = useRef(null);
+    const dragDepth = useRef(0);
     const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
     const [editingChatId, setEditingChatId] = useState(null);
     const [editTitle, setEditTitle] = useState("");
     const editInputRef = useRef(null);
     const messagesScrollRef = useRef(null);
-    const bottomRef = useRef(null);
     const activeChat = chats.find((c) => c.id === activeChatId) || null;
+    const wide = aiHubWidth >= WIDE;
     useEffect(() => {
       if (!activeChatId && chats.length > 0) setActiveChatId(chats[0].id);
       else if (chats.length === 0) createChat();
+      setBarState({ unread: false, error: false });
+      setTimeout(() => inputRef.current?.focus(), 60);
     }, []);
     useEffect(() => {
       if (isAutoScrollEnabled && messagesScrollRef.current) {
@@ -39431,7 +39741,7 @@
           behavior: "auto"
         });
       }
-    }, [activeChat?.messages.length, activeChat?.messages[activeChat?.messages.length - 1]?.content, isAutoScrollEnabled]);
+    }, [activeChat?.messages.length, activeChat?.messages[activeChat?.messages.length - 1]?.content, isAutoScrollEnabled, view]);
     const getPopupStyle = () => {
       if (!anchorRect) return { display: "none" };
       const screenHeight = screenBounds?.height ?? 800;
@@ -39446,7 +39756,7 @@
         display: "flex",
         flexDirection: "row",
         backgroundColor: design === "style2" ? `color-mix(in srgb, var(--kb-bg-shell, var(--theme-bg-dark)) ${glassOpacity}%, transparent)` : "var(--kb-bg-shell, var(--theme-bg-dark))",
-        borderColor: "var(--kb-stroke-subtle, var(--theme-border))",
+        borderColor: stroke,
         borderWidth: "1px",
         borderStyle: "solid",
         backdropFilter: design === "style2" ? isMac ? "blur(8px)" : "blur(20px)" : "none",
@@ -39560,7 +39870,9 @@
       }
       setInput("");
       setAttachments([]);
+      if (inputRef.current) inputRef.current.style.height = "auto";
       setIsGenerating(true);
+      setBarState({ busy: true, error: false });
       const aiMsgId = crypto.randomUUID();
       setGeneratingMessageId(aiMsgId);
       addMessage(currentChatId, {
@@ -39647,6 +39959,7 @@ ${currentApiKeys.customInstructions}` : ""
       } catch (e) {
         setIsGenerating(false);
         setGeneratingMessageId(null);
+        setBarState({ busy: false });
       }
     };
     const handleCancel = () => {
@@ -39654,6 +39967,7 @@ ${currentApiKeys.customInstructions}` : ""
         window.api?.cancelLlmRequest(generatingMessageId);
         setIsGenerating(false);
         setGeneratingMessageId(null);
+        setBarState({ busy: false });
       }
     };
     const handleCopy = (text2) => {
@@ -39665,7 +39979,7 @@ ${currentApiKeys.customInstructions}` : ""
     };
     const startEditingTitle = (id, currentTitle) => {
       setEditingChatId(id);
-      setEditTitle(currentTitle);
+      setEditTitle(currentTitle === "New Chat" ? t("newChat") : currentTitle);
       setTimeout(() => editInputRef.current?.focus(), 50);
     };
     const saveTitle = (id) => {
@@ -39678,11 +39992,10 @@ ${currentApiKeys.customInstructions}` : ""
       const val = e.target.value;
       setInput(val);
       e.target.style.height = "auto";
-      e.target.style.height = Math.min(e.target.scrollHeight, 200) + "px";
+      e.target.style.height = Math.min(e.target.scrollHeight, 160) + "px";
     };
-    const onDrop = async (e) => {
-      e.preventDefault();
-      const files = Array.from(e.dataTransfer.files);
+    const addFiles = async (fileList) => {
+      const files = Array.from(fileList || []);
       for (const file of files) {
         const filePath = window.api?.getFilePath(file) || file.path;
         if (filePath) {
@@ -39693,266 +40006,186 @@ ${currentApiKeys.customInstructions}` : ""
         }
       }
     };
-    const preprocessMarkdown = (text2) => {
-      if (!text2) return "";
-      return text2.replace(/\\\*/g, "*").replace(/\*\*\s+(.*?)\s+\*\*/g, "**$1**").replace(/(^|\s)\*\s+(.*?)\s+\*(\s|$)/g, "$1*$2*$3");
+    const onDrop = async (e) => {
+      e.preventDefault();
+      dragDepth.current = 0;
+      setDragging(false);
+      await addFiles(e.dataTransfer.files);
     };
-    const fg1 = "var(--kb-fg-1, #f1f5f9)";
-    const fg2 = "var(--kb-fg-2, #94a3b8)";
-    const stroke = "var(--kb-stroke-subtle, var(--theme-border))";
-    const iconBtn = (extra) => ({
-      width: 36,
-      height: 36,
-      borderRadius: 999,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flexShrink: 0,
-      background: "var(--kb-bg-tile, rgba(255,255,255,0.06))",
-      color: fg1,
-      ...extra
-    });
-    const tonal = { background: "var(--kb-bg-container, var(--theme-accent-glow))", color: "var(--kb-on-container, #fff)" };
-    const fieldStyle = { width: "100%", background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", color: fg1, borderRadius: 16, padding: "10px 14px", fontSize: 14, border: "none", outline: "none", userSelect: "text" };
-    const labelStyle = { fontSize: 12, color: fg2 };
-    const cardStyle = { background: "var(--kb-bg-surface, rgba(255,255,255,0.04))", borderRadius: 24, padding: 20, display: "flex", flexDirection: "column", gap: 16 };
-    const cardTitle = { fontSize: 15, fontWeight: 600, color: fg1, fontFamily: "var(--kb-font-display, inherit)", margin: 0 };
-    const pillBtn = { borderRadius: 999, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer", ...tonal };
-    const ModelSelect = ({ value, onChange, ariaLabel, style }) => /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center", ...style } }, /* @__PURE__ */ window.React.createElement(
-      "select",
-      {
-        value,
-        onChange,
-        "aria-label": ariaLabel,
-        style: { ...fieldStyle, appearance: "none", WebkitAppearance: "none", borderRadius: 999, padding: "9px 40px 9px 16px", fontWeight: 500, cursor: "pointer", textOverflow: "ellipsis" }
-      },
-      MODELS$1.map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, m.label))
-    ), /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", "aria-hidden": "true", style: { position: "absolute", right: 12, fontSize: 20, color: fg2, pointerEvents: "none" } }, "expand_more"));
-    const Avatar = ({ src, icon, tone }) => /* @__PURE__ */ window.React.createElement("div", { style: { width: 32, height: 32, borderRadius: 999, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", ...tone === "ai" ? tonal : { background: "var(--kb-bg-tile, #334155)", color: fg1 } } }, src ? /* @__PURE__ */ window.React.createElement("img", { src, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } }) : /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 18, color: tone === "ai" ? "var(--kb-accent, var(--theme-primary))" : fg1 } }, icon));
-    const IconTile = ({ size, icon, src }) => /* @__PURE__ */ window.React.createElement("div", { style: { width: size, height: size, borderRadius: size >= 60 ? 22 : 15, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", ...tonal } }, src ? /* @__PURE__ */ window.React.createElement("img", { src, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } }) : /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: size >= 60 ? 32 : 24, color: "var(--kb-accent, var(--theme-primary))" } }, icon));
-    const AvatarRow = ({ type, src, icon, label }) => /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 16 } }, /* @__PURE__ */ window.React.createElement(IconTile, { size: 64, icon, src }), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, minWidth: 0 } }, /* @__PURE__ */ window.React.createElement("span", { style: labelStyle }, label), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, /* @__PURE__ */ window.React.createElement("label", { style: pillBtn }, t("change"), /* @__PURE__ */ window.React.createElement("input", { type: "file", accept: "image/*", style: { display: "none" }, onChange: (e) => handleAvatarUpload(e, type) })), src && /* @__PURE__ */ window.React.createElement("button", { onClick: () => type === "ai" ? setAiAvatar(null) : setUserAvatar(null), style: { ...pillBtn, background: "var(--kb-bg-tile, rgba(255,255,255,0.06))", color: "var(--kb-danger, #ef4444)" } }, t("remove")))));
+    const selectedModel = activeChat?.model || "openai:gpt-4o";
+    const needsKey = selectedModel.startsWith("anthropic:") && !apiKeys?.anthropic;
+    const chatTitle = activeChat ? activeChat.title === "New Chat" ? t("newChat") : activeChat.title : t("newChat");
     const setKeys = (patch2) => usePluginChatStore.getState().setApiKeys(patch2);
+    const canSend = Boolean(input.trim()) || attachments.length > 0;
+    const changeModel = (e) => {
+      if (activeChat) {
+        usePluginChatStore.setState((s) => ({
+          chats: s.chats.map((c) => c.id === activeChat.id ? { ...c, model: e.target.value } : c)
+        }));
+      } else {
+        createChat(e.target.value);
+      }
+    };
+    const historyProps = {
+      t,
+      chats,
+      activeChatId,
+      editingChatId,
+      editTitle,
+      setEditTitle,
+      saveTitle,
+      editInputRef,
+      cancelEdit: () => setEditingChatId(null),
+      onRename: startEditingTitle,
+      onDelete: (id) => deleteChat(id),
+      onNew: () => {
+        createChat();
+        setView("chat");
+        setTimeout(() => inputRef.current?.focus(), 60);
+      },
+      onPick: (id) => {
+        setActiveChatId(id);
+        setView("chat");
+      }
+    };
+    const onKeyDown = (e) => {
+      if (e.key !== "Escape") return;
+      e.stopPropagation();
+      if (view !== "chat") setView("chat");
+      else onClose?.();
+    };
+    const subtle = (extra) => ({ background: "transparent", color: fg2, border: "none", ...extra });
+    const header = view === "chat" ? /* @__PURE__ */ window.React.createElement("div", { style: { padding: "20px 20px 12px", display: "flex", alignItems: "center", gap: 12, flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement(IconTile, { size: 44, icon: "auto_awesome" }), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minWidth: 0, display: "flex", flexDirection: "column" } }, editingChatId && editingChatId === activeChatId ? /* @__PURE__ */ window.React.createElement(
+      "input",
+      {
+        ref: editInputRef,
+        value: editTitle,
+        onChange: (e) => setEditTitle(e.target.value),
+        onBlur: () => saveTitle(activeChatId),
+        onKeyDown: (e) => {
+          if (e.key === "Enter") saveTitle(activeChatId);
+          if (e.key === "Escape") {
+            e.stopPropagation();
+            setEditingChatId(null);
+          }
+        },
+        "aria-label": t("rename"),
+        style: { ...fieldStyle, padding: "4px 10px", borderRadius: 12, fontSize: 17, fontWeight: 600 }
+      }
+    ) : /* @__PURE__ */ window.React.createElement(
+      "h2",
+      {
+        onDoubleClick: () => activeChat && startEditingTitle(activeChat.id, activeChat.title),
+        title: t("rename"),
+        style: { margin: 0, fontSize: 19, fontWeight: 600, lineHeight: 1.25, color: fg1, fontFamily: display, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }
+      },
+      chatTitle
+    ), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, shortModel(selectedModel))), /* @__PURE__ */ window.React.createElement("button", { onClick: () => createChat(), className: "ai-btn", title: t("newChat"), "aria-label": t("newChat"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "add" })), !wide && /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("history"), className: "ai-btn", title: t("history"), "aria-label": t("history"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "history" })), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("settings"), className: "ai-btn", title: t("aiHubSettings"), "aria-label": t("aiHubSettings"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "settings" })), /* @__PURE__ */ window.React.createElement("button", { onClick: onClose, className: "ai-btn", title: t("closeLabel"), "aria-label": t("closeLabel"), style: iconBtn(tonal) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "close" }))) : /* @__PURE__ */ window.React.createElement("div", { style: { padding: "20px 20px 12px", display: "flex", alignItems: "center", gap: 12, flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("chat"), className: "ai-btn", title: t("backToChat"), "aria-label": t("backToChat"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "arrow_back" })), /* @__PURE__ */ window.React.createElement("h2", { style: { flex: 1, minWidth: 0, margin: 0, fontSize: 19, fontWeight: 600, color: fg1, fontFamily: display, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, view === "history" ? t("history") : t("aiHubSettings")), /* @__PURE__ */ window.React.createElement("button", { onClick: onClose, className: "ai-btn", title: t("closeLabel"), "aria-label": t("closeLabel"), style: iconBtn(tonal) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "close" })));
+    const messages = activeChat?.messages || [];
+    const chatView = /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", flex: 1, minHeight: 0, display: "flex", flexDirection: "column" } }, /* @__PURE__ */ window.React.createElement(
+      "div",
+      {
+        ref: messagesScrollRef,
+        onScroll: (e) => {
+          const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+          setIsAutoScrollEnabled(scrollHeight - scrollTop - clientHeight < 150);
+        },
+        className: "custom-scrollbar pointer-events-auto select-auto no-drag-region",
+        style: { flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", padding: "4px 20px 12px", gap: 10 }
+      },
+      messages.length === 0 ? /* @__PURE__ */ window.React.createElement("div", { style: { margin: "auto 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 12, textAlign: "center", userSelect: "none" } }, /* @__PURE__ */ window.React.createElement(IconTile, { size: 64, icon: "auto_awesome" }), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 17, fontWeight: 600, color: fg1, fontFamily: display } }, t("kobarAiHub")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, color: fg2, maxWidth: 300 } }, t("replyHint"))) : messages.map((msg) => {
+        const isUser = msg.role === "user";
+        const waiting = !isUser && !msg.content && isGenerating && msg.id === generatingMessageId;
+        return /* @__PURE__ */ window.React.createElement("div", { key: msg.id, className: "ai-msg", style: { display: "flex", gap: 10, width: "100%", justifyContent: isUser ? "flex-end" : "flex-start" } }, !isUser && /* @__PURE__ */ window.React.createElement(Avatar, { src: aiAvatar, icon: "smart_toy", ai: true }), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 2, maxWidth: isUser ? "85%" : "calc(100% - 38px)", minWidth: 0, flex: isUser ? void 0 : 1, alignItems: isUser ? "flex-end" : "flex-start" } }, /* @__PURE__ */ window.React.createElement(
+          "div",
+          {
+            className: "ai-chat-selectable",
+            style: { minWidth: 0, maxWidth: "100%", userSelect: "text", fontSize: 14, lineHeight: 1.6, wordBreak: "break-word", color: fg1, ...isUser ? { ...tonal, padding: "10px 16px", borderRadius: 20, borderTopRightRadius: 6 } : { padding: "2px 0" } }
+          },
+          msg.attachments && msg.attachments.length > 0 && /* @__PURE__ */ window.React.createElement("div", { style: { marginBottom: 8 } }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, padding: "4px 10px", borderRadius: 999, background: inset, color: "inherit" } }, "+", msg.attachments.length, " ", t("filesAttached"))),
+          waiting ? /* @__PURE__ */ window.React.createElement("span", { style: { color: fg2, display: "inline-flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "more_horiz", size: 20 }), t("thinking")) : /* @__PURE__ */ window.React.createElement("div", { className: "ai-md" }, /* @__PURE__ */ window.React.createElement(MarkdownBody, { text: msg.content, t }))
+        ), !waiting && /* @__PURE__ */ window.React.createElement("div", { className: "ai-msg-actions", style: { display: "flex", gap: 2 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => handleSendToSlot(msg.content), className: "ai-btn", title: t("sendToSlot"), "aria-label": t("sendToSlot"), style: subtle({ width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center" }) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "dynamic_feed", size: 16 })), /* @__PURE__ */ window.React.createElement("button", { onClick: () => handleCopy(msg.content), className: "ai-btn", title: t("copyText"), "aria-label": t("copyText"), style: subtle({ width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center" }) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "content_copy", size: 16 })))), isUser && /* @__PURE__ */ window.React.createElement(Avatar, { src: userAvatar, icon: "person" }));
+      })
+    ), !isAutoScrollEnabled && messages.length > 0 && /* @__PURE__ */ window.React.createElement(
+      "button",
+      {
+        onClick: () => {
+          setIsAutoScrollEnabled(true);
+          messagesScrollRef.current?.scrollTo({ top: messagesScrollRef.current.scrollHeight, behavior: "smooth" });
+        },
+        className: "ai-btn",
+        title: t("scrollBottom"),
+        "aria-label": t("scrollBottom"),
+        style: { ...iconBtn(), position: "absolute", right: 20, bottom: 8, background: "var(--kb-bg-surface, #1f2937)", boxShadow: "var(--kb-shadow-e2, 0 4px 14px rgba(0,0,0,0.35))" }
+      },
+      /* @__PURE__ */ window.React.createElement(Icon, { name: "arrow_downward" })
+    )), /* @__PURE__ */ window.React.createElement("div", { className: "pointer-events-auto", style: { padding: "8px 20px 20px", display: "flex", flexDirection: "column", gap: 10, flexShrink: 0 } }, needsKey && /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, padding: "12px 12px 12px 16px", borderRadius: 20, background: "var(--kb-bg-surface, rgba(255,255,255,0.04))" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "key", size: 22, style: { color: accent, flexShrink: 0 } }), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 } }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: fg1 } }, t("noKeyTitle")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2, lineHeight: 1.4 } }, t("noKeyBody"))), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("settings"), className: "ai-btn", style: { ...pillBtn, padding: "8px 14px", flexShrink: 0 } }, t("openKeys"))), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", background: inset, borderRadius: 28, padding: "8px 8px 8px 8px" } }, attachments.length > 0 && /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 6, padding: "4px 6px 6px" } }, attachments.map((a, i) => /* @__PURE__ */ window.React.createElement("div", { key: i, style: { display: "flex", alignItems: "center", gap: 6, padding: "2px 2px 2px 10px", fontSize: 12, color: fg1, borderRadius: 999, background: "var(--kb-bg-tile, rgba(255,255,255,0.08))" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: a.type === "image" ? "image" : "description", size: 14, style: { color: accent } }), /* @__PURE__ */ window.React.createElement("span", { style: { maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, a.name), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setAttachments((prev) => prev.filter((_, idx) => idx !== i)), className: "ai-btn", "aria-label": t("remove"), title: t("remove"), style: subtle({ width: 24, height: 24, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center" }) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "close", size: 14 }))))), /* @__PURE__ */ window.React.createElement(
+      "textarea",
+      {
+        ref: inputRef,
+        value: input,
+        onChange: onInput,
+        placeholder: t("typeMessage"),
+        "aria-label": t("typeMessage"),
+        className: "custom-scrollbar select-auto pointer-events-auto",
+        rows: 1,
+        style: { width: "100%", minHeight: 40, maxHeight: 160, overflowY: "auto", padding: "9px 12px", borderRadius: 0, background: "transparent", color: fg1, fontSize: 14, lineHeight: 1.5, border: "none", outline: "none", resize: "none", userSelect: "text" },
+        onKeyDown: (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+          }
+        }
+      }
+    ), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ window.React.createElement("input", { ref: fileInputRef, type: "file", multiple: true, style: { display: "none" }, onChange: async (e) => {
+      await addFiles(e.target.files);
+      e.target.value = "";
+    } }), /* @__PURE__ */ window.React.createElement("button", { onClick: () => fileInputRef.current?.click(), className: "ai-btn", title: t("attachFile"), "aria-label": t("attachFile"), style: subtle({ width: 36, height: 36, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center" }) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "attach_file" })), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minWidth: 0, display: "flex" } }, /* @__PURE__ */ window.React.createElement(ModelSelect, { chip: true, value: selectedModel, ariaLabel: t("defaultModel"), onChange: changeModel })), isGenerating ? /* @__PURE__ */ window.React.createElement("button", { onClick: handleCancel, className: "ai-btn", title: t("stopLabel"), "aria-label": t("stopLabel"), style: { width: 40, height: 40, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "none", ...tonal } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "stop" })) : /* @__PURE__ */ window.React.createElement("button", { onClick: handleSend, disabled: !canSend, title: t("typeMessage"), "aria-label": t("typeMessage"), style: { width: 40, height: 40, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "none", background: accent, color: "var(--kb-on-accent, #fff)", opacity: canSend ? 1 : "var(--kb-opacity-disabled, 0.5)" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "arrow_upward" }))))));
+    const AvatarRow = ({ type, src, icon, label }) => /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 16 } }, /* @__PURE__ */ window.React.createElement(IconTile, { size: 64, icon, src }), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, minWidth: 0 } }, /* @__PURE__ */ window.React.createElement("span", { style: labelStyle }, label), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, /* @__PURE__ */ window.React.createElement("label", { style: pillBtn }, t("change"), /* @__PURE__ */ window.React.createElement("input", { type: "file", accept: "image/*", style: { display: "none" }, onChange: (e) => handleAvatarUpload(e, type) })), src && /* @__PURE__ */ window.React.createElement("button", { onClick: () => type === "ai" ? setAiAvatar(null) : setUserAvatar(null), style: { ...pillBtn, background: "var(--kb-bg-tile, rgba(255,255,255,0.06))", color: "var(--kb-danger, #ef4444)" } }, t("remove")))));
+    const settingsView = /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("div", { className: "custom-scrollbar", style: { flex: 1, overflowY: "auto", padding: "4px 20px 12px", display: "flex", flexDirection: "column", gap: 16, minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("defaultModel")), /* @__PURE__ */ window.React.createElement(ModelSelect, { full: true, value: apiKeys?.defaultModel || "anthropic:claude-sonnet-4-6", ariaLabel: t("defaultModel"), onChange: (e) => setKeys({ defaultModel: e.target.value }) }))), /* @__PURE__ */ window.React.createElement("section", { id: "ai-keys", style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("apiKeysProviders")), /* @__PURE__ */ window.React.createElement("div", { style: { ...group, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("openaiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("willBeAddedSoon"), style: { ...fieldStyle, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: { ...group, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("geminiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("willBeAddedSoon"), style: { ...fieldStyle, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("anthropicKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { type: "password", value: apiKeys?.anthropic || "", onChange: (e) => setKeys({ anthropic: e.target.value }), placeholder: "sk-ant-...", style: fieldStyle })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("localUrlLabel")), /* @__PURE__ */ window.React.createElement("input", { type: "text", value: apiKeys?.localUrl || "", onChange: (e) => setKeys({ localUrl: e.target.value }), placeholder: "http://localhost:11434", style: fieldStyle }))), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("profileCustomization")), /* @__PURE__ */ window.React.createElement(AvatarRow, { type: "ai", src: aiAvatar, icon: "smart_toy", label: t("aiAvatar") }), /* @__PURE__ */ window.React.createElement(AvatarRow, { type: "user", src: userAvatar, icon: "person", label: t("userAvatar") })), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2 } }, t("definesAiBehavior"))), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys?.systemMessage || "", onChange: (e) => setKeys({ systemMessage: e.target.value }), placeholder: "You are a helpful AI...", style: { ...fieldStyle, minHeight: 88, resize: "vertical" } })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2 } }, t("addedToSystemPrompt"))), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys?.customInstructions || "", onChange: (e) => setKeys({ customInstructions: e.target.value }), placeholder: "e.g. Always respond in Spanish", style: { ...fieldStyle, minHeight: 88, resize: "vertical" } })))), /* @__PURE__ */ window.React.createElement("div", { style: { padding: "8px 20px 20px", display: "flex", justifyContent: "flex-end", flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("chat"), className: "ai-btn", style: { padding: "10px 24px", fontSize: 14, fontWeight: 600, borderRadius: 999, border: "none", background: accent, color: "var(--kb-on-accent, #fff)" } }, t("backToChat"))));
     return /* @__PURE__ */ window.React.createElement(
       "div",
       {
-        ref: popupRef,
-        className: "ai-root overflow-hidden font-sans no-drag-region pointer-events-auto flex flex-row",
-        style: {
-          ...getPopupStyle(),
-          borderRadius: 32
-        },
+        className: "ai-root font-sans no-drag-region pointer-events-auto",
+        style: { ...getPopupStyle(), borderRadius: 32, overflow: "hidden", fontFamily: "var(--kb-font-body, inherit)" },
+        onKeyDown,
         onMouseEnter: () => window.api?.setIgnoreMouseEvents?.(false),
         onMouseLeave: () => window.api?.setIgnoreMouseEvents?.(true),
         onDragOver: (e) => e.preventDefault(),
+        onDragEnter: () => {
+          dragDepth.current += 1;
+          setDragging(true);
+        },
+        onDragLeave: () => {
+          dragDepth.current = Math.max(0, dragDepth.current - 1);
+          if (dragDepth.current === 0) setDragging(false);
+        },
         onDrop
       },
       /* @__PURE__ */ window.React.createElement(ResizerHandle, { direction: "side", edgePosition, startDrag }),
       /* @__PURE__ */ window.React.createElement(ResizerHandle, { direction: "bottom", edgePosition, startDrag }),
       /* @__PURE__ */ window.React.createElement(ResizerHandle, { direction: "corner", edgePosition, startDrag }),
       /* @__PURE__ */ window.React.createElement("style", null, `
-                /* Canlı hosts load Material Symbols Rounded; older hosts fall back to Outlined. */
+                /* Canli hosts load Material Symbols Rounded; older hosts fall back to Outlined. */
                 .ai-root .material-symbols-outlined { font-family: 'Material Symbols Rounded', 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
-                .ai-root input:not([type=file]), .ai-root select, .ai-root textarea { background: var(--kb-bg-inset, rgba(0,0,0,0.4)); border-color: transparent; border-radius: 16px; }
-                .ai-root button, .ai-root label { cursor: pointer; }
+                .ai-root input:not([type=file]), .ai-root select, .ai-root textarea { font-family: inherit; }
+                .ai-root input::placeholder, .ai-root textarea::placeholder { color: var(--kb-fg-2, #94a3b8); opacity: 1; }
+                .ai-root select option { background: var(--kb-bg-surface, #1f2937); color: var(--kb-fg-1, #f1f5f9); }
+                .ai-root button, .ai-root label, .ai-root select { cursor: pointer; }
                 .ai-root button:disabled { cursor: default; }
                 .ai-root button:focus-visible, .ai-root select:focus-visible, .ai-root textarea:focus-visible, .ai-root input:focus-visible { outline: 2px solid var(--kb-focus-ring, var(--kb-accent, var(--theme-primary))); outline-offset: 2px; }
                 .ai-root .ai-btn:hover:not(:disabled) { background: var(--kb-fill-hover, rgba(255,255,255,0.08)) !important; }
-                .ai-root .ai-row-idle:hover { background: var(--kb-fill-hover, rgba(255,255,255,0.06)); }
-                .ai-root .ai-row .ai-del, .ai-root .ai-msg .ai-msg-actions { opacity: 0; transition: opacity 120ms var(--kb-ease-standard, ease); }
-                .ai-root .ai-row:hover .ai-del, .ai-root .ai-row:focus-within .ai-del, .ai-root .ai-msg:hover .ai-msg-actions, .ai-root .ai-msg:focus-within .ai-msg-actions { opacity: 1; }
-                .ai-root .ai-md-code { font-family: var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace); }
-                .ai-chat-selectable, .ai-chat-selectable * {
-                    -webkit-user-select: text !important;
-                    user-select: text !important;
-                    cursor: text !important;
-                }
-                .ai-chat-selectable *::selection {
-                    background-color: rgba(59, 130, 246, 0.6) !important;
-                    color: white !important;
-                }
+                .ai-root .ai-row-idle:hover { background: var(--kb-fill-hover, rgba(255,255,255,0.06)) !important; }
+                .ai-root .ai-row .ai-row-actions, .ai-root .ai-msg .ai-msg-actions { opacity: 0; transition: opacity 120ms var(--kb-ease-standard, ease); }
+                .ai-root .ai-row:hover .ai-row-actions, .ai-root .ai-row:focus-within .ai-row-actions, .ai-root .ai-msg:hover .ai-msg-actions, .ai-root .ai-msg:focus-within .ai-msg-actions { opacity: 1; }
+                .ai-root .ai-chat-selectable, .ai-root .ai-chat-selectable * { -webkit-user-select: text; user-select: text; }
+                .ai-root .ai-chat-selectable *::selection { background-color: rgba(59, 130, 246, 0.6); color: white; }
+                .ai-root .ai-md > :last-child { margin-bottom: 0 !important; }
+                .ai-root .ai-resizer:hover { background: var(--kb-fill-hover, rgba(255,255,255,0.08)); }
             `),
-      /* @__PURE__ */ window.React.createElement("div", { className: "flex shrink-0 h-full", style: { width: isSidebarOpen ? 208 : 0, opacity: isSidebarOpen ? 1 : 0, overflow: "hidden", borderRight: isSidebarOpen ? `1px solid ${stroke}` : "none", transition: "width 200ms var(--kb-ease-standard, ease), opacity 200ms var(--kb-ease-standard, ease)", minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col h-full shrink-0", style: { width: 208 } }, /* @__PURE__ */ window.React.createElement("div", { style: { padding: "20px 20px 12px" } }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 15, fontWeight: 600, color: fg1, fontFamily: "var(--kb-font-display, inherit)" } }, t("chats"))), /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 overflow-y-auto w-full custom-scrollbar flex flex-col", style: { padding: "0 12px 16px", gap: 6 } }, chats.map((c) => /* @__PURE__ */ window.React.createElement(
-        "div",
-        {
-          key: c.id,
-          onClick: () => setActiveChatId(c.id),
-          onDoubleClick: () => startEditingTitle(c.id, c.title),
-          className: `ai-row ${activeChatId === c.id ? "" : "ai-row-idle"}`,
-          style: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 4, width: "100%", minHeight: 48, padding: "6px 6px 6px 14px", borderRadius: 16, cursor: "pointer", userSelect: "none", ...activeChatId === c.id ? tonal : { background: "var(--kb-bg-tile, rgba(255,255,255,0.04))", color: fg1 } }
-        },
-        editingChatId === c.id ? /* @__PURE__ */ window.React.createElement(
-          "input",
-          {
-            ref: editInputRef,
-            value: editTitle,
-            onChange: (e) => setEditTitle(e.target.value),
-            onBlur: () => saveTitle(c.id),
-            onKeyDown: (e) => {
-              if (e.key === "Enter") saveTitle(c.id);
-              if (e.key === "Escape") setEditingChatId(null);
-            },
-            style: { width: "100%", color: fg1, fontSize: 14, padding: "6px 10px", outline: "none", border: "none", borderRadius: 12 },
-            onClick: (e) => e.stopPropagation()
-          }
-        ) : /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { fontSize: 14, fontWeight: 500, minWidth: 0, flex: 1 } }, c.title), /* @__PURE__ */ window.React.createElement(
-          "button",
-          {
-            onClick: (e) => {
-              e.stopPropagation();
-              deleteChat(c.id);
-            },
-            className: "ai-del ai-btn",
-            title: t("remove"),
-            "aria-label": t("remove"),
-            style: { width: 32, height: 32, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, background: "transparent", color: activeChatId === c.id ? "var(--kb-on-container, #fff)" : fg2 }
-          },
-          /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 18 } }, "delete")
-        ))
-      ))))),
-      /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 flex flex-col relative", style: { minWidth: 0, minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("div", { className: "shrink-0 pointer-events-auto", style: { padding: "20px 20px 12px", display: "flex", alignItems: "center", gap: 12 } }, /* @__PURE__ */ window.React.createElement(IconTile, { size: 44, icon: "auto_awesome" }), /* @__PURE__ */ window.React.createElement("h2", { style: { flex: 1, minWidth: 0, margin: 0, fontSize: 19, fontWeight: 600, color: fg1, fontFamily: "var(--kb-font-display, inherit)", whiteSpace: "nowrap" } }, t("kobarAiHub")), /* @__PURE__ */ window.React.createElement("button", { onClick: () => createChat(), className: "ai-btn", title: t("newChat"), "aria-label": t("newChat"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "add")), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setShowSettings(!showSettings), className: "ai-btn", title: t("aiHubSettings"), "aria-label": t("aiHubSettings"), "aria-pressed": showSettings, style: iconBtn(showSettings ? tonal : null) }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "settings")), /* @__PURE__ */ window.React.createElement("button", { onClick: onClose, className: "ai-btn", title: t("closeLabel"), "aria-label": t("closeLabel"), style: iconBtn(tonal) }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "close"))), /* @__PURE__ */ window.React.createElement("div", { className: "shrink-0 pointer-events-auto", style: { padding: "0 20px 12px", display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => setIsSidebarOpen(!isSidebarOpen), className: "ai-btn", title: t("chats"), "aria-label": t("chats"), "aria-pressed": isSidebarOpen, style: iconBtn() }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, isSidebarOpen ? "left_panel_close" : "left_panel_open")), /* @__PURE__ */ window.React.createElement(
-        ModelSelect,
-        {
-          value: activeChat?.model || "openai:gpt-4o",
-          ariaLabel: t("defaultModel"),
-          style: { flex: 1, minWidth: 0, maxWidth: 380 },
-          onChange: (e) => {
-            if (activeChat) {
-              usePluginChatStore.setState((s) => ({
-                chats: s.chats.map((c) => c.id === activeChat.id ? { ...c, model: e.target.value } : c)
-              }));
-            } else {
-              createChat(e.target.value);
-            }
-          }
-        }
-      )), /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 flex flex-col", style: { minHeight: 0, display: showSettings ? "none" : "flex" } }, /* @__PURE__ */ window.React.createElement(
-        "div",
-        {
-          ref: messagesScrollRef,
-          onScroll: (e) => {
-            const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-            const isNearBottom = scrollHeight - scrollTop - clientHeight < 150;
-            setIsAutoScrollEnabled(isNearBottom);
-          },
-          className: "flex-1 overflow-y-auto custom-scrollbar flex flex-col pointer-events-auto select-auto no-drag-region",
-          style: { padding: "4px 20px 12px", gap: 16, minHeight: 0 }
-        },
-        activeChat?.messages.length === 0 ? /* @__PURE__ */ window.React.createElement("div", { className: "select-none", style: { margin: "auto 0", border: `2px dashed ${stroke}`, borderRadius: 28, padding: "32px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: 12, textAlign: "center" } }, /* @__PURE__ */ window.React.createElement(IconTile, { size: 64, icon: "auto_awesome" }), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 17, fontWeight: 600, color: fg1, fontFamily: "var(--kb-font-display, inherit)" } }, t("kobarAiHub")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, color: fg2, maxWidth: 300 } }, t("sayHello"))) : activeChat?.messages.map((msg) => /* @__PURE__ */ window.React.createElement("div", { key: msg.id, className: "ai-msg", style: { display: "flex", gap: 12, width: "100%", justifyContent: msg.role === "user" ? "flex-end" : "flex-start" } }, msg.role !== "user" && /* @__PURE__ */ window.React.createElement(Avatar, { src: aiAvatar, icon: "smart_toy", tone: "ai" }), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 4, maxWidth: "85%", minWidth: 0, alignItems: msg.role === "user" ? "flex-end" : "flex-start" } }, /* @__PURE__ */ window.React.createElement("div", { className: "ai-chat-selectable", style: { WebkitUserSelect: "text", userSelect: "text", padding: "12px 16px", borderRadius: 20, minWidth: 0, maxWidth: "100%", ...msg.role === "user" ? { ...tonal, borderTopRightRadius: 6 } : { background: "var(--kb-bg-surface, rgba(255,255,255,0.04))", color: fg1, borderTopLeftRadius: 6 } } }, msg.attachments && msg.attachments.length > 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-wrap gap-2 mb-3" }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, padding: "4px 8px", borderRadius: 10, background: "var(--kb-bg-inset, rgba(0,0,0,0.25))", color: "inherit" } }, "+", msg.attachments.length, " ", t("filesAttached"))), /* @__PURE__ */ window.React.createElement("div", { className: "break-words ai-chat-selectable max-w-none", style: { fontSize: 14, lineHeight: 1.55 } }, /* @__PURE__ */ window.React.createElement(
-          Markdown,
-          {
-            remarkPlugins: [remarkGfm],
-            components: {
-              strong: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("strong", { style: { fontWeight: 700 }, ...props }),
-              p: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("p", { className: "mb-3 last:mb-0 leading-relaxed", ...props }),
-              ul: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("ul", { className: "list-disc pl-5 mb-3 space-y-1", ...props }),
-              ol: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("ol", { className: "list-decimal pl-5 mb-3 space-y-1", ...props }),
-              li: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("li", { className: "leading-relaxed", ...props }),
-              h1: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h1", { className: "mb-3", style: { fontSize: 20, fontWeight: 700, fontFamily: "var(--kb-font-display, inherit)" }, ...props }),
-              h2: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h2", { className: "mb-3", style: { fontSize: 17, fontWeight: 700, fontFamily: "var(--kb-font-display, inherit)" }, ...props }),
-              h3: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("h3", { className: "mb-2", style: { fontSize: 15, fontWeight: 700 }, ...props }),
-              em: ({ node: node2, ...props }) => /* @__PURE__ */ window.React.createElement("em", { className: "italic", ...props }),
-              pre: ({ node: node2, children, ...props }) => /* @__PURE__ */ window.React.createElement("pre", { className: "select-text", style: { WebkitUserSelect: "text", userSelect: "text" }, ...props }, children),
-              code: ({ node: node2, inline, className, children, ...props }) => {
-                const match = /language-(\w+)/.exec(className || "");
-                const language = match ? match[1] : "text";
-                return !inline ? /* @__PURE__ */ window.React.createElement("div", { className: "relative mt-2 mb-4 overflow-hidden group no-drag-region select-text", style: { WebkitUserSelect: "text", userSelect: "text", borderRadius: 16, background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", color: fg1 } }, /* @__PURE__ */ window.React.createElement("div", { className: "absolute right-2 top-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity" }, /* @__PURE__ */ window.React.createElement(
-                  "button",
-                  {
-                    onClick: (e) => {
-                      e.stopPropagation();
-                      window.api?.writeToClipboard?.({ type: "text", content: String(children).replace(/\n$/, "") });
-                    },
-                    className: "ai-btn",
-                    style: { width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--kb-bg-tile, rgba(255,255,255,0.1))", color: fg1 },
-                    title: t("copyToOsClipboard"),
-                    "aria-label": t("copyToOsClipboard")
-                  },
-                  /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 16 } }, "content_copy")
-                )), /* @__PURE__ */ window.React.createElement(
-                  highlighter,
-                  {
-                    style: vscDarkPlus,
-                    language,
-                    PreTag: "div",
-                    className: "text-xs !m-0 select-text ai-md-code",
-                    customStyle: { WebkitUserSelect: "text", userSelect: "text", margin: 0, padding: 14, background: "transparent", fontFamily: "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)" },
-                    codeTagProps: { style: { fontFamily: "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)" } }
-                  },
-                  String(children).replace(/\n$/, "")
-                )) : /* @__PURE__ */ window.React.createElement("code", { className: "ai-md-code select-text", style: { WebkitUserSelect: "text", userSelect: "text", fontSize: 12, padding: "2px 6px", background: "var(--kb-bg-inset, rgba(0,0,0,0.3))", color: fg1, borderRadius: 8 }, ...props }, children);
-              }
-            }
-          },
-          preprocessMarkdown(msg.content)
-        ))), /* @__PURE__ */ window.React.createElement("div", { className: "ai-msg-actions", style: { display: "flex", gap: 4 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => handleSendToSlot(msg.content), className: "ai-btn", title: t("sendToSlot"), "aria-label": t("sendToSlot"), style: { width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", color: fg2 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 16 } }, "dynamic_feed")), /* @__PURE__ */ window.React.createElement("button", { onClick: () => handleCopy(msg.content), className: "ai-btn", title: t("copyText"), "aria-label": t("copyText"), style: { width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", color: fg2 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 16 } }, "content_copy")))), msg.role === "user" && /* @__PURE__ */ window.React.createElement(Avatar, { src: userAvatar, icon: "person", tone: "user" }))),
-        isGenerating && /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", gap: 12, width: "100%", justifyContent: "flex-start" } }, /* @__PURE__ */ window.React.createElement(Avatar, { icon: "progress_activity", tone: "ai" }), /* @__PURE__ */ window.React.createElement("div", { style: { padding: "12px 16px", borderRadius: 20, borderTopLeftRadius: 6, background: "var(--kb-bg-surface, rgba(255,255,255,0.04))", color: fg2, fontSize: 14, display: "flex", alignItems: "center" } }, /* @__PURE__ */ window.React.createElement("span", null, t("thinking")))),
-        /* @__PURE__ */ window.React.createElement("div", { ref: bottomRef, className: "h-1 shrink-0" })
-      ), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col shrink-0 pointer-events-auto", style: { padding: "8px 20px 20px" } }, attachments.length > 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-wrap gap-2 mb-2" }, attachments.map((a, i) => /* @__PURE__ */ window.React.createElement("div", { key: i, style: { display: "flex", alignItems: "center", gap: 6, padding: "4px 4px 4px 10px", fontSize: 12, color: fg1, borderRadius: 10, background: "var(--kb-bg-tile, rgba(255,255,255,0.06))" } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 14, color: "var(--kb-accent, var(--theme-primary))" } }, a.type === "image" ? "image" : "description"), /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { maxWidth: 150 } }, a.name), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setAttachments((prev) => prev.filter((_, idx) => idx !== i)), className: "ai-btn", "aria-label": t("remove"), style: { width: 22, height: 22, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", color: fg2 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 14 } }, "close"))))), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "flex-end", gap: 8, background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", borderRadius: 28, padding: 6 } }, /* @__PURE__ */ window.React.createElement(
-        "textarea",
-        {
-          ref: inputRef,
-          value: input,
-          onChange: onInput,
-          placeholder: t("typeMessage"),
-          className: "custom-scrollbar max-h-[200px] overflow-y-auto select-auto pointer-events-auto",
-          rows: 1,
-          style: { flex: 1, minWidth: 0, minHeight: 40, padding: "9px 8px 9px 14px", borderRadius: 0, background: "transparent", color: fg1, fontSize: 14, border: "none", outline: "none", resize: "none" },
-          onKeyDown: (e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSend();
-            }
-          }
-        }
-      ), isGenerating ? /* @__PURE__ */ window.React.createElement("button", { onClick: handleCancel, className: "ai-btn", title: t("stopLabel"), "aria-label": t("stopLabel"), style: { width: 40, height: 40, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, ...tonal } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "stop")) : /* @__PURE__ */ window.React.createElement("button", { onClick: handleSend, disabled: !input.trim() && attachments.length === 0, title: t("typeMessage"), "aria-label": t("typeMessage"), style: { width: 40, height: 40, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, background: "var(--kb-accent, var(--theme-primary))", color: "var(--kb-on-accent, #fff)", opacity: !input.trim() && attachments.length === 0 ? "var(--kb-opacity-disabled, 0.5)" : 1 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "arrow_upward"))))), showSettings && /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 flex flex-col no-drag-region", style: { minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 overflow-y-auto custom-scrollbar", style: { padding: "4px 20px 12px", display: "flex", flexDirection: "column", gap: 16, minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("defaultModel")), /* @__PURE__ */ window.React.createElement(
-        ModelSelect,
-        {
-          value: apiKeys?.defaultModel || "anthropic:claude-sonnet-4-6",
-          ariaLabel: t("defaultModel"),
-          onChange: (e) => setKeys({ defaultModel: e.target.value })
-        }
-      ))), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("apiKeysProviders")), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("openaiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("willBeAddedSoon"), style: { ...fieldStyle, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("geminiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("willBeAddedSoon"), style: { ...fieldStyle, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("anthropicKeyLabel")), /* @__PURE__ */ window.React.createElement(
-        "input",
-        {
-          type: "password",
-          value: apiKeys?.anthropic || "",
-          onChange: (e) => setKeys({ anthropic: e.target.value }),
-          placeholder: "sk-ant-...",
-          style: fieldStyle
-        }
-      )), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("localUrlLabel")), /* @__PURE__ */ window.React.createElement(
-        "input",
-        {
-          type: "text",
-          value: apiKeys?.localUrl || "",
-          onChange: (e) => setKeys({ localUrl: e.target.value }),
-          placeholder: "http://localhost:11434",
-          style: fieldStyle
-        }
-      ))), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("profileCustomization")), /* @__PURE__ */ window.React.createElement(AvatarRow, { type: "ai", src: aiAvatar, icon: "smart_toy", label: t("aiAvatar") }), /* @__PURE__ */ window.React.createElement(AvatarRow, { type: "user", src: userAvatar, icon: "person", label: t("userAvatar") })), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2, opacity: 0.8 } }, t("definesAiBehavior"))), /* @__PURE__ */ window.React.createElement(
-        "textarea",
-        {
-          value: apiKeys?.systemMessage || "",
-          onChange: (e) => setKeys({ systemMessage: e.target.value }),
-          placeholder: "You are a helpful AI...",
-          style: { ...fieldStyle, minHeight: 88, resize: "vertical" }
-        }
-      )), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2, opacity: 0.8 } }, t("addedToSystemPrompt"))), /* @__PURE__ */ window.React.createElement(
-        "textarea",
-        {
-          value: apiKeys?.customInstructions || "",
-          onChange: (e) => setKeys({ customInstructions: e.target.value }),
-          placeholder: "e.g. Always respond in Spanish",
-          style: { ...fieldStyle, minHeight: 88, resize: "vertical" }
-        }
-      )))), /* @__PURE__ */ window.React.createElement("div", { className: "shrink-0", style: { padding: "8px 20px 20px", display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ window.React.createElement(
-        "button",
-        {
-          onClick: () => setShowSettings(false),
-          style: { padding: "10px 24px", fontSize: 14, fontWeight: 600, borderRadius: 999, background: "var(--kb-accent, var(--theme-primary))", color: "var(--kb-on-accent, #fff)" }
-        },
-        t("backToChat")
-      ))))
+      wide && view === "chat" && /* @__PURE__ */ window.React.createElement("div", { style: { width: 232, flexShrink: 0, display: "flex", flexDirection: "column", minHeight: 0, padding: "20px 12px 20px 20px", borderRight: `1px solid ${stroke}` } }, /* @__PURE__ */ window.React.createElement(HistoryList, { ...historyProps })),
+      /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column", position: "relative" } }, header, view === "chat" && chatView, view === "history" && /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minHeight: 0, display: "flex", flexDirection: "column", padding: "4px 20px 20px" } }, /* @__PURE__ */ window.React.createElement(HistoryList, { ...historyProps, primaryNew: true })), view === "settings" && settingsView),
+      dragging && /* @__PURE__ */ window.React.createElement("div", { style: { position: "absolute", inset: 12, zIndex: 40, borderRadius: 24, border: `2px dashed ${accent}`, background: "color-mix(in srgb, var(--kb-bg-shell, #111827) 88%, transparent)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, pointerEvents: "none", color: fg1 } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "upload_file", size: 32, style: { color: accent } }), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 15, fontWeight: 600, fontFamily: display } }, t("dropFiles")))
     );
   };
   const MODELS = [
@@ -39966,18 +40199,18 @@ ${currentApiKeys.customInstructions}` : ""
     const React2 = window.React;
     const { useState, useEffect } = React2;
     const useAppStore = window.useAppStore;
-    const currentLang = useAppStore((state) => state.language);
-    const apiKeys = usePluginChatStore((state) => state.apiKeys);
-    const setApiKeys = usePluginChatStore((state) => state.setApiKeys);
+    const currentLang = useAppStore((state2) => state2.language);
+    const apiKeys = usePluginChatStore((state2) => state2.apiKeys);
+    const setApiKeys = usePluginChatStore((state2) => state2.setApiKeys);
     const t = (key) => getTranslation(currentLang, key);
-    const fg1 = "var(--kb-fg-1, #f1f5f9)";
-    const fg2 = "var(--kb-fg-2, #94a3b8)";
-    const field = { width: "100%", background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", color: fg1, borderRadius: 16, padding: "10px 14px", fontSize: 14, border: "none", outline: "none" };
-    const label = { fontSize: 12, color: fg2 };
+    const fg12 = "var(--kb-fg-1, #f1f5f9)";
+    const fg22 = "var(--kb-fg-2, #94a3b8)";
+    const field = { width: "100%", background: "var(--kb-bg-inset, rgba(0,0,0,0.4))", color: fg12, borderRadius: 16, padding: "10px 14px", fontSize: 14, border: "none", outline: "none" };
+    const label = { fontSize: 12, color: fg22 };
     const card = { background: "var(--kb-bg-surface, rgba(255,255,255,0.04))", borderRadius: 24, padding: 20, display: "flex", flexDirection: "column", gap: 16 };
-    const title = { fontSize: 15, fontWeight: 600, color: fg1, fontFamily: "var(--kb-font-display, inherit)", margin: 0 };
-    const group = { display: "flex", flexDirection: "column", gap: 8 };
-    return /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 16, color: fg1 } }, /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("defaultModel")), /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center" } }, /* @__PURE__ */ window.React.createElement(
+    const title = { fontSize: 15, fontWeight: 600, color: fg12, fontFamily: "var(--kb-font-display, inherit)", margin: 0 };
+    const group2 = { display: "flex", flexDirection: "column", gap: 8 };
+    return /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 16, color: fg12 } }, /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("defaultModel")), /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center" } }, /* @__PURE__ */ window.React.createElement(
       "select",
       {
         value: apiKeys.defaultModel,
@@ -39986,7 +40219,7 @@ ${currentApiKeys.customInstructions}` : ""
         style: { ...field, appearance: "none", WebkitAppearance: "none", borderRadius: 999, padding: "10px 40px 10px 16px", fontWeight: 500, cursor: "pointer" }
       },
       MODELS.map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, m.label))
-    ), /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", "aria-hidden": "true", style: { position: "absolute", right: 12, fontSize: 20, color: fg2, pointerEvents: "none" } }, "expand_more")))), /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("apiKeysProviders")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("anthropicKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { type: "password", value: apiKeys.anthropic || "", onChange: (e) => setApiKeys({ anthropic: e.target.value }), placeholder: "sk-ant-...", style: field })), /* @__PURE__ */ window.React.createElement("div", { style: { ...group, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("openaiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("comingSoon"), style: { ...field, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: { ...group, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("geminiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("comingSoon"), style: { ...field, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("localUrlLabel"), " (Ollama / LM Studio)"), /* @__PURE__ */ window.React.createElement("input", { type: "text", value: apiKeys.localUrl || "", onChange: (e) => setApiKeys({ localUrl: e.target.value }), placeholder: "http://localhost:11434", style: field }))), /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys.systemMessage || "", onChange: (e) => setApiKeys({ systemMessage: e.target.value }), placeholder: "You are a helpful AI assistant...", className: "custom-scrollbar", style: { ...field, minHeight: 88, resize: "vertical" } })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys.customInstructions || "", onChange: (e) => setApiKeys({ customInstructions: e.target.value }), placeholder: "User preferences...", className: "custom-scrollbar", style: { ...field, minHeight: 88, resize: "vertical" } }))));
+    ), /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", "aria-hidden": "true", style: { position: "absolute", right: 12, fontSize: 20, color: fg22, pointerEvents: "none" } }, "expand_more")))), /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("apiKeysProviders")), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("anthropicKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { type: "password", value: apiKeys.anthropic || "", onChange: (e) => setApiKeys({ anthropic: e.target.value }), placeholder: "sk-ant-...", style: field })), /* @__PURE__ */ window.React.createElement("div", { style: { ...group2, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("openaiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("comingSoon"), style: { ...field, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: { ...group2, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("geminiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("comingSoon"), style: { ...field, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("localUrlLabel"), " (Ollama / LM Studio)"), /* @__PURE__ */ window.React.createElement("input", { type: "text", value: apiKeys.localUrl || "", onChange: (e) => setApiKeys({ localUrl: e.target.value }), placeholder: "http://localhost:11434", style: field }))), /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys.systemMessage || "", onChange: (e) => setApiKeys({ systemMessage: e.target.value }), placeholder: "You are a helpful AI assistant...", className: "custom-scrollbar", style: { ...field, minHeight: 88, resize: "vertical" } })), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys.customInstructions || "", onChange: (e) => setApiKeys({ customInstructions: e.target.value }), placeholder: "User preferences...", className: "custom-scrollbar", style: { ...field, minHeight: 88, resize: "vertical" } }))));
   };
   if (window.KoBarExtensions.registerSettingsPanel) {
     window.KoBarExtensions.registerSettingsPanel("com.kobar.aihub", {
@@ -40004,11 +40237,12 @@ ${currentApiKeys.customInstructions}` : ""
     window.KoBarExtensions.registerSidebarButton({
       id: "com.kobar.aihub.btn",
       icon: "smart_toy",
+      tile: { template: "badge", sensitive: true },
       label: getTranslation(window.useAppStore.getState().language, "pluginName"),
       onClick: (e, anchorRect) => {
-        const state = window.useAppStore.getState();
-        const isCurrentlyOpen = state.activeExtensionPanelId === "com.kobar.aihub.panel";
-        state.closeAllUtilityPopups();
+        const state2 = window.useAppStore.getState();
+        const isCurrentlyOpen = state2.activeExtensionPanelId === "com.kobar.aihub.panel";
+        state2.closeAllUtilityPopups();
         if (!isCurrentlyOpen) {
           window.useAppStore.setState({
             activeExtensionPanelId: "com.kobar.aihub.panel",
@@ -40022,13 +40256,17 @@ ${currentApiKeys.customInstructions}` : ""
     const BTN_ID = "com.kobar.aihub.btn";
     const PANEL_ID = "com.kobar.aihub.panel";
     const ext = window.KoBarExtensions;
-    let unread = false;
     const pushState = () => {
       if (typeof ext?.setBarItemState !== "function") return;
       try {
+        const { busy, unread, error } = getBarState();
+        const lang = window.useAppStore.getState().language;
+        const key = busy ? "tileBusy" : unread ? "tileUnread" : error ? "tileError" : "pluginName";
         ext.setBarItemState(BTN_ID, {
-          label: getTranslation(window.useAppStore.getState().language, "pluginName"),
-          badge: unread ? "dot" : 0
+          label: getTranslation(lang, key),
+          icon: busy ? "more_horiz" : "smart_toy",
+          badge: unread ? "dot" : 0,
+          tone: error ? "error" : "default"
         });
       } catch (e) {
       }
@@ -40038,23 +40276,29 @@ ${currentApiKeys.customInstructions}` : ""
       const chat = usePluginChatStore.getState().chats.find((c) => c.id === data?.chatId);
       return !!chat && chat.messages.some((m) => m.id === data?.messageId);
     };
-    const markUnread = (data) => {
-      if (isPanelOpen() || !isOurMessage(data) || unread) return;
-      unread = true;
-      pushState();
+    const onFinished = (failed) => (data) => {
+      if (!isOurMessage(data)) return;
+      const open = isPanelOpen();
+      setBarState({ busy: false, unread: open ? false : true, error: failed && !open });
     };
     if (typeof ext?.setBarItemState === "function") {
-      window.api?.onLlmStreamEnd?.(markUnread);
-      window.api?.onLlmStreamError?.(markUnread);
-      window.useAppStore.subscribe((state) => {
-        if (unread && state.activeExtensionPanelId === PANEL_ID) {
-          unread = false;
+      subscribeBarState(pushState);
+      window.api?.onLlmStreamEnd?.(onFinished(false));
+      window.api?.onLlmStreamError?.(onFinished(true));
+      let lastLang = window.useAppStore.getState().language;
+      window.useAppStore.subscribe((state2) => {
+        if (state2.activeExtensionPanelId === PANEL_ID && (getBarState().unread || getBarState().error)) {
+          setBarState({ unread: false, error: false });
+        }
+        if (state2.language !== lastLang) {
+          lastLang = state2.language;
           pushState();
         }
       });
       if (typeof ext?.onBarItemChange === "function") {
         ext.onBarItemChange(BTN_ID, () => pushState());
       }
+      pushState();
     }
   }
 })(window.React);

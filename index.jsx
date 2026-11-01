@@ -2,6 +2,7 @@ import { AiHubPanel } from './AiHubPanel';
 import { SettingsPanel } from './SettingsPanel';
 import { getTranslation } from './translations';
 import { usePluginChatStore } from './usePluginChatStore';
+import { getBarState, setBarState, subscribeBarState } from './barState';
 
 // Register Settings Panel
 if (window.KoBarExtensions.registerSettingsPanel) {
@@ -24,6 +25,7 @@ if (window.KoBarExtensions.registerSidebarButton) {
     window.KoBarExtensions.registerSidebarButton({
         id: 'com.kobar.aihub.btn',
         icon: 'smart_toy',
+        tile: { template: 'badge', sensitive: true },
         label: getTranslation(window.useAppStore.getState().language, 'pluginName'),
         onClick: (e, anchorRect) => {
             const state = window.useAppStore.getState();
@@ -39,20 +41,24 @@ if (window.KoBarExtensions.registerSidebarButton) {
     });
 }
 
-// Bar badge: 'dot' when an AI Hub reply finished while the panel was closed.
-// Feature-detected: older hosts without the tile API simply ignore it.
+// Bar tile: a dot when a reply finished while the panel was closed, a busy icon while one is being written, an
+// error tone after a failed request. Feature-detected: older hosts without the tile API keep the plain icon button.
 {
     const BTN_ID = 'com.kobar.aihub.btn';
     const PANEL_ID = 'com.kobar.aihub.panel';
     const ext = window.KoBarExtensions;
-    let unread = false;
 
     const pushState = () => {
         if (typeof ext?.setBarItemState !== 'function') return;
         try {
+            const { busy, unread, error } = getBarState();
+            const lang = window.useAppStore.getState().language;
+            const key = busy ? 'tileBusy' : unread ? 'tileUnread' : error ? 'tileError' : 'pluginName';
             ext.setBarItemState(BTN_ID, {
-                label: getTranslation(window.useAppStore.getState().language, 'pluginName'),
-                badge: unread ? 'dot' : 0
+                label: getTranslation(lang, key),
+                icon: busy ? 'more_horiz' : 'smart_toy',
+                badge: unread ? 'dot' : 0,
+                tone: error ? 'error' : 'default'
             });
         } catch (e) { /* host without the tile API */ }
     };
@@ -62,24 +68,30 @@ if (window.KoBarExtensions.registerSidebarButton) {
         const chat = usePluginChatStore.getState().chats.find(c => c.id === data?.chatId);
         return !!chat && chat.messages.some(m => m.id === data?.messageId);
     };
-    const markUnread = (data) => {
-        if (isPanelOpen() || !isOurMessage(data) || unread) return;
-        unread = true;
-        pushState();
+    const onFinished = (failed) => (data) => {
+        if (!isOurMessage(data)) return;
+        const open = isPanelOpen();
+        setBarState({ busy: false, unread: open ? false : true, error: failed && !open });
     };
 
     if (typeof ext?.setBarItemState === 'function') {
-        window.api?.onLlmStreamEnd?.(markUnread);
-        window.api?.onLlmStreamError?.(markUnread);
-        // Clear the dot when the user opens the panel (they have seen the reply).
+        subscribeBarState(pushState);
+        window.api?.onLlmStreamEnd?.(onFinished(false));
+        window.api?.onLlmStreamError?.(onFinished(true));
+        let lastLang = window.useAppStore.getState().language;
+        // Clear the dot when the user opens the panel (they have seen the reply); follow language changes.
         window.useAppStore.subscribe((state) => {
-            if (unread && state.activeExtensionPanelId === PANEL_ID) {
-                unread = false;
+            if (state.activeExtensionPanelId === PANEL_ID && (getBarState().unread || getBarState().error)) {
+                setBarState({ unread: false, error: false });
+            }
+            if (state.language !== lastLang) {
+                lastLang = state.language;
                 pushState();
             }
         });
         if (typeof ext?.onBarItemChange === 'function') {
             ext.onBarItemChange(BTN_ID, () => pushState());
         }
+        pushState();
     }
 }
