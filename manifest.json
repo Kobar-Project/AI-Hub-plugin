@@ -1,7 +1,7 @@
 {
   "id": "com.kobar.aihub",
   "name": "AI Hub",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A versatile, multi-model AI assistant integrated directly into KoBar. Supports multiple providers (Anthropic, OpenAI, Gemini) and Local LLMs.",
   "author": "KoBar",
   "entry": "index.js",
@@ -25,7 +25,7 @@
     "ja",
     "hi"
   ],
-  "versionNote": "Updated plugin images.",
+  "versionNote": "New design and current models: Claude, OpenAI and Gemini models grouped by provider; OpenAI and Gemini keys can be used. The bar shows when a reply is ready.",
   "image": "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/AI%20Hub/aihub.png",
   "storeImage": [
     "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/AI%20Hub/AI-Hub1.png",
