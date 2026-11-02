@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { usePluginChatStore } from './usePluginChatStore';
 import { getTranslation } from './translations';
 import { setBarState } from './barState';
+import { MODELS, PROVIDERS, DEFAULT_MODEL, providerOf, providerLabel, isKnownModel, modelLabel, shortModel } from './models';
 
 // ---- Shared design tokens (every token has a fallback so older hosts still render) ----
 const fg1 = 'var(--kb-fg-1, #f1f5f9)';
@@ -15,15 +16,6 @@ const tonal = { background: 'var(--kb-bg-container, var(--theme-accent-glow))', 
 const inset = 'var(--kb-bg-inset, rgba(0,0,0,0.4))';
 const display = 'var(--kb-font-display, inherit)';
 const mono = "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)";
-
-const MODELS = [
-    { id: 'anthropic:claude-sonnet-4-6', label: 'Claude 4.6 Sonnet (Anthropic - Best)', short: 'Claude Sonnet 4.6' },
-    { id: 'anthropic:claude-opus-4-6', label: 'Claude 4.6 Opus (Anthropic - Heavy)', short: 'Claude Opus 4.6' },
-    { id: 'anthropic:claude-haiku-4-5-20251001', label: 'Claude 4.5 Haiku (Anthropic - Fast)', short: 'Claude Haiku 4.5' },
-    { id: 'local:llama3', label: 'Local Default (Ollama / LM Studio)', short: 'Local (Llama 3)' },
-    { id: 'local:llava', label: 'Local Vision (Ollama - LLaVA)', short: 'Local vision (LLaVA)' }
-];
-const shortModel = (id) => MODELS.find((m) => m.id === id)?.short || id;
 
 const WIDE = 560; // from this panel width the history is a fixed column instead of its own view
 
@@ -54,7 +46,7 @@ const Avatar = ({ src, icon, ai }) => (
     </div>
 );
 
-const ModelSelect = ({ value, onChange, ariaLabel, chip, full }) => (
+const ModelSelect = ({ value, onChange, ariaLabel, chip, t }) => (
     <div style={{ position: 'relative', display: 'flex', alignItems: 'center', minWidth: 0, flex: chip ? '0 1 auto' : undefined }}>
         <select
             value={value}
@@ -64,7 +56,12 @@ const ModelSelect = ({ value, onChange, ariaLabel, chip, full }) => (
                 ? { ...fieldStyle, width: 'auto', maxWidth: '100%', background: 'var(--kb-bg-tile, rgba(255,255,255,0.06))', appearance: 'none', WebkitAppearance: 'none', borderRadius: 999, padding: '8px 32px 8px 14px', fontSize: 13, fontWeight: 500, textOverflow: 'ellipsis' }
                 : { ...fieldStyle, appearance: 'none', WebkitAppearance: 'none', borderRadius: 999, padding: '9px 40px 9px 16px', fontWeight: 500, textOverflow: 'ellipsis' }}
         >
-            {MODELS.map((m) => <option key={m.id} value={m.id}>{full ? m.label : m.short}</option>)}
+            {value && !isKnownModel(value) && <option value={value}>{`${value} (${t('legacy')})`}</option>}
+            {PROVIDERS.map((pr) => (
+                <optgroup key={pr.id} label={providerLabel(pr.id, t)}>
+                    {MODELS.filter((m) => providerOf(m.id) === pr.id).map((m) => <option key={m.id} value={m.id}>{chip ? m.name : modelLabel(m, t)}</option>)}
+                </optgroup>
+            ))}
         </select>
         <Icon name="expand_more" size={chip ? 18 : 20} style={{ position: 'absolute', right: chip ? 8 : 12, color: fg2, pointerEvents: 'none' }} />
     </div>
@@ -423,7 +420,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
         if (isGenerating) return;
 
         let currentChatId = activeChatId;
-        const selectedModelString = activeChat?.model || 'openai:gpt-4o';
+        const selectedModelString = activeChat?.model || apiKeys?.defaultModel || DEFAULT_MODEL;
         const [provider, model] = selectedModelString.split(':');
 
         if (!currentChatId || !activeChat) {
@@ -619,8 +616,10 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
         await addFiles(e.dataTransfer.files);
     };
 
-    const selectedModel = activeChat?.model || 'openai:gpt-4o';
-    const needsKey = selectedModel.startsWith('anthropic:') && !apiKeys?.anthropic;
+    const selectedModel = activeChat?.model || apiKeys?.defaultModel || DEFAULT_MODEL;
+    const selectedProvider = providerOf(selectedModel);
+    const needsKey = ['anthropic', 'openai', 'gemini'].includes(selectedProvider) && !apiKeys?.[selectedProvider];
+    const providerName = providerLabel(selectedProvider, t);
     const chatTitle = activeChat ? (activeChat.title === 'New Chat' ? t('newChat') : activeChat.title) : t('newChat');
     const setKeys = (patch) => usePluginChatStore.getState().setApiKeys(patch);
     const canSend = Boolean(input.trim()) || attachments.length > 0;
@@ -678,7 +677,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                         style={{ margin: 0, fontSize: 19, fontWeight: 600, lineHeight: 1.25, color: fg1, fontFamily: display, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                     >{chatTitle}</h2>
                 )}
-                <span style={{ fontSize: 12, color: fg2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{shortModel(selectedModel)}</span>
+                <span style={{ fontSize: 12, color: fg2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{shortModel(selectedModel, t)}</span>
             </div>
             <button onClick={() => createChat()} className="ai-btn" title={t('newChat')} aria-label={t('newChat')} style={iconBtn()}>
                 <Icon name="add" />
@@ -790,8 +789,8 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 12px 12px 16px', borderRadius: 20, background: 'var(--kb-bg-surface, rgba(255,255,255,0.04))' }}>
                         <Icon name="key" size={22} style={{ color: accent, flexShrink: 0 }} />
                         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <span style={{ fontSize: 14, fontWeight: 600, color: fg1 }}>{t('noKeyTitle')}</span>
-                            <span style={{ fontSize: 12, color: fg2, lineHeight: 1.4 }}>{t('noKeyBody')}</span>
+                            <span style={{ fontSize: 14, fontWeight: 600, color: fg1 }}>{t('noKeyTitle').replace('{provider}', providerName)}</span>
+                            <span style={{ fontSize: 12, color: fg2, lineHeight: 1.4 }}>{t('noKeyBody').replace('{provider}', providerName)}</span>
                         </div>
                         <button onClick={() => setView('settings')} className="ai-btn" style={{ ...pillBtn, padding: '8px 14px', flexShrink: 0 }}>{t('openKeys')}</button>
                     </div>
@@ -832,7 +831,7 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                             <Icon name="attach_file" />
                         </button>
                         <div style={{ flex: 1, minWidth: 0, display: 'flex' }}>
-                            <ModelSelect chip value={selectedModel} ariaLabel={t('defaultModel')} onChange={changeModel} />
+                            <ModelSelect chip t={t} value={selectedModel} ariaLabel={t('defaultModel')} onChange={changeModel} />
                         </div>
                         {isGenerating ? (
                             <button onClick={handleCancel} className="ai-btn" title={t('stopLabel')} aria-label={t('stopLabel')} style={{ width: 40, height: 40, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: 'none', ...tonal }}>
@@ -876,24 +875,19 @@ export const AiHubPanel = ({ onClose, anchorRect }) => {
                     <h3 style={cardTitle}>{t('modelDefaults')}</h3>
                     <div style={group}>
                         <label style={labelStyle}>{t('defaultModel')}</label>
-                        <ModelSelect full value={apiKeys?.defaultModel || 'anthropic:claude-sonnet-4-6'} ariaLabel={t('defaultModel')} onChange={(e) => setKeys({ defaultModel: e.target.value })} />
+                        <ModelSelect t={t} value={apiKeys?.defaultModel || DEFAULT_MODEL} ariaLabel={t('defaultModel')} onChange={(e) => setKeys({ defaultModel: e.target.value })} />
                     </div>
                 </section>
 
                 <section id="ai-keys" style={cardStyle}>
                     <h3 style={cardTitle}>{t('apiKeysProviders')}</h3>
-                    <div style={{ ...group, opacity: 0.5 }}>
-                        <label style={labelStyle}>{t('openaiKeyLabel')}</label>
-                        <input disabled type="password" placeholder={t('willBeAddedSoon')} style={{ ...fieldStyle, cursor: 'not-allowed' }} />
-                    </div>
-                    <div style={{ ...group, opacity: 0.5 }}>
-                        <label style={labelStyle}>{t('geminiKeyLabel')}</label>
-                        <input disabled type="password" placeholder={t('willBeAddedSoon')} style={{ ...fieldStyle, cursor: 'not-allowed' }} />
-                    </div>
-                    <div style={group}>
-                        <label style={labelStyle}>{t('anthropicKeyLabel')}</label>
-                        <input type="password" value={apiKeys?.anthropic || ''} onChange={(e) => setKeys({ anthropic: e.target.value })} placeholder="sk-ant-..." style={fieldStyle} />
-                    </div>
+                    {[['anthropic', 'anthropicKeyLabel', 'sk-ant-...', 'keyHintAnthropic'], ['openai', 'openaiKeyLabel', 'sk-...', 'keyHintOpenai'], ['gemini', 'geminiKeyLabel', 'AIza...', 'keyHintGemini']].map(([k, lbl, ph, hint]) => (
+                        <div key={k} style={group}>
+                            <label style={labelStyle}>{t(lbl)}</label>
+                            <input type="password" value={apiKeys?.[k] || ''} onChange={(e) => setKeys({ [k]: e.target.value })} placeholder={ph} style={fieldStyle} />
+                            <span style={{ fontSize: 11, color: fg2, opacity: 0.8 }}>{t(hint)}</span>
+                        </div>
+                    ))}
                     <div style={group}>
                         <label style={labelStyle}>{t('localUrlLabel')}</label>
                         <input type="text" value={apiKeys?.localUrl || ''} onChange={(e) => setKeys({ localUrl: e.target.value })} placeholder="http://localhost:11434" style={fieldStyle} />

@@ -38916,7 +38916,7 @@
           localUrl: "http://localhost:11434",
           systemMessage: "",
           customInstructions: "",
-          defaultModel: "anthropic:claude-sonnet-4-6"
+          defaultModel: "anthropic:claude-sonnet-5-5"
         },
         aiAvatar: null,
         userAvatar: null,
@@ -38994,8 +38994,8 @@
       scrollBottom: "Scroll to bottom",
       rename: "Rename",
       attachFile: "Attach a file",
-      noKeyTitle: "Add your Anthropic key",
-      noKeyBody: "Claude models need an API key. Local models run without one.",
+      noKeyTitle: "Add your {provider} key",
+      noKeyBody: "{provider} models need an API key. Local models run without one.",
       openKeys: "Add key",
       replyHint: "Enter to send, Shift+Enter for a new line",
       chats: "Chats",
@@ -39012,9 +39012,9 @@
       modelDefaults: "Model Defaults",
       defaultModel: "Default Chat Model",
       apiKeysProviders: "API Keys & Providers",
-      openaiKeyLabel: "OpenAI API Key (Coming Soon)",
+      openaiKeyLabel: "OpenAI API key",
       willBeAddedSoon: "Will be added soon",
-      geminiKeyLabel: "Gemini API Key (Coming Soon)",
+      geminiKeyLabel: "Gemini API key",
       anthropicKeyLabel: "Anthropic API Key",
       localUrlLabel: "Local URL (Ollama/LM Studio)",
       profileCustomization: "Profile Customization",
@@ -39028,7 +39028,20 @@
       customInstructionsLabel: "Custom Instructions",
       addedToSystemPrompt: "Added to system prompt",
       backToChat: "Back to Chat",
-      comingSoon: "Coming Soon"
+      comingSoon: "Coming Soon",
+      legacy: "legacy",
+      providerLocal: "Local",
+      mhHeavy: "heavy",
+      mhBalanced: "balanced",
+      mhFast: "fast",
+      mhCreative: "creative",
+      mhFlagship: "flagship",
+      mhVision: "vision",
+      mhLight: "light",
+      mhLocal: "offline",
+      keyHintAnthropic: "Get a key at console.anthropic.com",
+      keyHintOpenai: "Get a key at platform.openai.com/api-keys",
+      keyHintGemini: "Get a key at aistudio.google.com/apikey"
     },
     tr: {
       pluginName: "Yapay Zeka Merkezi (Eklenti)",
@@ -39044,8 +39057,8 @@
       scrollBottom: "En alta in",
       rename: "Yeniden adlandır",
       attachFile: "Dosya ekle",
-      noKeyTitle: "Anthropic anahtarınızı ekleyin",
-      noKeyBody: "Claude modelleri için API anahtarı gerekir. Yerel modeller anahtarsız çalışır.",
+      noKeyTitle: "{provider} anahtarınızı ekleyin",
+      noKeyBody: "{provider} modelleri için API anahtarı gerekir. Yerel modeller anahtarsız çalışır.",
       openKeys: "Anahtar ekle",
       replyHint: "Göndermek için Enter, yeni satır için Shift+Enter",
       chats: "Sohbetler",
@@ -39062,9 +39075,9 @@
       modelDefaults: "Varsayılan Modeller",
       defaultModel: "Varsayılan Sohbet Modeli",
       apiKeysProviders: "API Anahtarları ve Sağlayıcılar",
-      openaiKeyLabel: "OpenAI API Anahtarı (Yakında)",
+      openaiKeyLabel: "OpenAI API anahtarı",
       willBeAddedSoon: "Yakında eklenecek",
-      geminiKeyLabel: "Gemini API Anahtarı (Yakında)",
+      geminiKeyLabel: "Gemini API anahtarı",
       anthropicKeyLabel: "Anthropic API Anahtarı",
       localUrlLabel: "Yerel URL (Ollama/LM Studio)",
       profileCustomization: "Profil Özelleştirme",
@@ -39078,7 +39091,20 @@
       customInstructionsLabel: "Özel Talimatlar",
       addedToSystemPrompt: "Sistem istemine eklenir",
       backToChat: "Sohbete Dön",
-      comingSoon: "Yakında"
+      comingSoon: "Yakında",
+      legacy: "eski",
+      providerLocal: "Yerel",
+      mhHeavy: "güçlü",
+      mhBalanced: "dengeli",
+      mhFast: "hızlı",
+      mhCreative: "yaratıcı",
+      mhFlagship: "amiral gemisi",
+      mhVision: "görsel",
+      mhLight: "hafif",
+      mhLocal: "çevrimdışı",
+      keyHintAnthropic: "Anahtarı console.anthropic.com adresinden alın",
+      keyHintOpenai: "Anahtarı platform.openai.com/api-keys adresinden alın",
+      keyHintGemini: "Anahtarı aistudio.google.com/apikey adresinden alın"
     },
     de: {
       pluginName: "KI Hub (Plugin)",
@@ -39094,8 +39120,8 @@
       scrollBottom: "Nach unten",
       rename: "Umbenennen",
       attachFile: "Datei anhängen",
-      noKeyTitle: "Anthropic-Schlüssel hinzufügen",
-      noKeyBody: "Claude-Modelle brauchen einen API-Schlüssel. Lokale Modelle laufen ohne.",
+      noKeyTitle: "{provider}-Schlüssel hinzufügen",
+      noKeyBody: "{provider}-Modelle brauchen einen API-Schlüssel. Lokale Modelle laufen ohne.",
       openKeys: "Schlüssel hinzufügen",
       replyHint: "Enter zum Senden, Umschalt+Enter für eine neue Zeile",
       chats: "Chats",
@@ -39112,9 +39138,9 @@
       modelDefaults: "Modellstandards",
       defaultModel: "Standard-Chatmodell",
       apiKeysProviders: "API-Schlüssel & Anbieter",
-      openaiKeyLabel: "OpenAI API-Schlüssel (Demnächst)",
+      openaiKeyLabel: "OpenAI API-Schlüssel",
       willBeAddedSoon: "Wird bald hinzugefügt",
-      geminiKeyLabel: "Gemini API-Schlüssel (Demnächst)",
+      geminiKeyLabel: "Gemini API-Schlüssel",
       anthropicKeyLabel: "Anthropic API-Schlüssel",
       localUrlLabel: "Lokale URL (Ollama/LM Studio)",
       profileCustomization: "Profilanpassung",
@@ -39128,7 +39154,20 @@
       customInstructionsLabel: "Benutzerdefinierte Anweisungen",
       addedToSystemPrompt: "Wird dem System-Prompt hinzugefügt",
       backToChat: "Zurück zum Chat",
-      comingSoon: "Demnächst"
+      comingSoon: "Demnächst",
+      legacy: "alt",
+      providerLocal: "Lokal",
+      mhHeavy: "stark",
+      mhBalanced: "ausgewogen",
+      mhFast: "schnell",
+      mhCreative: "kreativ",
+      mhFlagship: "Flaggschiff",
+      mhVision: "Bild",
+      mhLight: "leicht",
+      mhLocal: "offline",
+      keyHintAnthropic: "Schlüssel unter console.anthropic.com erstellen",
+      keyHintOpenai: "Schlüssel unter platform.openai.com/api-keys erstellen",
+      keyHintGemini: "Schlüssel unter aistudio.google.com/apikey erstellen"
     },
     es: {
       pluginName: "Centro de IA (Plugin)",
@@ -39144,8 +39183,8 @@
       scrollBottom: "Ir al final",
       rename: "Renombrar",
       attachFile: "Adjuntar un archivo",
-      noKeyTitle: "Añade tu clave de Anthropic",
-      noKeyBody: "Los modelos Claude necesitan una clave de API. Los modelos locales no.",
+      noKeyTitle: "Añade tu clave de {provider}",
+      noKeyBody: "Los modelos de {provider} necesitan una clave de API. Los modelos locales no.",
       openKeys: "Añadir clave",
       replyHint: "Intro para enviar, Mayús+Intro para una línea nueva",
       chats: "Chats",
@@ -39162,9 +39201,9 @@
       modelDefaults: "Modelos Predeterminados",
       defaultModel: "Modelo de Chat Predeterminado",
       apiKeysProviders: "Claves API y Proveedores",
-      openaiKeyLabel: "Clave API de OpenAI (Próximamente)",
+      openaiKeyLabel: "Clave API de OpenAI",
       willBeAddedSoon: "Se agregará pronto",
-      geminiKeyLabel: "Clave API de Gemini (Próximamente)",
+      geminiKeyLabel: "Clave API de Gemini",
       anthropicKeyLabel: "Clave API de Anthropic",
       localUrlLabel: "URL Local (Ollama/LM Studio)",
       profileCustomization: "Personalización del Perfil",
@@ -39178,7 +39217,20 @@
       customInstructionsLabel: "Instrucciones Personalizadas",
       addedToSystemPrompt: "Añadido al prompt del sistema",
       backToChat: "Volver al Chat",
-      comingSoon: "Próximamente"
+      comingSoon: "Próximamente",
+      legacy: "antiguo",
+      providerLocal: "Local",
+      mhHeavy: "potente",
+      mhBalanced: "equilibrado",
+      mhFast: "rápido",
+      mhCreative: "creativo",
+      mhFlagship: "insignia",
+      mhVision: "visión",
+      mhLight: "ligero",
+      mhLocal: "sin conexión",
+      keyHintAnthropic: "Consigue una clave en console.anthropic.com",
+      keyHintOpenai: "Consigue una clave en platform.openai.com/api-keys",
+      keyHintGemini: "Consigue una clave en aistudio.google.com/apikey"
     },
     fr: {
       pluginName: "Hub IA (Plugin)",
@@ -39194,8 +39246,8 @@
       scrollBottom: "Aller en bas",
       rename: "Renommer",
       attachFile: "Joindre un fichier",
-      noKeyTitle: "Ajoutez votre clé Anthropic",
-      noKeyBody: "Les modèles Claude demandent une clé API. Les modèles locaux n’en ont pas besoin.",
+      noKeyTitle: "Ajoutez votre clé {provider}",
+      noKeyBody: "Les modèles {provider} demandent une clé API. Les modèles locaux n’en ont pas besoin.",
       openKeys: "Ajouter la clé",
       replyHint: "Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne",
       chats: "Chats",
@@ -39212,9 +39264,9 @@
       modelDefaults: "Modèles par défaut",
       defaultModel: "Modèle de chat par défaut",
       apiKeysProviders: "Clés API & Fournisseurs",
-      openaiKeyLabel: "Clé API OpenAI (Bientôt)",
+      openaiKeyLabel: "Clé API OpenAI",
       willBeAddedSoon: "Sera ajouté bientôt",
-      geminiKeyLabel: "Clé API Gemini (Bientôt)",
+      geminiKeyLabel: "Clé API Gemini",
       anthropicKeyLabel: "Clé API Anthropic",
       localUrlLabel: "URL Locale (Ollama/LM Studio)",
       profileCustomization: "Personnalisation du profil",
@@ -39228,7 +39280,20 @@
       customInstructionsLabel: "Instructions personnalisées",
       addedToSystemPrompt: "Ajouté au prompt système",
       backToChat: "Retour au chat",
-      comingSoon: "Bientôt"
+      comingSoon: "Bientôt",
+      legacy: "ancien",
+      providerLocal: "Local",
+      mhHeavy: "puissant",
+      mhBalanced: "équilibré",
+      mhFast: "rapide",
+      mhCreative: "créatif",
+      mhFlagship: "phare",
+      mhVision: "vision",
+      mhLight: "léger",
+      mhLocal: "hors ligne",
+      keyHintAnthropic: "Obtenez une clé sur console.anthropic.com",
+      keyHintOpenai: "Obtenez une clé sur platform.openai.com/api-keys",
+      keyHintGemini: "Obtenez une clé sur aistudio.google.com/apikey"
     },
     ru: {
       pluginName: "Центр ИИ (Плагин)",
@@ -39244,8 +39309,8 @@
       scrollBottom: "Вниз",
       rename: "Переименовать",
       attachFile: "Прикрепить файл",
-      noKeyTitle: "Добавьте ключ Anthropic",
-      noKeyBody: "Моделям Claude нужен API-ключ. Локальные модели работают без него.",
+      noKeyTitle: "Добавьте ключ {provider}",
+      noKeyBody: "Моделям {provider} нужен API-ключ. Локальные модели работают без него.",
       openKeys: "Добавить ключ",
       replyHint: "Enter отправляет, Shift+Enter переносит строку",
       chats: "Чаты",
@@ -39262,9 +39327,9 @@
       modelDefaults: "Модели по умолчанию",
       defaultModel: "Модель чата по умолчанию",
       apiKeysProviders: "API ключи и провайдеры",
-      openaiKeyLabel: "API ключ OpenAI (Скоро)",
+      openaiKeyLabel: "API ключ OpenAI",
       willBeAddedSoon: "Скоро будет добавлено",
-      geminiKeyLabel: "API ключ Gemini (Скоро)",
+      geminiKeyLabel: "API ключ Gemini",
       anthropicKeyLabel: "API ключ Anthropic",
       localUrlLabel: "Локальный URL (Ollama/LM Studio)",
       profileCustomization: "Настройка профиля",
@@ -39278,7 +39343,20 @@
       customInstructionsLabel: "Пользовательские инструкции",
       addedToSystemPrompt: "Добавляется в системный промпт",
       backToChat: "Вернуться к чату",
-      comingSoon: "Скоро"
+      comingSoon: "Скоро",
+      legacy: "старая",
+      providerLocal: "Локальные",
+      mhHeavy: "мощная",
+      mhBalanced: "баланс",
+      mhFast: "быстрая",
+      mhCreative: "творческая",
+      mhFlagship: "флагман",
+      mhVision: "зрение",
+      mhLight: "лёгкая",
+      mhLocal: "офлайн",
+      keyHintAnthropic: "Получите ключ на console.anthropic.com",
+      keyHintOpenai: "Получите ключ на platform.openai.com/api-keys",
+      keyHintGemini: "Получите ключ на aistudio.google.com/apikey"
     },
     ar: {
       pluginName: "مركز الذكاء الاصطناعي (مكون إضافي)",
@@ -39294,8 +39372,8 @@
       scrollBottom: "إلى الأسفل",
       rename: "إعادة التسمية",
       attachFile: "إرفاق ملف",
-      noKeyTitle: "أضف مفتاح Anthropic",
-      noKeyBody: "نماذج Claude تحتاج إلى مفتاح API. النماذج المحلية تعمل بدونه.",
+      noKeyTitle: "أضف مفتاح {provider}",
+      noKeyBody: "نماذج {provider} تحتاج إلى مفتاح API. النماذج المحلية تعمل بدونه.",
       openKeys: "إضافة المفتاح",
       replyHint: "Enter للإرسال وShift+Enter لسطر جديد",
       chats: "المحادثات",
@@ -39312,9 +39390,9 @@
       modelDefaults: "النماذج الافتراضية",
       defaultModel: "نموذج المحادثة الافتراضي",
       apiKeysProviders: "مفاتيح API ومزودو الخدمة",
-      openaiKeyLabel: "مفتاح API لـ OpenAI (قريباً)",
+      openaiKeyLabel: "مفتاح API لـ OpenAI",
       willBeAddedSoon: "سيتم إضافته قريباً",
-      geminiKeyLabel: "مفتاح API لـ Gemini (قريباً)",
+      geminiKeyLabel: "مفتاح API لـ Gemini",
       anthropicKeyLabel: "مفتاح API لـ Anthropic",
       localUrlLabel: "الرابط المحلي (Ollama/LM Studio)",
       profileCustomization: "تخصيص الملف الشخصي",
@@ -39328,7 +39406,20 @@
       customInstructionsLabel: "تعليمات مخصصة",
       addedToSystemPrompt: "تضاف إلى موجه النظام",
       backToChat: "العودة إلى المحادثة",
-      comingSoon: "قريباً"
+      comingSoon: "قريباً",
+      legacy: "قديم",
+      providerLocal: "محلي",
+      mhHeavy: "قوي",
+      mhBalanced: "متوازن",
+      mhFast: "سريع",
+      mhCreative: "إبداعي",
+      mhFlagship: "الأفضل",
+      mhVision: "رؤية",
+      mhLight: "خفيف",
+      mhLocal: "دون اتصال",
+      keyHintAnthropic: "احصل على مفتاح من console.anthropic.com",
+      keyHintOpenai: "احصل على مفتاح من platform.openai.com/api-keys",
+      keyHintGemini: "احصل على مفتاح من aistudio.google.com/apikey"
     },
     zh: {
       pluginName: "AI 中心 (插件)",
@@ -39344,8 +39435,8 @@
       scrollBottom: "滚动到底部",
       rename: "重命名",
       attachFile: "添加文件",
-      noKeyTitle: "添加你的 Anthropic 密钥",
-      noKeyBody: "Claude 模型需要 API 密钥，本地模型无需密钥。",
+      noKeyTitle: "添加你的 {provider} 密钥",
+      noKeyBody: "{provider} 模型需要 API 密钥，本地模型无需密钥。",
       openKeys: "添加密钥",
       replyHint: "按 Enter 发送，Shift+Enter 换行",
       chats: "聊天",
@@ -39362,9 +39453,9 @@
       modelDefaults: "默认模型",
       defaultModel: "默认聊天模型",
       apiKeysProviders: "API 密钥和提供商",
-      openaiKeyLabel: "OpenAI API 密钥 (即将推出)",
+      openaiKeyLabel: "OpenAI API 密钥",
       willBeAddedSoon: "即将添加",
-      geminiKeyLabel: "Gemini API 密钥 (即将推出)",
+      geminiKeyLabel: "Gemini API 密钥",
       anthropicKeyLabel: "Anthropic API 密钥",
       localUrlLabel: "本地 URL (Ollama/LM Studio)",
       profileCustomization: "个人资料定制",
@@ -39378,7 +39469,20 @@
       customInstructionsLabel: "自定义指令",
       addedToSystemPrompt: "添加到系统提示词",
       backToChat: "返回聊天",
-      comingSoon: "即将推出"
+      comingSoon: "即将推出",
+      legacy: "旧版",
+      providerLocal: "本地",
+      mhHeavy: "强力",
+      mhBalanced: "均衡",
+      mhFast: "快速",
+      mhCreative: "创意",
+      mhFlagship: "旗舰",
+      mhVision: "视觉",
+      mhLight: "轻量",
+      mhLocal: "离线",
+      keyHintAnthropic: "在 console.anthropic.com 获取密钥",
+      keyHintOpenai: "在 platform.openai.com/api-keys 获取密钥",
+      keyHintGemini: "在 aistudio.google.com/apikey 获取密钥"
     },
     ja: {
       pluginName: "AIハブ (プラグイン)",
@@ -39394,8 +39498,8 @@
       scrollBottom: "一番下へ",
       rename: "名前を変更",
       attachFile: "ファイルを添付",
-      noKeyTitle: "Anthropic キーを追加",
-      noKeyBody: "Claude モデルには API キーが必要です。ローカルモデルは不要です。",
+      noKeyTitle: "{provider} キーを追加",
+      noKeyBody: "{provider} のモデルには API キーが必要です。ローカルモデルは不要です。",
       openKeys: "キーを追加",
       replyHint: "Enter で送信、Shift+Enter で改行",
       chats: "チャット",
@@ -39412,9 +39516,9 @@
       modelDefaults: "デフォルトモデル",
       defaultModel: "デフォルトのチャットモデル",
       apiKeysProviders: "APIキーとプロバイダー",
-      openaiKeyLabel: "OpenAI APIキー（近日公開）",
+      openaiKeyLabel: "OpenAI APIキー",
       willBeAddedSoon: "まもなく追加されます",
-      geminiKeyLabel: "Gemini APIキー（近日公開）",
+      geminiKeyLabel: "Gemini APIキー",
       anthropicKeyLabel: "Anthropic APIキー",
       localUrlLabel: "ローカルURL (Ollama/LM Studio)",
       profileCustomization: "プロフィールのカスタマイズ",
@@ -39428,7 +39532,20 @@
       customInstructionsLabel: "カスタム指示",
       addedToSystemPrompt: "システムプロンプトに追加されます",
       backToChat: "チャットに戻る",
-      comingSoon: "近日公開"
+      comingSoon: "近日公開",
+      legacy: "旧",
+      providerLocal: "ローカル",
+      mhHeavy: "高性能",
+      mhBalanced: "バランス",
+      mhFast: "高速",
+      mhCreative: "創造的",
+      mhFlagship: "主力",
+      mhVision: "画像",
+      mhLight: "軽量",
+      mhLocal: "オフライン",
+      keyHintAnthropic: "console.anthropic.com でキーを取得",
+      keyHintOpenai: "platform.openai.com/api-keys でキーを取得",
+      keyHintGemini: "aistudio.google.com/apikey でキーを取得"
     },
     hi: {
       pluginName: "एआई हब (प्लगइन)",
@@ -39444,8 +39561,8 @@
       scrollBottom: "सबसे नीचे जाएँ",
       rename: "नाम बदलें",
       attachFile: "फ़ाइल जोड़ें",
-      noKeyTitle: "अपनी Anthropic कुंजी जोड़ें",
-      noKeyBody: "Claude मॉडल के लिए API कुंजी चाहिए। लोकल मॉडल बिना कुंजी चलते हैं।",
+      noKeyTitle: "अपनी {provider} कुंजी जोड़ें",
+      noKeyBody: "{provider} मॉडल के लिए API कुंजी चाहिए। लोकल मॉडल बिना कुंजी चलते हैं।",
       openKeys: "कुंजी जोड़ें",
       replyHint: "भेजने के लिए Enter, नई पंक्ति के लिए Shift+Enter",
       chats: "चैट्स",
@@ -39462,9 +39579,9 @@
       modelDefaults: "मॉडल डिफ़ॉल्ट्स",
       defaultModel: "डिफ़ॉल्ट चैट मॉडल",
       apiKeysProviders: "API कुंजियाँ और प्रदाता",
-      openaiKeyLabel: "OpenAI API कुंजी (जल्द आ रहा है)",
+      openaiKeyLabel: "OpenAI API कुंजी",
       willBeAddedSoon: "जल्द ही जोड़ा जाएगा",
-      geminiKeyLabel: "Gemini API कुंजी (जल्द आ रहा है)",
+      geminiKeyLabel: "Gemini API कुंजी",
       anthropicKeyLabel: "Anthropic API कुंजी",
       localUrlLabel: "स्थानीय URL (Ollama/LM Studio)",
       profileCustomization: "प्रोफ़ाइल अनुकूलन",
@@ -39478,7 +39595,20 @@
       customInstructionsLabel: "कस्टम निर्देश",
       addedToSystemPrompt: "सिस्टम प्रॉम्प्ट में जोड़ा गया",
       backToChat: "चैट पर वापस जाएं",
-      comingSoon: "जल्द आ रहा है"
+      comingSoon: "जल्द आ रहा है",
+      legacy: "पुराना",
+      providerLocal: "लोकल",
+      mhHeavy: "दमदार",
+      mhBalanced: "संतुलित",
+      mhFast: "तेज़",
+      mhCreative: "रचनात्मक",
+      mhFlagship: "प्रमुख",
+      mhVision: "विज़न",
+      mhLight: "हल्का",
+      mhLocal: "ऑफ़लाइन",
+      keyHintAnthropic: "console.anthropic.com से कुंजी लें",
+      keyHintOpenai: "platform.openai.com/api-keys से कुंजी लें",
+      keyHintGemini: "aistudio.google.com/apikey से कुंजी लें"
     }
   };
   const getTranslation = (currentLang, key) => {
@@ -39502,6 +39632,39 @@
     listeners.add(fn);
     return () => listeners.delete(fn);
   };
+  const DEFAULT_MODEL = "anthropic:claude-sonnet-5-5";
+  const PROVIDERS = [
+    { id: "anthropic", label: "Anthropic" },
+    { id: "openai", label: "OpenAI" },
+    { id: "gemini", label: "Google Gemini" },
+    { id: "local", label: null }
+  ];
+  const MODELS = [
+    { id: "anthropic:claude-opus-5-5", name: "Claude Opus 5.5", hint: "mhHeavy" },
+    { id: "anthropic:claude-sonnet-5-5", name: "Claude Sonnet 5.5", hint: "mhBalanced" },
+    { id: "anthropic:claude-haiku-5-5", name: "Claude Haiku 5.5", hint: "mhFast" },
+    { id: "anthropic:claude-fable-5-1", name: "Claude Fable 5.1", hint: "mhCreative" },
+    { id: "openai:gpt-6-astra", name: "GPT-6 Astra", hint: "mhFlagship" },
+    { id: "openai:gpt-6.1-sol", name: "GPT-6.1 Sol", hint: "mhBalanced" },
+    { id: "openai:gpt-6-luna", name: "GPT-6 Luna", hint: "mhFast" },
+    { id: "openai:gpt-6.1-terra", name: "GPT-6.1 Terra", hint: "mhVision" },
+    { id: "gemini:gemini-4-argon", name: "Gemini 4 Argon", hint: "mhFlagship" },
+    { id: "gemini:gemini-3.8-flash", name: "Gemini 3.8 Flash", hint: "mhFast" },
+    { id: "gemini:gemini-3.5-flash-lite", name: "Gemini 3.5 Flash-Lite", hint: "mhLight" },
+    { id: "local:llama3", name: "Llama 3", hint: "mhLocal" },
+    { id: "local:llava", name: "LLaVA", hint: "mhVision" }
+  ];
+  const providerOf = (modelId) => String(modelId || "").split(":")[0];
+  const providerLabel = (providerId, t) => {
+    const p = PROVIDERS.find((x) => x.id === providerId);
+    return p ? p.label || t("providerLocal") : providerId;
+  };
+  const isKnownModel = (id) => MODELS.some((m) => m.id === id);
+  const modelLabel = (m, t) => `${m.name} · ${t(m.hint)}`;
+  const shortModel = (id, t) => {
+    const m = MODELS.find((x) => x.id === id);
+    return m ? m.name : `${id} (${t("legacy")})`;
+  };
   const fg1 = "var(--kb-fg-1, #f1f5f9)";
   const fg2 = "var(--kb-fg-2, #94a3b8)";
   const stroke = "var(--kb-stroke-subtle, var(--theme-border))";
@@ -39510,14 +39673,6 @@
   const inset = "var(--kb-bg-inset, rgba(0,0,0,0.4))";
   const display = "var(--kb-font-display, inherit)";
   const mono = "var(--kb-font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace)";
-  const MODELS$1 = [
-    { id: "anthropic:claude-sonnet-4-6", label: "Claude 4.6 Sonnet (Anthropic - Best)", short: "Claude Sonnet 4.6" },
-    { id: "anthropic:claude-opus-4-6", label: "Claude 4.6 Opus (Anthropic - Heavy)", short: "Claude Opus 4.6" },
-    { id: "anthropic:claude-haiku-4-5-20251001", label: "Claude 4.5 Haiku (Anthropic - Fast)", short: "Claude Haiku 4.5" },
-    { id: "local:llama3", label: "Local Default (Ollama / LM Studio)", short: "Local (Llama 3)" },
-    { id: "local:llava", label: "Local Vision (Ollama - LLaVA)", short: "Local vision (LLaVA)" }
-  ];
-  const shortModel = (id) => MODELS$1.find((m) => m.id === id)?.short || id;
   const WIDE = 560;
   const iconBtn = (extra) => ({
     width: 36,
@@ -39541,7 +39696,7 @@
   const Icon = ({ name: name2, size = 20, style }) => /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", "aria-hidden": "true", style: { fontSize: size, ...style } }, name2);
   const IconTile = ({ size, icon, src }) => /* @__PURE__ */ window.React.createElement("div", { style: { width: size, height: size, borderRadius: size >= 60 ? 22 : 15, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", ...tonal } }, src ? /* @__PURE__ */ window.React.createElement("img", { src, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } }) : /* @__PURE__ */ window.React.createElement(Icon, { name: icon, size: size >= 60 ? 32 : 24, style: { color: accent } }));
   const Avatar = ({ src, icon, ai }) => /* @__PURE__ */ window.React.createElement("div", { style: { width: 28, height: 28, borderRadius: 999, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", marginTop: 2, ...ai ? tonal : { background: "var(--kb-bg-tile, #334155)", color: fg1 } } }, src ? /* @__PURE__ */ window.React.createElement("img", { src, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } }) : /* @__PURE__ */ window.React.createElement(Icon, { name: icon, size: 16, style: { color: ai ? accent : fg1 } }));
-  const ModelSelect = ({ value, onChange, ariaLabel, chip, full }) => /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center", minWidth: 0, flex: chip ? "0 1 auto" : void 0 } }, /* @__PURE__ */ window.React.createElement(
+  const ModelSelect = ({ value, onChange, ariaLabel, chip, t }) => /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center", minWidth: 0, flex: chip ? "0 1 auto" : void 0 } }, /* @__PURE__ */ window.React.createElement(
     "select",
     {
       value,
@@ -39549,7 +39704,8 @@
       "aria-label": ariaLabel,
       style: chip ? { ...fieldStyle, width: "auto", maxWidth: "100%", background: "var(--kb-bg-tile, rgba(255,255,255,0.06))", appearance: "none", WebkitAppearance: "none", borderRadius: 999, padding: "8px 32px 8px 14px", fontSize: 13, fontWeight: 500, textOverflow: "ellipsis" } : { ...fieldStyle, appearance: "none", WebkitAppearance: "none", borderRadius: 999, padding: "9px 40px 9px 16px", fontWeight: 500, textOverflow: "ellipsis" }
     },
-    MODELS$1.map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, full ? m.label : m.short))
+    value && !isKnownModel(value) && /* @__PURE__ */ window.React.createElement("option", { value }, `${value} (${t("legacy")})`),
+    PROVIDERS.map((pr) => /* @__PURE__ */ window.React.createElement("optgroup", { key: pr.id, label: providerLabel(pr.id, t) }, MODELS.filter((m) => providerOf(m.id) === pr.id).map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, chip ? m.name : modelLabel(m, t)))))
   ), /* @__PURE__ */ window.React.createElement(Icon, { name: "expand_more", size: chip ? 18 : 20, style: { position: "absolute", right: chip ? 8 : 12, color: fg2, pointerEvents: "none" } }));
   const preprocessMarkdown = (text2) => {
     if (!text2) return "";
@@ -39851,7 +40007,7 @@
       if (!input.trim() && attachments.length === 0) return;
       if (isGenerating) return;
       let currentChatId = activeChatId;
-      const selectedModelString = activeChat?.model || "openai:gpt-4o";
+      const selectedModelString = activeChat?.model || apiKeys?.defaultModel || DEFAULT_MODEL;
       const [provider, model] = selectedModelString.split(":");
       if (!currentChatId || !activeChat) {
         currentChatId = createChat(selectedModelString);
@@ -40017,8 +40173,10 @@ ${currentApiKeys.customInstructions}` : ""
       setDragging(false);
       await addFiles(e.dataTransfer.files);
     };
-    const selectedModel = activeChat?.model || "openai:gpt-4o";
-    const needsKey = selectedModel.startsWith("anthropic:") && !apiKeys?.anthropic;
+    const selectedModel = activeChat?.model || apiKeys?.defaultModel || DEFAULT_MODEL;
+    const selectedProvider = providerOf(selectedModel);
+    const needsKey = ["anthropic", "openai", "gemini"].includes(selectedProvider) && !apiKeys?.[selectedProvider];
+    const providerName = providerLabel(selectedProvider, t);
     const chatTitle = activeChat ? activeChat.title === "New Chat" ? t("newChat") : activeChat.title : t("newChat");
     const setKeys = (patch2) => usePluginChatStore.getState().setApiKeys(patch2);
     const canSend = Boolean(input.trim()) || attachments.length > 0;
@@ -40085,7 +40243,7 @@ ${currentApiKeys.customInstructions}` : ""
         style: { margin: 0, fontSize: 19, fontWeight: 600, lineHeight: 1.25, color: fg1, fontFamily: display, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }
       },
       chatTitle
-    ), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, shortModel(selectedModel))), /* @__PURE__ */ window.React.createElement("button", { onClick: () => createChat(), className: "ai-btn", title: t("newChat"), "aria-label": t("newChat"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "add" })), !wide && /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("history"), className: "ai-btn", title: t("history"), "aria-label": t("history"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "history" })), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("settings"), className: "ai-btn", title: t("aiHubSettings"), "aria-label": t("aiHubSettings"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "settings" })), /* @__PURE__ */ window.React.createElement("button", { onClick: onClose, className: "ai-btn", title: t("closeLabel"), "aria-label": t("closeLabel"), style: iconBtn(tonal) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "close" }))) : /* @__PURE__ */ window.React.createElement("div", { style: { padding: "20px 20px 12px", display: "flex", alignItems: "center", gap: 12, flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("chat"), className: "ai-btn", title: t("backToChat"), "aria-label": t("backToChat"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "arrow_back" })), /* @__PURE__ */ window.React.createElement("h2", { style: { flex: 1, minWidth: 0, margin: 0, fontSize: 19, fontWeight: 600, color: fg1, fontFamily: display, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, view === "history" ? t("history") : t("aiHubSettings")), /* @__PURE__ */ window.React.createElement("button", { onClick: onClose, className: "ai-btn", title: t("closeLabel"), "aria-label": t("closeLabel"), style: iconBtn(tonal) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "close" })));
+    ), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, shortModel(selectedModel, t))), /* @__PURE__ */ window.React.createElement("button", { onClick: () => createChat(), className: "ai-btn", title: t("newChat"), "aria-label": t("newChat"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "add" })), !wide && /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("history"), className: "ai-btn", title: t("history"), "aria-label": t("history"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "history" })), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("settings"), className: "ai-btn", title: t("aiHubSettings"), "aria-label": t("aiHubSettings"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "settings" })), /* @__PURE__ */ window.React.createElement("button", { onClick: onClose, className: "ai-btn", title: t("closeLabel"), "aria-label": t("closeLabel"), style: iconBtn(tonal) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "close" }))) : /* @__PURE__ */ window.React.createElement("div", { style: { padding: "20px 20px 12px", display: "flex", alignItems: "center", gap: 12, flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("chat"), className: "ai-btn", title: t("backToChat"), "aria-label": t("backToChat"), style: iconBtn() }, /* @__PURE__ */ window.React.createElement(Icon, { name: "arrow_back" })), /* @__PURE__ */ window.React.createElement("h2", { style: { flex: 1, minWidth: 0, margin: 0, fontSize: 19, fontWeight: 600, color: fg1, fontFamily: display, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, view === "history" ? t("history") : t("aiHubSettings")), /* @__PURE__ */ window.React.createElement("button", { onClick: onClose, className: "ai-btn", title: t("closeLabel"), "aria-label": t("closeLabel"), style: iconBtn(tonal) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "close" })));
     const messages = activeChat?.messages || [];
     const chatView = /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", flex: 1, minHeight: 0, display: "flex", flexDirection: "column" } }, /* @__PURE__ */ window.React.createElement(
       "div",
@@ -40124,7 +40282,7 @@ ${currentApiKeys.customInstructions}` : ""
         style: { ...iconBtn(), position: "absolute", right: 20, bottom: 8, background: "var(--kb-bg-surface, #1f2937)", boxShadow: "var(--kb-shadow-e2, 0 4px 14px rgba(0,0,0,0.35))" }
       },
       /* @__PURE__ */ window.React.createElement(Icon, { name: "arrow_downward" })
-    )), /* @__PURE__ */ window.React.createElement("div", { className: "pointer-events-auto", style: { padding: "8px 20px 20px", display: "flex", flexDirection: "column", gap: 10, flexShrink: 0 } }, needsKey && /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, padding: "12px 12px 12px 16px", borderRadius: 20, background: "var(--kb-bg-surface, rgba(255,255,255,0.04))" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "key", size: 22, style: { color: accent, flexShrink: 0 } }), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 } }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: fg1 } }, t("noKeyTitle")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2, lineHeight: 1.4 } }, t("noKeyBody"))), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("settings"), className: "ai-btn", style: { ...pillBtn, padding: "8px 14px", flexShrink: 0 } }, t("openKeys"))), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", background: inset, borderRadius: 28, padding: "8px 8px 8px 8px" } }, attachments.length > 0 && /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 6, padding: "4px 6px 6px" } }, attachments.map((a, i) => /* @__PURE__ */ window.React.createElement("div", { key: i, style: { display: "flex", alignItems: "center", gap: 6, padding: "2px 2px 2px 10px", fontSize: 12, color: fg1, borderRadius: 999, background: "var(--kb-bg-tile, rgba(255,255,255,0.08))" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: a.type === "image" ? "image" : "description", size: 14, style: { color: accent } }), /* @__PURE__ */ window.React.createElement("span", { style: { maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, a.name), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setAttachments((prev) => prev.filter((_, idx) => idx !== i)), className: "ai-btn", "aria-label": t("remove"), title: t("remove"), style: subtle({ width: 24, height: 24, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center" }) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "close", size: 14 }))))), /* @__PURE__ */ window.React.createElement(
+    )), /* @__PURE__ */ window.React.createElement("div", { className: "pointer-events-auto", style: { padding: "8px 20px 20px", display: "flex", flexDirection: "column", gap: 10, flexShrink: 0 } }, needsKey && /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, padding: "12px 12px 12px 16px", borderRadius: 20, background: "var(--kb-bg-surface, rgba(255,255,255,0.04))" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "key", size: 22, style: { color: accent, flexShrink: 0 } }), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 } }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: fg1 } }, t("noKeyTitle").replace("{provider}", providerName)), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2, lineHeight: 1.4 } }, t("noKeyBody").replace("{provider}", providerName))), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("settings"), className: "ai-btn", style: { ...pillBtn, padding: "8px 14px", flexShrink: 0 } }, t("openKeys"))), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", background: inset, borderRadius: 28, padding: "8px 8px 8px 8px" } }, attachments.length > 0 && /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 6, padding: "4px 6px 6px" } }, attachments.map((a, i) => /* @__PURE__ */ window.React.createElement("div", { key: i, style: { display: "flex", alignItems: "center", gap: 6, padding: "2px 2px 2px 10px", fontSize: 12, color: fg1, borderRadius: 999, background: "var(--kb-bg-tile, rgba(255,255,255,0.08))" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: a.type === "image" ? "image" : "description", size: 14, style: { color: accent } }), /* @__PURE__ */ window.React.createElement("span", { style: { maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, a.name), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setAttachments((prev) => prev.filter((_, idx) => idx !== i)), className: "ai-btn", "aria-label": t("remove"), title: t("remove"), style: subtle({ width: 24, height: 24, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center" }) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "close", size: 14 }))))), /* @__PURE__ */ window.React.createElement(
       "textarea",
       {
         ref: inputRef,
@@ -40145,9 +40303,9 @@ ${currentApiKeys.customInstructions}` : ""
     ), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ window.React.createElement("input", { ref: fileInputRef, type: "file", multiple: true, style: { display: "none" }, onChange: async (e) => {
       await addFiles(e.target.files);
       e.target.value = "";
-    } }), /* @__PURE__ */ window.React.createElement("button", { onClick: () => fileInputRef.current?.click(), className: "ai-btn", title: t("attachFile"), "aria-label": t("attachFile"), style: subtle({ width: 36, height: 36, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center" }) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "attach_file" })), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minWidth: 0, display: "flex" } }, /* @__PURE__ */ window.React.createElement(ModelSelect, { chip: true, value: selectedModel, ariaLabel: t("defaultModel"), onChange: changeModel })), isGenerating ? /* @__PURE__ */ window.React.createElement("button", { onClick: handleCancel, className: "ai-btn", title: t("stopLabel"), "aria-label": t("stopLabel"), style: { width: 40, height: 40, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "none", ...tonal } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "stop" })) : /* @__PURE__ */ window.React.createElement("button", { onClick: handleSend, disabled: !canSend, title: t("typeMessage"), "aria-label": t("typeMessage"), style: { width: 40, height: 40, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "none", background: accent, color: "var(--kb-on-accent, #fff)", opacity: canSend ? 1 : "var(--kb-opacity-disabled, 0.5)" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "arrow_upward" }))))));
+    } }), /* @__PURE__ */ window.React.createElement("button", { onClick: () => fileInputRef.current?.click(), className: "ai-btn", title: t("attachFile"), "aria-label": t("attachFile"), style: subtle({ width: 36, height: 36, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center" }) }, /* @__PURE__ */ window.React.createElement(Icon, { name: "attach_file" })), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1, minWidth: 0, display: "flex" } }, /* @__PURE__ */ window.React.createElement(ModelSelect, { chip: true, t, value: selectedModel, ariaLabel: t("defaultModel"), onChange: changeModel })), isGenerating ? /* @__PURE__ */ window.React.createElement("button", { onClick: handleCancel, className: "ai-btn", title: t("stopLabel"), "aria-label": t("stopLabel"), style: { width: 40, height: 40, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "none", ...tonal } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "stop" })) : /* @__PURE__ */ window.React.createElement("button", { onClick: handleSend, disabled: !canSend, title: t("typeMessage"), "aria-label": t("typeMessage"), style: { width: 40, height: 40, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "none", background: accent, color: "var(--kb-on-accent, #fff)", opacity: canSend ? 1 : "var(--kb-opacity-disabled, 0.5)" } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "arrow_upward" }))))));
     const AvatarRow = ({ type, src, icon, label }) => /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 16 } }, /* @__PURE__ */ window.React.createElement(IconTile, { size: 64, icon, src }), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, minWidth: 0 } }, /* @__PURE__ */ window.React.createElement("span", { style: labelStyle }, label), /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, /* @__PURE__ */ window.React.createElement("label", { style: pillBtn }, t("change"), /* @__PURE__ */ window.React.createElement("input", { type: "file", accept: "image/*", style: { display: "none" }, onChange: (e) => handleAvatarUpload(e, type) })), src && /* @__PURE__ */ window.React.createElement("button", { onClick: () => type === "ai" ? setAiAvatar(null) : setUserAvatar(null), style: { ...pillBtn, background: "var(--kb-bg-tile, rgba(255,255,255,0.06))", color: "var(--kb-danger, #ef4444)" } }, t("remove")))));
-    const settingsView = /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("div", { className: "custom-scrollbar", style: { flex: 1, overflowY: "auto", padding: "4px 20px 12px", display: "flex", flexDirection: "column", gap: 16, minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("defaultModel")), /* @__PURE__ */ window.React.createElement(ModelSelect, { full: true, value: apiKeys?.defaultModel || "anthropic:claude-sonnet-4-6", ariaLabel: t("defaultModel"), onChange: (e) => setKeys({ defaultModel: e.target.value }) }))), /* @__PURE__ */ window.React.createElement("section", { id: "ai-keys", style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("apiKeysProviders")), /* @__PURE__ */ window.React.createElement("div", { style: { ...group, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("openaiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("willBeAddedSoon"), style: { ...fieldStyle, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: { ...group, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("geminiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("willBeAddedSoon"), style: { ...fieldStyle, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("anthropicKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { type: "password", value: apiKeys?.anthropic || "", onChange: (e) => setKeys({ anthropic: e.target.value }), placeholder: "sk-ant-...", style: fieldStyle })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("localUrlLabel")), /* @__PURE__ */ window.React.createElement("input", { type: "text", value: apiKeys?.localUrl || "", onChange: (e) => setKeys({ localUrl: e.target.value }), placeholder: "http://localhost:11434", style: fieldStyle }))), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("profileCustomization")), /* @__PURE__ */ window.React.createElement(AvatarRow, { type: "ai", src: aiAvatar, icon: "smart_toy", label: t("aiAvatar") }), /* @__PURE__ */ window.React.createElement(AvatarRow, { type: "user", src: userAvatar, icon: "person", label: t("userAvatar") })), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2 } }, t("definesAiBehavior"))), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys?.systemMessage || "", onChange: (e) => setKeys({ systemMessage: e.target.value }), placeholder: "You are a helpful AI...", style: { ...fieldStyle, minHeight: 88, resize: "vertical" } })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2 } }, t("addedToSystemPrompt"))), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys?.customInstructions || "", onChange: (e) => setKeys({ customInstructions: e.target.value }), placeholder: "e.g. Always respond in Spanish", style: { ...fieldStyle, minHeight: 88, resize: "vertical" } })))), /* @__PURE__ */ window.React.createElement("div", { style: { padding: "8px 20px 20px", display: "flex", justifyContent: "flex-end", flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("chat"), className: "ai-btn", style: { padding: "10px 24px", fontSize: 14, fontWeight: 600, borderRadius: 999, border: "none", background: accent, color: "var(--kb-on-accent, #fff)" } }, t("backToChat"))));
+    const settingsView = /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("div", { className: "custom-scrollbar", style: { flex: 1, overflowY: "auto", padding: "4px 20px 12px", display: "flex", flexDirection: "column", gap: 16, minHeight: 0 } }, /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("defaultModel")), /* @__PURE__ */ window.React.createElement(ModelSelect, { t, value: apiKeys?.defaultModel || DEFAULT_MODEL, ariaLabel: t("defaultModel"), onChange: (e) => setKeys({ defaultModel: e.target.value }) }))), /* @__PURE__ */ window.React.createElement("section", { id: "ai-keys", style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("apiKeysProviders")), [["anthropic", "anthropicKeyLabel", "sk-ant-...", "keyHintAnthropic"], ["openai", "openaiKeyLabel", "sk-...", "keyHintOpenai"], ["gemini", "geminiKeyLabel", "AIza...", "keyHintGemini"]].map(([k, lbl, ph, hint]) => /* @__PURE__ */ window.React.createElement("div", { key: k, style: group }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t(lbl)), /* @__PURE__ */ window.React.createElement("input", { type: "password", value: apiKeys?.[k] || "", onChange: (e) => setKeys({ [k]: e.target.value }), placeholder: ph, style: fieldStyle }), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 11, color: fg2, opacity: 0.8 } }, t(hint)))), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("localUrlLabel")), /* @__PURE__ */ window.React.createElement("input", { type: "text", value: apiKeys?.localUrl || "", onChange: (e) => setKeys({ localUrl: e.target.value }), placeholder: "http://localhost:11434", style: fieldStyle }))), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("profileCustomization")), /* @__PURE__ */ window.React.createElement(AvatarRow, { type: "ai", src: aiAvatar, icon: "smart_toy", label: t("aiAvatar") }), /* @__PURE__ */ window.React.createElement(AvatarRow, { type: "user", src: userAvatar, icon: "person", label: t("userAvatar") })), /* @__PURE__ */ window.React.createElement("section", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("h3", { style: cardTitle }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2 } }, t("definesAiBehavior"))), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys?.systemMessage || "", onChange: (e) => setKeys({ systemMessage: e.target.value }), placeholder: "You are a helpful AI...", style: { ...fieldStyle, minHeight: 88, resize: "vertical" } })), /* @__PURE__ */ window.React.createElement("div", { style: group }, /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 } }, /* @__PURE__ */ window.React.createElement("label", { style: labelStyle }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: fg2 } }, t("addedToSystemPrompt"))), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys?.customInstructions || "", onChange: (e) => setKeys({ customInstructions: e.target.value }), placeholder: "e.g. Always respond in Spanish", style: { ...fieldStyle, minHeight: 88, resize: "vertical" } })))), /* @__PURE__ */ window.React.createElement("div", { style: { padding: "8px 20px 20px", display: "flex", justifyContent: "flex-end", flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("button", { onClick: () => setView("chat"), className: "ai-btn", style: { padding: "10px 24px", fontSize: 14, fontWeight: 600, borderRadius: 999, border: "none", background: accent, color: "var(--kb-on-accent, #fff)" } }, t("backToChat"))));
     return /* @__PURE__ */ window.React.createElement(
       "div",
       {
@@ -40196,13 +40354,6 @@ ${currentApiKeys.customInstructions}` : ""
       dragging && /* @__PURE__ */ window.React.createElement("div", { style: { position: "absolute", inset: 12, zIndex: 40, borderRadius: 24, border: `2px dashed ${accent}`, background: "color-mix(in srgb, var(--kb-bg-shell, #111827) 88%, transparent)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, pointerEvents: "none", color: fg1 } }, /* @__PURE__ */ window.React.createElement(Icon, { name: "upload_file", size: 32, style: { color: accent } }), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 15, fontWeight: 600, fontFamily: display } }, t("dropFiles")))
     );
   };
-  const MODELS = [
-    { id: "anthropic:claude-sonnet-4-6", label: "Claude 4.6 Sonnet (Anthropic - Best)" },
-    { id: "anthropic:claude-opus-4-6", label: "Claude 4.6 Opus (Anthropic - Heavy)" },
-    { id: "anthropic:claude-haiku-4-5-20251001", label: "Claude 4.5 Haiku (Anthropic - Fast)" },
-    { id: "local:llama3", label: "Local Default (Ollama / LM Studio)" },
-    { id: "local:llava", label: "Local Vision (Ollama - LLaVA)" }
-  ];
   const SettingsPanel = () => {
     const React2 = window.React;
     const { useState, useEffect } = React2;
@@ -40221,13 +40372,14 @@ ${currentApiKeys.customInstructions}` : ""
     return /* @__PURE__ */ window.React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 16, color: fg12 } }, /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("modelDefaults")), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("defaultModel")), /* @__PURE__ */ window.React.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center" } }, /* @__PURE__ */ window.React.createElement(
       "select",
       {
-        value: apiKeys.defaultModel,
+        value: apiKeys.defaultModel || DEFAULT_MODEL,
         onChange: (e) => setApiKeys({ defaultModel: e.target.value }),
         "aria-label": t("defaultModel"),
         style: { ...field, appearance: "none", WebkitAppearance: "none", borderRadius: 999, padding: "10px 40px 10px 16px", fontWeight: 500, cursor: "pointer" }
       },
-      MODELS.map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, m.label))
-    ), /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", "aria-hidden": "true", style: { position: "absolute", right: 12, fontSize: 20, color: fg22, pointerEvents: "none" } }, "expand_more")))), /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("apiKeysProviders")), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("anthropicKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { type: "password", value: apiKeys.anthropic || "", onChange: (e) => setApiKeys({ anthropic: e.target.value }), placeholder: "sk-ant-...", style: field })), /* @__PURE__ */ window.React.createElement("div", { style: { ...group2, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("openaiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("comingSoon"), style: { ...field, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: { ...group2, opacity: 0.5 } }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("geminiKeyLabel")), /* @__PURE__ */ window.React.createElement("input", { disabled: true, type: "password", placeholder: t("comingSoon"), style: { ...field, cursor: "not-allowed" } })), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("localUrlLabel"), " (Ollama / LM Studio)"), /* @__PURE__ */ window.React.createElement("input", { type: "text", value: apiKeys.localUrl || "", onChange: (e) => setApiKeys({ localUrl: e.target.value }), placeholder: "http://localhost:11434", style: field }))), /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys.systemMessage || "", onChange: (e) => setApiKeys({ systemMessage: e.target.value }), placeholder: "You are a helpful AI assistant...", className: "custom-scrollbar", style: { ...field, minHeight: 88, resize: "vertical" } })), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys.customInstructions || "", onChange: (e) => setApiKeys({ customInstructions: e.target.value }), placeholder: "User preferences...", className: "custom-scrollbar", style: { ...field, minHeight: 88, resize: "vertical" } }))));
+      apiKeys.defaultModel && !isKnownModel(apiKeys.defaultModel) && /* @__PURE__ */ window.React.createElement("option", { value: apiKeys.defaultModel }, `${apiKeys.defaultModel} (${t("legacy")})`),
+      PROVIDERS.map((pr) => /* @__PURE__ */ window.React.createElement("optgroup", { key: pr.id, label: providerLabel(pr.id, t) }, MODELS.filter((m) => providerOf(m.id) === pr.id).map((m) => /* @__PURE__ */ window.React.createElement("option", { key: m.id, value: m.id }, modelLabel(m, t)))))
+    ), /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", "aria-hidden": "true", style: { position: "absolute", right: 12, fontSize: 20, color: fg22, pointerEvents: "none" } }, "expand_more")))), /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("apiKeysProviders")), [["anthropic", "anthropicKeyLabel", "sk-ant-...", "keyHintAnthropic"], ["openai", "openaiKeyLabel", "sk-...", "keyHintOpenai"], ["gemini", "geminiKeyLabel", "AIza...", "keyHintGemini"]].map(([k, lbl, ph, hint]) => /* @__PURE__ */ window.React.createElement("div", { key: k, style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t(lbl)), /* @__PURE__ */ window.React.createElement("input", { type: "password", value: apiKeys[k] || "", onChange: (e) => setApiKeys({ [k]: e.target.value }), placeholder: ph, style: field }), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 11, color: fg22, opacity: 0.8 } }, t(hint)))), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("localUrlLabel"), " (Ollama / LM Studio)"), /* @__PURE__ */ window.React.createElement("input", { type: "text", value: apiKeys.localUrl || "", onChange: (e) => setApiKeys({ localUrl: e.target.value }), placeholder: "http://localhost:11434", style: field }))), /* @__PURE__ */ window.React.createElement("section", { style: card }, /* @__PURE__ */ window.React.createElement("h3", { style: title }, t("promptCustomization")), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("systemMessageLabel")), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys.systemMessage || "", onChange: (e) => setApiKeys({ systemMessage: e.target.value }), placeholder: "You are a helpful AI assistant...", className: "custom-scrollbar", style: { ...field, minHeight: 88, resize: "vertical" } })), /* @__PURE__ */ window.React.createElement("div", { style: group2 }, /* @__PURE__ */ window.React.createElement("label", { style: label }, t("customInstructionsLabel")), /* @__PURE__ */ window.React.createElement("textarea", { value: apiKeys.customInstructions || "", onChange: (e) => setApiKeys({ customInstructions: e.target.value }), placeholder: "User preferences...", className: "custom-scrollbar", style: { ...field, minHeight: 88, resize: "vertical" } }))));
   };
   if (window.KoBarExtensions.registerSettingsPanel) {
     window.KoBarExtensions.registerSettingsPanel("com.kobar.aihub", {

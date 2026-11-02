@@ -1,13 +1,6 @@
 import { usePluginChatStore } from './usePluginChatStore';
 import { getTranslation } from './translations';
-
-const MODELS = [
-    { id: 'anthropic:claude-sonnet-4-6', label: 'Claude 4.6 Sonnet (Anthropic - Best)' },
-    { id: 'anthropic:claude-opus-4-6', label: 'Claude 4.6 Opus (Anthropic - Heavy)' },
-    { id: 'anthropic:claude-haiku-4-5-20251001', label: 'Claude 4.5 Haiku (Anthropic - Fast)' },
-    { id: 'local:llama3', label: 'Local Default (Ollama / LM Studio)' },
-    { id: 'local:llava', label: 'Local Vision (Ollama - LLaVA)' }
-];
+import { MODELS, PROVIDERS, DEFAULT_MODEL, providerOf, providerLabel, isKnownModel, modelLabel } from './models';
 
 export const SettingsPanel = () => {
     const React = window.React;
@@ -37,12 +30,17 @@ export const SettingsPanel = () => {
                     <label style={label}>{t('defaultModel')}</label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                         <select
-                            value={apiKeys.defaultModel}
+                            value={apiKeys.defaultModel || DEFAULT_MODEL}
                             onChange={(e) => setApiKeys({ defaultModel: e.target.value })}
                             aria-label={t('defaultModel')}
                             style={{ ...field, appearance: 'none', WebkitAppearance: 'none', borderRadius: 999, padding: '10px 40px 10px 16px', fontWeight: 500, cursor: 'pointer' }}
                         >
-                            {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                            {apiKeys.defaultModel && !isKnownModel(apiKeys.defaultModel) && <option value={apiKeys.defaultModel}>{`${apiKeys.defaultModel} (${t('legacy')})`}</option>}
+                            {PROVIDERS.map(pr => (
+                                <optgroup key={pr.id} label={providerLabel(pr.id, t)}>
+                                    {MODELS.filter(m => providerOf(m.id) === pr.id).map(m => <option key={m.id} value={m.id}>{modelLabel(m, t)}</option>)}
+                                </optgroup>
+                            ))}
                         </select>
                         <span className="material-symbols-outlined" aria-hidden="true" style={{ position: 'absolute', right: 12, fontSize: 20, color: fg2, pointerEvents: 'none' }}>expand_more</span>
                     </div>
@@ -51,18 +49,13 @@ export const SettingsPanel = () => {
 
             <section style={card}>
                 <h3 style={title}>{t('apiKeysProviders')}</h3>
-                <div style={group}>
-                    <label style={label}>{t('anthropicKeyLabel')}</label>
-                    <input type="password" value={apiKeys.anthropic || ''} onChange={(e) => setApiKeys({ anthropic: e.target.value })} placeholder="sk-ant-..." style={field} />
-                </div>
-                <div style={{ ...group, opacity: 0.5 }}>
-                    <label style={label}>{t('openaiKeyLabel')}</label>
-                    <input disabled type="password" placeholder={t('comingSoon')} style={{ ...field, cursor: 'not-allowed' }} />
-                </div>
-                <div style={{ ...group, opacity: 0.5 }}>
-                    <label style={label}>{t('geminiKeyLabel')}</label>
-                    <input disabled type="password" placeholder={t('comingSoon')} style={{ ...field, cursor: 'not-allowed' }} />
-                </div>
+                {[['anthropic', 'anthropicKeyLabel', 'sk-ant-...', 'keyHintAnthropic'], ['openai', 'openaiKeyLabel', 'sk-...', 'keyHintOpenai'], ['gemini', 'geminiKeyLabel', 'AIza...', 'keyHintGemini']].map(([k, lbl, ph, hint]) => (
+                    <div key={k} style={group}>
+                        <label style={label}>{t(lbl)}</label>
+                        <input type="password" value={apiKeys[k] || ''} onChange={(e) => setApiKeys({ [k]: e.target.value })} placeholder={ph} style={field} />
+                        <span style={{ fontSize: 11, color: fg2, opacity: 0.8 }}>{t(hint)}</span>
+                    </div>
+                ))}
                 <div style={group}>
                     <label style={label}>{t('localUrlLabel')} (Ollama / LM Studio)</label>
                     <input type="text" value={apiKeys.localUrl || ''} onChange={(e) => setApiKeys({ localUrl: e.target.value })} placeholder="http://localhost:11434" style={field} />

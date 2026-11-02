@@ -13,7 +13,7 @@ export const usePluginChatStore = create(
                 localUrl: 'http://localhost:11434',
                 systemMessage: '',
                 customInstructions: '',
-                defaultModel: 'anthropic:claude-sonnet-4-6'
+                defaultModel: 'anthropic:claude-sonnet-5-5'
             },
             aiAvatar: null,
             userAvatar: null,
